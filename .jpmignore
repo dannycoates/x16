@@ -1,6 +1,6 @@
 .*
 *
 !/data/**
-!/index.js
+!/backend/**
 !/install.rdf
 !/package.json

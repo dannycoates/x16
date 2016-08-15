@@ -1,0 +1,16 @@
+{
+  "name": "x16",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MPL-2.0",
+  "scripts": {
+    "pack": "webpack"
+  },
+  "devDependencies": {
+
+  },
+  "dependencies": {
+    "redux": "^3.5.2",
+    "redux-thunk": "^2.1.0"
+  }
+}
