@@ -1,0 +1,6 @@
+.*
+*
+!/data/**
+!/index.js
+!/install.rdf
+!/package.json
