@@ -4,90 +4,52 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const { AddonManager } = require('resource://gre/modules/AddonManager.jsm');
-const { ToggleButton } = require('sdk/ui/button/toggle');
-const { Panel } = require('sdk/panel');
-const { Request } = require('sdk/request');
-const tabs = require('sdk/tabs');
+Symbol.observable = Symbol('observable');
 
-let panelHeight = 500
-let panelWidth = 300
+const aboutConfig = require('sdk/preferences/service');
+const actions = require('./lib/actions/experiment');
+const AddonListener = require('./lib/AddonListener');
+const configureStore = require('./lib/configureStore');
+const environments = require('./lib/environments');
+const { PrefsTarget } = require('sdk/preferences/event-target');
+const self = require('sdk/self');
+const { UI } = require('./lib/ui');
+const { WebApp } = require('./lib/webapp');
 
-const panel = Panel({
-  contentURL: './index.html',
-  onHide: () => {
-    button.state('window', { checked: false });
+const store = configureStore()
+const addons = new AddonListener(store)
+const ui = new UI(store)
+const prefs = PrefsTarget(); // eslint-disable-line new-cap
+let webapp = null
+
+function changeEnv(env) {
+  if (webapp) { webapp.destroy() }
+  webapp = new WebApp({
+    baseUrl: environments[env].baseUrl,
+    whitelist: environments[env].whitelist,
+    addonVersion: self.version
+  })
+  // TODO webapp.on()
+  store.dispatch(actions.loadExperiments(env));
+}
+
+function loadEnv() {
+  const env = aboutConfig.get('testpilot.env', 'production');
+  if (!aboutConfig.has('testpilot.env')) {
+    aboutConfig.set('testpilot.env', env);
   }
-});
 
-panel.port.on('state', state => {
-  console.error('backend got state')
-})
+  prefs.on('testpilot.env', () => {
+    changeEnv(prefs.prefs['testpilot.env']);
+  });
+  return changeEnv(env);
+}
 
-panel.port.on('action', action => {
-  console.error(`backend received ${action.type}`)
-  switch (action.type) {
-    case 'SHOW_EXPERIMENT':
-      const url = action.href === 'TODO' ? 'https://testpilot.firefox.com/experiments' : action.href
-      tabs.open(url)
-      panel.hide()
-      break;
-    case 'LOAD_EXPERIMENTS':
-      const r = new Request({
-        headers: { 'Accept': 'application/json' },
-        url: 'https://testpilot.firefox.com/api/experiments'
-      })
-      r.on(
-        'complete',
-        res => {
-          if (res.status === 200) {
-            panel.port.emit(
-              'action',
-              {
-                type: 'UPDATE_EXPERIMENTS',
-                json: res.json
-              }
-            )
-          }
-        }
-      )
-      r.get()
-      break;
-    case 'LOAD_ADDONS':
-      AddonManager.getAllAddons(addons => {
-        panel.port.emit(
-          'action',
-          {
-            type: 'UPDATE_ADDONS',
-            addons
-          }
-        )
-      })
-      break;
-    case 'INSTALL_EXPERIMENT':
-      break;
-    case 'UNINSTALL_EXPERIMENT':
-      break;
-    case 'CHANGE_PANEL_HEIGHT':
-      panelHeight = action.height - 20
-      console.error(`height: ${panelHeight}`)
-      break;
-  }
-});
+exports.main = function (options) {
+  loadEnv();
+}
 
-const button = ToggleButton({
-   id: 'x16',
-   label: 'X-16',
-   icon: `./wolf.svg`,
-   onChange: buttonChanged
-});
-
-function buttonChanged(state) {
-  if (state.checked) {
-    panel.show({
-      position: button,
-      width: panelWidth,
-      height: panelHeight
-    });
-  }
+exports.unload = function (reason) {
+  addons.destroy()
+  webapp.destroy()
 }
