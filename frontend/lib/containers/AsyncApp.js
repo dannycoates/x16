@@ -14,20 +14,19 @@ class AsyncApp extends Component {
 
   componentDidMount() {
     const { dispatch, env } = this.props
-    dispatch(loadExperimentsIfNeeded(env))
+    dispatch(loadExperimentsIfNeeded(env || 'production'))
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.env !== this.props.env) {
-      const { dispatch, env } = this.props
-      dispatch(loadExperimentsIfNeeded(env))
-    }
+    // if (nextProps.env !== this.props.env) {
+    //   const { dispatch } = this.props
+    //   dispatch(loadExperimentsIfNeeded(nextProps.env))
+    // }
   }
 
   componentDidUpdate() {
-    const height = document.getElementById('root').clientHeight
-    console.error(document.body.clientHeight)
-    this.props.dispatch(changePanelHeight(height))
+    // const height = document.body.clientHeight
+    // this.props.dispatch(changePanelHeight(height))
   }
 
   render() {
@@ -57,7 +56,7 @@ AsyncApp.propTypes = {
 function mapStateToProps(state) {
   return {
     env: state.env,
-    experiments: state.experiments
+    experiments: Object.keys(state.experiments).map(k => state.experiments[k])
   }
 }
 

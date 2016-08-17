@@ -1,6 +1,7 @@
 .*
 *
-!/data/**
 !/backend/**
+!/common/**
+!/data/**
 !/install.rdf
 !/package.json

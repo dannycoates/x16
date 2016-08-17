@@ -8,29 +8,51 @@ Symbol.observable = Symbol('observable');
 
 const aboutConfig = require('sdk/preferences/service');
 const actions = require('./lib/actions/experiment');
+const aTypes = require('../common/actionTypes');
 const AddonListener = require('./lib/AddonListener');
 const configureStore = require('./lib/configureStore');
-const environments = require('./lib/environments');
+const environments = require('../common/environments');
+const Hub = require('./lib/hub');
 const { PrefsTarget } = require('sdk/preferences/event-target');
 const self = require('sdk/self');
 const { UI } = require('./lib/ui');
 const { WebApp } = require('./lib/webapp');
 
-const store = configureStore()
+const hub = new Hub()
+const store = configureStore(hub)
 const addons = new AddonListener(store)
 const ui = new UI(store)
 const prefs = PrefsTarget(); // eslint-disable-line new-cap
 let webapp = null
 
+hub.connect(ui.panel.port)
+hub.on(aTypes.SHOW_EXPERIMENT, a => ui.openTab(a.href))
+  .on(aTypes.GET_EXPERIMENTS, a => store.dispatch(actions.getExperiments(a.env)))
+  .on(aTypes.CHANGE_PANEL_HEIGHT, a => store.dispatch(a))
+  .on(aTypes.INSTALL_EXPERIMENT, a => store.dispatch(actions.installExperiment(a.experiment)))
+  .on(aTypes.UNINSTALL_EXPERIMENT, a => store.dispatch(actions.uninstallExperiment(a.experiment)))
+  .on(aTypes.SYNC_INSTALLED, a => {
+    webapp.send(
+      'sync-installed-result',
+      {
+        // TODO
+        clientUUID: require('sdk/util/uuid').uuid().toString().slice(1, -1),
+        installed: []
+      }
+    );
+  })
+
 function changeEnv(env) {
-  if (webapp) { webapp.destroy() }
+  if (webapp) {
+    webapp.destroy()
+    store.dispatch(actions.loadExperiments(env))
+  }
   webapp = new WebApp({
     baseUrl: environments[env].baseUrl,
     whitelist: environments[env].whitelist,
-    addonVersion: self.version
+    addonVersion: self.version,
+    hub: hub
   })
-  // TODO webapp.on()
-  store.dispatch(actions.loadExperiments(env));
 }
 
 function loadEnv() {
@@ -49,7 +71,7 @@ exports.main = function (options) {
   loadEnv();
 }
 
-exports.unload = function (reason) {
+exports.onUnload = function (reason) {
   addons.destroy()
   webapp.destroy()
 }

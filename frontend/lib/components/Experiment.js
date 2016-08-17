@@ -4,8 +4,7 @@ const NEW_EXPERIMENT_PERIOD = 14 * 24 * 60 * 60 * 1000; // 2 weeks
 
 export default class Experiment extends Component {
   render() {
-    const { onClick, title, html_url, created, modified, thumbnail, gradient_start, gradient_stop } = this.props
-    const active = false // TODO
+    const { onClick, title, html_url, active, created, modified, thumbnail, gradient_start, gradient_stop } = this.props
     const isNew = (new Date() - new Date(created)) < NEW_EXPERIMENT_PERIOD
     return (
       <a className={ ['experiment-item ', (active ? 'active' : (isNew ? 'is-new' : ''))].join(' ') } href={html_url} onClick={e => {
@@ -30,6 +29,7 @@ Experiment.propTypes = {
   title: PropTypes.string.isRequired,
   thumbnail: PropTypes.string.isRequired,
   html_url: PropTypes.string.isRequired,
+  active: PropTypes.bool.isRequired,
   created: PropTypes.string.isRequired,
   modified: PropTypes.string.isRequired,
   gradient_start: PropTypes.string.isRequired,

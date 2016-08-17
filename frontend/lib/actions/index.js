@@ -1,40 +1,34 @@
-import backend from '../backend'
+import actionTypes from '../../../common/actionTypes'
 
 export function showExperiment(href) {
-  const action = {
-    type: 'SHOW_EXPERIMENT',
+  return {
+    type: actionTypes.SHOW_EXPERIMENT,
     href
   }
-  backend.send(action)
-  return action
 }
 
 export function changePanelHeight(height) {
-  const action = {
-    type: 'CHANGE_PANEL_HEIGHT',
+  return {
+    type: actionTypes.CHANGE_PANEL_HEIGHT,
     height
   }
-  backend.send(action)
-  return action
 }
 
-function loadExperiments(env) {
-  const action = {
-    type: 'LOAD_EXPERIMENTS',
+function getExperiments(env) {
+  return {
+    type: actionTypes.GET_EXPERIMENTS,
     env
   }
-  backend.send(action)
-  return action
 }
 
 function shouldLoadExperiments(state, env) {
-  return true // TODO
+  return state.env !== env
 }
 
 export function loadExperimentsIfNeeded(env) {
   return (dispatch, getState) => {
     if (shouldLoadExperiments(getState(), env)) {
-      return dispatch(loadExperiments(env))
+      return dispatch(getExperiments(env))
     }
   }
 }

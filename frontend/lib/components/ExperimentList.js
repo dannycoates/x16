@@ -23,6 +23,7 @@ ExperimentList.propTypes = {
     title: PropTypes.string.isRequired,
     thumbnail: PropTypes.string.isRequired,
     html_url: PropTypes.string.isRequired,
+    active: PropTypes.bool.isRequired,
     created: PropTypes.string.isRequired,
     modified: PropTypes.string.isRequired,
     gradient_start: PropTypes.string.isRequired,

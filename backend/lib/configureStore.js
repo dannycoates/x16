@@ -2,10 +2,13 @@ const redux = require('redux');
 const thunkMiddleware = require('redux-thunk').default
 const reducers = require('./reducers')
 
-module.exports = function configureStore(preloadedState) {
+module.exports = function configureStore(hub, preloadedState) {
   return redux.createStore(
-    reducers.main,
+    reducers,
     preloadedState,
-    redux.applyMiddleware(thunkMiddleware)
+    redux.applyMiddleware(
+      thunkMiddleware,
+      hub.middleware()
+    )
   )
 }

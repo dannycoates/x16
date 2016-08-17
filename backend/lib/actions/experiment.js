@@ -1,7 +1,9 @@
 
+const actionTypes = require('../../../common/actionTypes');
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm');
 const { Class } = require('sdk/core/heritage');
-const environments = require('../environments');
+const environments = require('../../../common/environments');
+const { Request } = require('sdk/request');
 
 const InstallListener = Class({
   initialize: function({install, dispatch}) {
@@ -9,22 +11,24 @@ const InstallListener = Class({
     install.addListener(this)
   },
   onInstallEnded: function (install, addon) {
-    this.dispatch(installEnded(addon))
+    this.dispatch(installEnded({
+      id: addon.id
+    }))
   },
   onInstallFailed: function(install) {
-    this.dispatch(installFailed(addon))
+    this.dispatch(installFailed(install))
   },
   onInstallStarted: function(install) {
-    this.dispatch(installStarted(addon))
+    this.dispatch(installStarted(install))
   },
   onInstallCancelled: function(install) {
-    this.dispatch(installCancelled(addon))
+    this.dispatch(installCancelled(install))
   },
   onDownloadStarted: function(install) {
-    this.dispatch(downloadStarted(addon))
+    this.dispatch(downloadStarted(install))
   },
   onDownloadProgress: function(install) {
-    this.dispatch(downloadProgress(addon))
+    this.dispatch(downloadProgress(install))
   },
   onDownloadEnded: function(install) {
     this.dispatch(downloadEnded(install))
@@ -39,112 +43,113 @@ const InstallListener = Class({
 
 function installEnded(addon) {
   return {
-    type: 'INSTALL_ENDED',
+    type: actionTypes.INSTALL_ENDED,
     addon
   }
 }
 
 function installFailed(install) {
   return {
-    type: 'INSTALL_FAILED',
+    type: actionTypes.INSTALL_FAILED,
     install
   }
 }
 
 function installStarted(install) {
   return {
-    type: 'INSTALL_STARTED',
+    type: actionTypes.INSTALL_STARTED,
     install
   }
 }
 
 function installCancelled(install) {
   return {
-    type: 'INSTALL_CANCELLED',
+    type: actionTypes.INSTALL_CANCELLED,
     install
   }
 }
 
 function downloadStarted(install) {
   return {
-    type: 'DOWNLOAD_STARTED',
+    type: actionTypes.DOWNLOAD_STARTED,
     install
   }
 }
 
 function downloadProgress(install) {
   return {
-    type: 'DOWNLOAD_PROGRESS',
+    type: actionTypes.DOWNLOAD_PROGRESS,
     install
   }
 }
 
 function downloadEnded(install) {
   return {
-    type: 'DOWNLOAD_ENDED',
+    type: actionTypes.DOWNLOAD_ENDED,
     install
   }
 }
 
 function downloadCancelled(install) {
   return {
-    type: 'DOWNLOAD_CANCELLED',
+    type: actionTypes.DOWNLOAD_CANCELLED,
     install
   }
 }
 
 function downloadFailed(install) {
   return {
-    type: 'DOWNLOAD_FAILED',
+    type: actionTypes.DOWNLOAD_FAILED,
     install
   }
 }
 
 function loadingExperiments(env) {
   return {
-    type: 'LOADING_EXPERIMENTS',
+    type: actionTypes.LOADING_EXPERIMENTS,
     env
   }
 }
 
-function experimentsLoaded(experiments) {
+function experimentsLoaded(env, experiments) {
   return {
-    type: 'EXPERIMENTS_LOADED',
+    type: actionTypes.EXPERIMENTS_LOADED,
+    env,
     experiments
   }
 }
 
 function experimentsLoadError(res) {
   return {
-    type: 'EXPERIMENTS_LOAD_ERROR',
+    type: actionTypes.EXPERIMENTS_LOAD_ERROR,
     res
   }
 }
 
 function experimentEnabled(experiment) {
   return {
-    type: 'EXPERIMENT_ENABLED',
+    type: actionTypes.EXPERIMENT_ENABLED,
     experiment
   }
 }
 
 function experimentDisabled(experiment) {
   return {
-    type: 'EXPERIMENT_DISABLED',
+    type: actionTypes.EXPERIMENT_DISABLED,
     experiment
   }
 }
 
 function experimentUninstalling(experiment) {
   return {
-    type: 'EXPERIMENT_UNINSTALLING',
+    type: actionTypes.EXPERIMENT_UNINSTALLING,
     experiment
   }
 }
 
 function experimentUninstalled(experiment) {
   return {
-    type: 'EXPERIMENT_UNINSTALLED',
+    type: actionTypes.EXPERIMENT_UNINSTALLED,
     experiment
   }
 }
@@ -163,9 +168,11 @@ function installExperiment(experiment) {
 }
 
 function uninstallExperiment(experiment) {
-  AddonManager.getAddonByID(experiment.addon_id, a => {
-    if (a) { a.uninstall(); }
-  });
+  return (dispatch) => {
+    AddonManager.getAddonByID(experiment.addon_id, a => {
+      if (a) { a.uninstall(); }
+    });
+  }
 }
 
 function fetchExperiments(url) {
@@ -195,7 +202,8 @@ function fetchExperiments(url) {
 }
 
 function mergeAddonActiveState(experiments, addons) {
-  for (addon of addons) {
+  Object.keys(experiments).forEach(k => experiments[k].active = false)
+  for (let addon of addons) {
     const x = experiments[addon.id]
     if (x) {
       x.active = true
@@ -205,18 +213,37 @@ function mergeAddonActiveState(experiments, addons) {
   return experiments
 }
 
-function loadExperiments(env) {
+function loadExperiments(newEnv) {
   return (dispatch) => {
-    const baseUrl = environments[env].baseUrl
-    dispatch(loadingExperiments(env))
+    const baseUrl = environments[newEnv].baseUrl
+    dispatch(loadingExperiments(newEnv))
     return fetchExperiments(`${baseUrl}/api/experiments`)
       .then(
-        xs => AddonManager.getAllAddons(mergeAddonActiveState.bind(null, xs))
+        xs => new Promise(
+          (resolve, reject) => {
+            AddonManager.getAllAddons(
+              addons => {
+                resolve(mergeAddonActiveState(xs, addons))
+              }
+            )
+          }
+        )
       )
       .then(
-        xs => dispatch(experimentsLoaded(xs))
+        xs => dispatch(experimentsLoaded(newEnv, xs)),
+        err => dispatch(experimentsLoadError(err))
       )
-      .catch(err => dispatch(experimentsLoadFailed(err)))
+  }
+}
+
+function getExperiments(newEnv) {
+  return (dispatch, getState) => {
+    const { env, experiments } = getState()
+    if (newEnv === env) {
+      console.error('returned cached experiments')
+      return dispatch(experimentsLoaded(env, experiments))
+    }
+    return loadExperiments(newEnv)(dispatch)
   }
 }
 
@@ -227,5 +254,6 @@ module.exports = {
   experimentUninstalled,
   installExperiment,
   uninstallExperiment,
-  loadExperiments
+  loadExperiments,
+  getExperiments
 }

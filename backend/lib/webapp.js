@@ -10,6 +10,7 @@ const WebApp = Class({ // eslint-disable-line new-cap
     setListeners(this, options);
     this.baseUrl = options.baseUrl;
     this.workers = new Set();
+    this.hub = options.hub
 
     const pageIncludes = this.baseUrl + '/*';
     this.page = new PageMod({
@@ -21,9 +22,13 @@ const WebApp = Class({ // eslint-disable-line new-cap
     this.page.on(
       'attach',
       worker => {
+        this.hub.connect(worker.port)
         this.workers.add(worker);
-        worker.on('detach', () => this.workers.delete(worker));
-        worker.port.on('from-web-to-addon', ev => emit(this, ev.type, ev.data));
+        worker.on('detach', () => {
+          this.hub.disconnect(worker.port)
+          this.workers.delete(worker)
+        });
+        // worker.port.on('from-web-to-addon', ev => emit(this, ev.type, ev.data));
       }
     );
     const beaconIncludes = (pageIncludes + ',' + options.whitelist).split(',');

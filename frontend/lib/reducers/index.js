@@ -1,17 +1,30 @@
 import { combineReducers } from 'redux'
+import actionTypes from '../../../common/actionTypes'
 
-function experiments(state = [], action) {
+function experiments(experiments = {}, action) {
+  let x, n
   switch (action.type) {
-    case 'UPDATE_EXPERIMENTS':
-      let experiments = action.json.results
-      return [...experiments]
+    case actionTypes.EXPERIMENTS_LOADED:
+      return Object.assign({}, action.experiments)
+    case actionTypes.INSTALL_ENDED:
+      x = experiments[action.addon.id]
+      n = { ...x, active: true }
+      return { ...experiments, [n.id]: n }
+    case actionTypes.EXPERIMENT_UNINSTALLING:
+      x = experiments[action.experiment.id]
+      n = { ...x, active: false }
+      return { ...experiments, [n.id]: n }
     default:
-      return state
+      return experiments
   }
 }
 
-function env(state = 'production', action) {
-  return state
+function env(env = null, action) {
+  switch (action.type) {
+    case actionTypes.EXPERIMENTS_LOADED:
+      return action.env
+  }
+  return env
 }
 
 const reducers = combineReducers({
