@@ -23,7 +23,6 @@ class Backend {
     this._store = fakeStore
     this.port = comm ? comm.port : fakePort
     this.port.on('action', action => {
-      // console.error(`frontend received ${action.type}`)
       this.store.dispatch(action)
     })
   }

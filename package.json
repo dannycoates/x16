@@ -2,8 +2,9 @@
   "name": "x16",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/index.js",
+  "main": "backend/main.js",
   "scripts": {
+    "start": "npm run addon",
     "pack": "cd frontend; npm run pack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",
     "test": "echo \"Error: no test specified\" && exit 1"

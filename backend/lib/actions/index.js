@@ -12,7 +12,7 @@ const InstallListener = Class({
   },
   onInstallEnded: function (install, addon) {
     this.dispatch(installEnded({
-      id: addon.id
+      addon_id: addon.id
     }))
   },
   onInstallFailed: function(install) {
@@ -41,10 +41,10 @@ const InstallListener = Class({
   }
 })
 
-function installEnded(addon) {
+function installEnded(experiment) {
   return {
     type: actionTypes.INSTALL_ENDED,
-    addon
+    experiment
   }
 }
 
@@ -236,14 +236,11 @@ function loadExperiments(newEnv) {
   }
 }
 
-function getExperiments(newEnv) {
-  return (dispatch, getState) => {
-    const { env, experiments } = getState()
-    if (newEnv === env) {
-      console.error('returned cached experiments')
-      return dispatch(experimentsLoaded(env, experiments))
-    }
-    return loadExperiments(newEnv)(dispatch)
+function syncInstalled({clientUUID, installed}) {
+  return {
+    type: actionTypes.SYNC_INSTALLED,
+    clientUUID,
+    installed
   }
 }
 
@@ -255,5 +252,5 @@ module.exports = {
   installExperiment,
   uninstallExperiment,
   loadExperiments,
-  getExperiments
+  syncInstalled
 }

@@ -1,5 +1,5 @@
 
-const actions = require('./actions/experiment');
+const actions = require('./actions');
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm');
 const { Class } = require('sdk/core/heritage');
 

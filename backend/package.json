@@ -6,10 +6,9 @@
   "scripts": {
     "pack": "webpack"
   },
-  "devDependencies": {
-
-  },
+  "devDependencies": {},
   "dependencies": {
+    "lodash": "^4.15.0",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0"
   }

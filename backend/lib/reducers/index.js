@@ -1,12 +1,24 @@
-const { combineReducers } = require('redux')
+const { combineReducers } = require('redux/dist/redux.min')
 const actionTypes = require('../../../common/actionTypes')
 
-function experiments(state = {}, action) {
+function experiments(experiments = {}, action) {
+  let x, n
   switch (action.type) {
     case actionTypes.EXPERIMENTS_LOADED:
       return Object.assign({}, action.experiments)
+    case actionTypes.EXPERIMENT_ENABLED:
+    case actionTypes.INSTALL_ENDED:
+      x = experiments[action.experiment.addon_id]
+      n = Object.assign({}, x, { active: true })
+      return Object.assign({}, experiments, { [n.addon_id]: n })
+    case actionTypes.EXPERIMENT_DISABLED:
+    case actionTypes.EXPERIMENT_UNINSTALLING:
+      x = experiments[action.experiment.addon_id]
+      n = Object.assign({}, x, { active: false })
+      return Object.assign({}, experiments, { [n.addon_id]: n })
+    default:
+      return experiments
   }
-  return state
 }
 
 function env(state = null, action) {
@@ -18,16 +30,22 @@ function env(state = null, action) {
 }
 
 function panelHeight(state = 500, action) {
-  if (action.type === actionTypes.CHANGE_PANEL_HEIGHT) {
-    return action.height - 20
+  if (action.type === actionTypes.EXPERIMENTS_LOADED) {
+    return (Object.keys(action.experiments).length * 80) + 53
   }
+  return state
+}
+
+const newUUID = require('sdk/util/uuid').uuid().toString().slice(1, -1)
+function clientUUID(state = newUUID, action) {
   return state
 }
 
 const reducers = combineReducers({
   experiments,
   panelHeight,
-  env
+  env,
+  clientUUID
 })
 
 module.exports = reducers

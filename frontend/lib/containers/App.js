@@ -1,36 +1,16 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import {
-  showExperiment,
-  loadExperimentsIfNeeded,
-  changePanelHeight
-} from '../actions'
+import { showExperiment } from '../actions'
+import environments from '../../../common/environments'
 import ExperimentList from '../components/ExperimentList'
 
-class AsyncApp extends Component {
+class App extends Component {
   constructor(props) {
     super(props)
   }
 
-  componentDidMount() {
-    const { dispatch, env } = this.props
-    dispatch(loadExperimentsIfNeeded(env || 'production'))
-  }
-
-  componentWillReceiveProps(nextProps) {
-    // if (nextProps.env !== this.props.env) {
-    //   const { dispatch } = this.props
-    //   dispatch(loadExperimentsIfNeeded(nextProps.env))
-    // }
-  }
-
-  componentDidUpdate() {
-    // const height = document.body.clientHeight
-    // this.props.dispatch(changePanelHeight(height))
-  }
-
   render() {
-    const { experiments, dispatch } = this.props
+    const { env, experiments, dispatch } = this.props
     return (
       <div>
         <ExperimentList
@@ -40,14 +20,14 @@ class AsyncApp extends Component {
         <a className="view-all" href="#" onClick={e => {
           e.preventDefault()
           e.stopPropagation()
-          dispatch(showExperiment('TODO'))
+          dispatch(showExperiment(environments[env].baseUrl))
         }}>View all experiments</a>
       </div>
     )
   }
 }
 
-AsyncApp.propTypes = {
+App.propTypes = {
   env: PropTypes.string,
   experiments: ExperimentList.propTypes.experiments,
   dispatch: PropTypes.func.isRequired
@@ -62,4 +42,4 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps
-)(AsyncApp)
+)(App)

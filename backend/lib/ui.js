@@ -1,5 +1,5 @@
 
-const actions = require('./actions/experiment');
+const actions = require('./actions');
 const { Class } = require('sdk/core/heritage');
 const { Panel } = require('sdk/panel');
 const tabs = require('sdk/tabs');
@@ -26,7 +26,7 @@ const UI = Class({
            this.panel.show({
              position: this.button,
              width: this.panelWidth,
-             height: 475// TODO this.store.getState().panelHeight
+             height: this.store.getState().panelHeight
            });
          }
        }
