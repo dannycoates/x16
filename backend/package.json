@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "license": "MPL-2.0",
-  "scripts": {
-    "pack": "webpack"
-  },
   "devDependencies": {},
   "dependencies": {
     "lodash": "^4.15.0",

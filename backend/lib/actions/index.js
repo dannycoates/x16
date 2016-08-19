@@ -4,6 +4,8 @@ const { AddonManager } = require('resource://gre/modules/AddonManager.jsm');
 const { Class } = require('sdk/core/heritage');
 const environments = require('../../../common/environments');
 const { Request } = require('sdk/request');
+const self = require('sdk/self');
+const _ = require('lodash/object');
 
 const InstallListener = Class({
   initialize: function({install, dispatch}) {
@@ -168,10 +170,18 @@ function installExperiment(experiment) {
 }
 
 function uninstallExperiment(experiment) {
-  return (dispatch) => {
+  return () => {
     AddonManager.getAddonByID(experiment.addon_id, a => {
       if (a) { a.uninstall(); }
     });
+  }
+}
+
+function uninstallSelf() {
+  return (dispatch, getState) => {
+    const xs = _.values(_.pickBy(getState().experiments, x => x.active))
+    xs.forEach(x => uninstallExperiment(x)())
+    AddonManager.getAddonByID(self.id, a => a.uninstall())
   }
 }
 
@@ -251,6 +261,7 @@ module.exports = {
   experimentUninstalled,
   installExperiment,
   uninstallExperiment,
+  uninstallSelf,
   loadExperiments,
   syncInstalled
 }

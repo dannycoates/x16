@@ -4,6 +4,7 @@
   "description": "",
   "main": "backend/main.js",
   "scripts": {
+    "postinstall": "cd frontend; npm i; cd ../backend; npm i",
     "start": "npm run addon",
     "pack": "cd frontend; npm run pack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",

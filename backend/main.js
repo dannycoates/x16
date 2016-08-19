@@ -11,6 +11,7 @@ const {
   SHOW_EXPERIMENT,
   INSTALL_EXPERIMENT,
   UNINSTALL_EXPERIMENT,
+  UNINSTALL_SELF,
   SYNC_INSTALLED
 } = require('../common/actionTypes');
 const AddonListener = require('./lib/AddonListener');
@@ -52,6 +53,7 @@ hub.connect(ui.panel.port)
 hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
   .on(INSTALL_EXPERIMENT, a => store.dispatch(actions.installExperiment(a.experiment)))
   .on(UNINSTALL_EXPERIMENT, a => store.dispatch(actions.uninstallExperiment(a.experiment)))
+  .on(UNINSTALL_SELF, a => store.dispatch(actions.uninstallSelf()))
   .on(SYNC_INSTALLED, a => store.dispatch(actions.syncInstalled({
     clientUUID: store.getState().clientUUID,
     installed: _.pickBy(store.getState().experiments, x => x.active)
