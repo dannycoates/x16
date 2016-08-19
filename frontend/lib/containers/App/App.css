@@ -1,0 +1,25 @@
+a {
+    color: black;
+    outline: 0;
+    text-decoration: none;
+}
+
+.view-all {
+    background: #e5e5e5;
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    color: #000;
+    display: block;
+    font-size: 16px;
+    font-weight: 400;
+    height: 50px;
+    line-height: 50px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    transition: background 100ms;
+}
+
+.view-all:hover {
+    background: rgba(0, 0, 0, 0.2);
+}

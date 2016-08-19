@@ -1,10 +1,18 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { showExperiment } from '../actions'
-import environments from '../../../common/environments'
-import ExperimentList from '../components/ExperimentList'
+import { showExperiment } from '../../actions'
+import environments from '../../../../common/environments'
+import ExperimentList from '../../components/ExperimentList'
+
+import './App.css'
 
 class App extends Component {
+  static propTypes = {
+    env: PropTypes.string,
+    experiments: ExperimentList.propTypes.experiments,
+    dispatch: PropTypes.func.isRequired
+  }
+
   constructor(props) {
     super(props)
   }
@@ -25,12 +33,6 @@ class App extends Component {
       </div>
     )
   }
-}
-
-App.propTypes = {
-  env: PropTypes.string,
-  experiments: ExperimentList.propTypes.experiments,
-  dispatch: PropTypes.func.isRequired
 }
 
 function mapStateToProps(state) {

@@ -3,7 +3,7 @@ import thunkMiddleware from 'redux-thunk'
 import reducers from './reducers'
 import { EventEmitter } from 'events'
 
-function whatever(backend) {
+function commMiddleware(backend) {
   return (store) => {
     backend.store = store
     return (next) => (action) => {
@@ -24,7 +24,7 @@ export function configureStore(backend, preloadedState) {
     preloadedState,
     applyMiddleware(
       thunkMiddleware,
-      whatever(backend)
+      commMiddleware(backend)
     )
   )
 }
