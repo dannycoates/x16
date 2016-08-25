@@ -20,7 +20,6 @@ const env = require('./lib/env');
 const Hub = require('./lib/hub');
 const _ = require('lodash/object');
 const self = require('sdk/self');
-const { setTimeout } = require('sdk/timers');
 const { storage } = require('sdk/simple-storage')
 const { UI } = require('./lib/ui');
 const { WebApp } = require('./lib/webapp');
@@ -70,4 +69,4 @@ exports.onUnload = function (reason) {
 }
 
 // Need to wait a tick for the ui port to "connect"
-setTimeout(() => store.dispatch(actions.loadExperiments(startEnv.name)))
+ui.on('connected',() => store.dispatch(actions.loadExperiments(startEnv.name)))
