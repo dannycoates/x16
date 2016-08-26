@@ -1,4 +1,9 @@
 module.exports = {
+  any: {
+    name: 'any',
+    baseUrl: '*',
+    whitelist: '*'
+  },
   local: {
     name: 'local',
     baseUrl: 'http://testpilot.dev:8000',

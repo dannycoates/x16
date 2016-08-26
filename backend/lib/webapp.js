@@ -7,7 +7,8 @@ const WebApp = Class({ // eslint-disable-line new-cap
     this.workers = new Set();
     this.hub = options.hub
 
-    const pageIncludes = this.baseUrl + '/*';
+    let pageIncludes = this.baseUrl;
+    if (this.baseUrl !== '*') { pageIncludes += '/*' }
     this.page = new PageMod({
       include: pageIncludes,
       contentScriptFile: './message-bridge.js',

@@ -10,7 +10,8 @@ const {
   INSTALL_EXPERIMENT,
   UNINSTALL_EXPERIMENT,
   UNINSTALL_SELF,
-  SYNC_INSTALLED
+  SYNC_INSTALLED,
+  SET_BASE_URL
 } = require('../common/actionTypes');
 const AddonListener = require('./lib/AddonListener');
 const configureStore = require('./lib/configureStore');
@@ -36,7 +37,6 @@ let webapp = new WebApp({
 })
 
 env.on('change', newEnv => {
-  store.dispatch(actions.loadExperiments(newEnv.name))
   webapp.destroy()
   webapp = new WebApp({
     baseUrl: newEnv.baseUrl,
@@ -44,6 +44,7 @@ env.on('change', newEnv => {
     addonVersion: self.version,
     hub: hub
   })
+  store.dispatch(actions.loadExperiments(newEnv.name, newEnv.baseUrl))
 })
 
 hub.connect(ui.panel.port)
@@ -51,6 +52,11 @@ hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
   .on(INSTALL_EXPERIMENT, a => store.dispatch(actions.installExperiment(a.experiment)))
   .on(UNINSTALL_EXPERIMENT, a => store.dispatch(actions.uninstallExperiment(a.experiment)))
   .on(UNINSTALL_SELF, a => store.dispatch(actions.uninstallSelf()))
+  .on(SET_BASE_URL, a => {
+    if (env.get().name === 'any' && a.url !== store.getState().baseUrl) {
+      store.dispatch(actions.loadExperiments('any', a.url))
+    }
+  })
   .on(SYNC_INSTALLED, a => store.dispatch(actions.syncInstalled({
     clientUUID: store.getState().clientUUID,
     installed: _.pickBy(store.getState().experiments, x => x.active)
@@ -67,4 +73,7 @@ exports.onUnload = function (reason) {
 }
 
 // Need to wait a tick for the ui port to "connect"
-ui.once('connected', () => store.dispatch(actions.loadExperiments(startEnv.name)))
+ui.once('connected', () => {
+  const baseUrl = startEnv.name === 'any' ? store.getState().baseUrl : startEnv.baseUrl
+  store.dispatch(actions.loadExperiments(startEnv.name, baseUrl))
+})

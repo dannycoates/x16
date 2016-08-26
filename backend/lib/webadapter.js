@@ -20,6 +20,11 @@ function webToAction({type, data}) {
       return {
         type: actionTypes.SYNC_INSTALLED
       }
+    case 'base-url':
+      return {
+        type: actionTypes.SET_BASE_URL,
+        url: data
+      }
   }
 }
 

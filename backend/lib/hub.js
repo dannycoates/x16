@@ -46,12 +46,17 @@ const Hub = Class({
         action.meta.src = action.meta.src || 'backend'
         if (action.meta.src === 'backend') {
           for (let port of this.ports.keys()) {
-            port.emit('action', action)
-            // HACK
-            const evt = actionToWeb(action)
+            try {
+              port.emit('action', action)
+              // HACK
+              const evt = actionToWeb(action)
 
-            if (evt) {
-              port.emit('from-addon-to-web', evt)
+              if (evt) {
+                port.emit('from-addon-to-web', evt)
+              }
+            }
+            catch(e) {
+              this.ports.delete(port)
             }
           }
         }

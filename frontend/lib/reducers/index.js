@@ -4,6 +4,9 @@ import actionTypes from '../../../common/actionTypes'
 function experiments(experiments = {}, action) {
   let x, n
   switch (action.type) {
+    case actionTypes.LOADING_EXPERIMENTS:
+      return {}
+
     case actionTypes.EXPERIMENTS_LOADED:
       return Object.assign({}, action.experiments)
 
@@ -32,9 +35,18 @@ function env(env = null, action) {
   return env
 }
 
+function baseUrl(state = null, action) {
+  switch (action.type) {
+    case actionTypes.EXPERIMENTS_LOADED:
+      return action.baseUrl
+  }
+  return state
+}
+
 const reducers = combineReducers({
   experiments,
-  env
+  env,
+  baseUrl
 })
 
 export default reducers

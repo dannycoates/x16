@@ -9,6 +9,9 @@
 // Page script acts as messaging bridge between addon and web content.
 
 window.addEventListener('from-web-to-addon', function(event) {
+  if (event && event.detail && event.detail.type === 'sync-installed') {
+    self.port.emit('from-web-to-addon', { type: 'base-url', data: window.location.origin });
+  }
   self.port.emit('from-web-to-addon', event.detail);
 }, false);
 

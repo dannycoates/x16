@@ -1,14 +1,13 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { showExperiment } from '../../actions'
-import environments from '../../../../common/environments'
 import ExperimentList from '../../components/ExperimentList'
 
 import './App.css'
 
 class App extends Component {
   static propTypes = {
-    env: PropTypes.string,
+    baseUrl: PropTypes.string,
     experiments: ExperimentList.propTypes.experiments,
     dispatch: PropTypes.func.isRequired
   }
@@ -18,17 +17,17 @@ class App extends Component {
   }
 
   render() {
-    const { env, experiments, dispatch } = this.props
+    const { baseUrl, experiments, dispatch } = this.props
     return (
       <div>
         <ExperimentList
           experiments={ experiments }
           onExperimentClick={ href => dispatch(showExperiment(href)) }
         />
-        <a className="view-all" href="#" onClick={e => {
+        <a className="view-all" href={ baseUrl } onClick={e => {
           e.preventDefault()
           e.stopPropagation()
-          dispatch(showExperiment(environments[env].baseUrl))
+          dispatch(showExperiment(baseUrl))
         }}>View all experiments</a>
       </div>
     )
@@ -37,7 +36,7 @@ class App extends Component {
 
 function mapStateToProps(state) {
   return {
-    env: state.env,
+    baseUrl: state.baseUrl,
     experiments: Object.keys(state.experiments).map(k => state.experiments[k])
   }
 }

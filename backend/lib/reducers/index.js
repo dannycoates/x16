@@ -4,6 +4,8 @@ const actionTypes = require('../../../common/actionTypes')
 function experiments(experiments = {}, action) {
   let x, n
   switch (action.type) {
+    case actionTypes.LOADING_EXPERIMENTS:
+      return {}
     case actionTypes.EXPERIMENTS_LOADED:
       return Object.assign({}, action.experiments)
     case actionTypes.EXPERIMENT_ENABLED:
@@ -29,11 +31,26 @@ function env(state = null, action) {
   return state
 }
 
-function panelHeight(state = 500, action) {
-  if (action.type === actionTypes.EXPERIMENTS_LOADED) {
-    return (Object.keys(action.experiments).length * 80) + 53
+function baseUrl(state = null, action) {
+  switch (action.type) {
+    case actionTypes.EXPERIMENTS_LOADED:
+      return action.baseUrl
+    default:
+      return state
   }
-  return state
+}
+
+function panelHeight(state = 53, action) {
+  switch (action.type) {
+    case actionTypes.LOADING_EXPERIMENTS:
+      return 53
+
+    case actionTypes.EXPERIMENTS_LOADED:
+      return (Object.keys(action.experiments).length * 80) + 53
+
+    default:
+      return state
+  }
 }
 
 const newUUID = require('sdk/util/uuid').uuid().toString().slice(1, -1)
@@ -45,6 +62,7 @@ const reducers = combineReducers({
   experiments,
   panelHeight,
   env,
+  baseUrl,
   clientUUID
 })
 

@@ -2,7 +2,6 @@
 const actionTypes = require('../../../common/actionTypes');
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm');
 const { Class } = require('sdk/core/heritage');
-const environments = require('../../../common/environments');
 const { Request } = require('sdk/request');
 const self = require('sdk/self');
 const _ = require('lodash/object');
@@ -113,10 +112,11 @@ function loadingExperiments(env) {
   }
 }
 
-function experimentsLoaded(env, experiments) {
+function experimentsLoaded(env, baseUrl, experiments) {
   return {
     type: actionTypes.EXPERIMENTS_LOADED,
     env,
+    baseUrl,
     experiments
   }
 }
@@ -242,9 +242,8 @@ function mergeAddonActiveState(experiments, addons) {
   return experiments
 }
 
-function loadExperiments(newEnv) {
+function loadExperiments(newEnv, baseUrl) {
   return (dispatch) => {
-    const baseUrl = environments[newEnv].baseUrl
     dispatch(loadingExperiments(newEnv))
     return fetchExperiments(baseUrl, '/api/experiments.json')
       .then(
@@ -259,7 +258,7 @@ function loadExperiments(newEnv) {
         )
       )
       .then(
-        xs => dispatch(experimentsLoaded(newEnv, xs)),
+        xs => dispatch(experimentsLoaded(newEnv, baseUrl, xs)),
         err => dispatch(experimentsLoadError(err))
       )
   }
