@@ -21,11 +21,9 @@ const AddonListener = Class({
     }
   },
   onDisabled: function(addon) {
-    if (this.getExperiment(addon)) {
-      const x = this.getExperiment(addon)
-      if (x) {
-        this.dispatch(actions.experimentDisabled(x))
-      }
+    const x = this.getExperiment(addon)
+    if (x) {
+      this.dispatch(actions.experimentDisabled(x))
     }
   },
   onUninstalling: function(addon) {
@@ -38,6 +36,14 @@ const AddonListener = Class({
     const x = this.getExperiment(addon)
     if (x) {
       this.dispatch(actions.experimentUninstalled(x))
+    }
+  },
+  onOperationCancelled: function (addon) {
+    const x = this.getExperiment(addon)
+    if (x) {
+      if (addon.pendingOperations & AddonManager.PENDING_ENABLE) {
+        this.dispatch(actions.experimentEnabled(x))
+      }
     }
   },
   destroy: function () {

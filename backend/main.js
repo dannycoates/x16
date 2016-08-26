@@ -4,8 +4,6 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-Symbol.observable = Symbol('observable');
-
 const actions = require('./lib/actions');
 const {
   SHOW_EXPERIMENT,
@@ -69,4 +67,4 @@ exports.onUnload = function (reason) {
 }
 
 // Need to wait a tick for the ui port to "connect"
-ui.on('connected',() => store.dispatch(actions.loadExperiments(startEnv.name)))
+ui.once('connected', () => store.dispatch(actions.loadExperiments(startEnv.name)))
