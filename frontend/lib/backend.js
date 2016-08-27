@@ -22,12 +22,8 @@ class Backend {
   constructor() {
     this._store = fakeStore
     this.port = comm ? comm.port : fakePort
-    this.port.on('ping', x => {
-      this.port.emit('pong', x)
-    })
-    this.port.on('action', action => {
-      this.store.dispatch(action)
-    })
+    this.port.on('ping', x => this.port.emit('pong', x))
+    this.port.on('action', action => this.store.dispatch(action))
   }
 
   set store(it) { this._store = it }

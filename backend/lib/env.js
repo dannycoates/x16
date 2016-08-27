@@ -4,8 +4,9 @@ const environments = require('../../common/environments');
 const { emit, setListeners } = require('sdk/event/core');
 const { EventTarget } = require('sdk/event/target');
 const { PrefsTarget } = require('sdk/preferences/event-target');
+const self = require('sdk/self');
 
-const prefs = PrefsTarget(); // eslint-disable-line new-cap
+const prefs = PrefsTarget()
 const target = EventTarget()
 target.get = function () {
   return environments[aboutConfig.get('testpilot.env', 'production')]
@@ -13,6 +14,10 @@ target.get = function () {
 
 if (!aboutConfig.has('testpilot.env')) {
   aboutConfig.set('testpilot.env', target.get().name);
+}
+
+if (aboutConfig.get('testpilot.dev') !== 'production') {
+  aboutConfig.set(`extensions.${self.id}.sdk.console.logLevel`, 'debug')
 }
 
 prefs.on('testpilot.env', () => {

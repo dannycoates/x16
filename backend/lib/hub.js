@@ -16,10 +16,9 @@ function handler(hub, port, action) {
 
 const Hub = Class({
   implements: [EventTarget],
-  initialize: function () {
-    setListeners(this)
+  initialize: function (options) {
+    setListeners(this, options)
     this.ports = new Map()
-    this.dispatch = function() {}
   },
   connect: function (port) {
     const fn = handler.bind(null, this, port)
@@ -27,7 +26,7 @@ const Hub = Class({
     // HACK
     port.on('from-web-to-addon', evt => {
       const action = webToAction(evt)
-      console.error(`webapp action ${action.type}`)
+      console.info(`webapp action ${action.type}`)
       emit(this, action.type, action)
     })
     this.ports.set(port, fn)
@@ -39,30 +38,27 @@ const Hub = Class({
     this.ports.delete(port)
   },
   middleware: function () {
-    return (store) => {
-      this.dispatch = store.dispatch
-      return (next) => (action) => {
-        action.meta = action.meta || {}
-        action.meta.src = action.meta.src || 'backend'
-        if (action.meta.src === 'backend') {
-          for (let port of this.ports.keys()) {
-            try {
-              port.emit('action', action)
-              // HACK
-              const evt = actionToWeb(action)
+    return (store) => (next) => (action) => {
+      action.meta = action.meta || {}
+      action.meta.src = action.meta.src || 'backend'
+      if (action.meta.src === 'backend') {
+        for (let port of this.ports.keys()) {
+          try {
+            port.emit('action', action)
+            // HACK
+            const evt = actionToWeb(action)
 
-              if (evt) {
-                port.emit('from-addon-to-web', evt)
-              }
-            }
-            catch(e) {
-              this.ports.delete(port)
+            if (evt) {
+              port.emit('from-addon-to-web', evt)
             }
           }
+          catch(e) {
+            this.ports.delete(port)
+          }
         }
-        console.error(`backend processing ${action.type}:${action.meta.src}`)
-        return next(action)
       }
+      console.info(`backend processing ${action.type}:${action.meta.src}`)
+      return next(action)
     }
   }
 })

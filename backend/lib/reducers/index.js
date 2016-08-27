@@ -6,18 +6,22 @@ function experiments(experiments = {}, action) {
   switch (action.type) {
     case actionTypes.LOADING_EXPERIMENTS:
       return {}
+
     case actionTypes.EXPERIMENTS_LOADED:
       return Object.assign({}, action.experiments)
+
     case actionTypes.EXPERIMENT_ENABLED:
     case actionTypes.INSTALL_ENDED:
       x = experiments[action.experiment.addon_id]
       n = Object.assign({}, x, { active: true })
       return Object.assign({}, experiments, { [n.addon_id]: n })
+
     case actionTypes.EXPERIMENT_DISABLED:
     case actionTypes.EXPERIMENT_UNINSTALLING:
       x = experiments[action.experiment.addon_id]
       n = Object.assign({}, x, { active: false })
       return Object.assign({}, experiments, { [n.addon_id]: n })
+
     default:
       return experiments
   }

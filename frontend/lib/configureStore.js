@@ -12,7 +12,7 @@ function commMiddleware(backend) {
       if (action.meta.src === 'frontend') {
         backend.send(action)
       }
-      console.error(`frontend processing ${action.type}:${action.meta.src}`)
+      console.info(`frontend processing ${action.type}:${action.meta.src}`)
       return next(action)
     }
   }
