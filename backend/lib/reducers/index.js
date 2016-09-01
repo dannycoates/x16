@@ -1,10 +1,10 @@
 const { combineReducers } = require('redux/dist/redux.min')
 const actionTypes = require('../../../common/actionTypes')
 
-function experiments(experiments = {}, action) {
+function experiments(experiments = null, action) {
   let x, n
   switch (action.type) {
-    case actionTypes.LOADING_EXPERIMENTS:
+    case actionTypes.EXPERIMENTS_LOAD_ERROR:
       return {}
 
     case actionTypes.EXPERIMENTS_LOADED:
@@ -31,8 +31,9 @@ function env(state = null, action) {
   switch (action.type) {
     case actionTypes.EXPERIMENTS_LOADED:
       return action.env
+    default:
+      return state
   }
-  return state
 }
 
 function baseUrl(state = null, action) {
@@ -44,30 +45,38 @@ function baseUrl(state = null, action) {
   }
 }
 
-function panelHeight(state = 53, action) {
+const newUUID = require('sdk/util/uuid').uuid().toString().slice(1, -1)
+function clientUUID(state = newUUID, action) {
+  return state
+}
+
+const FOOTER_HEIGHT = 53
+function ui(state = { panelHeight: FOOTER_HEIGHT }, action) {
   switch (action.type) {
-    case actionTypes.LOADING_EXPERIMENTS:
-      return 53
+    case actionTypes.SET_BADGE:
+      return Object.assign({}, state, { badge: action.text })
+
+    case actionTypes.MAIN_BUTTON_CLICKED:
+      return Object.assign({}, state, { badge: null, clicked: action.time })
+
+    case actionTypes.EXPERIMENTS_LOAD_ERROR:
+      return Object.assign({}, state, { panelHeight: FOOTER_HEIGHT })
 
     case actionTypes.EXPERIMENTS_LOADED:
-      return (Object.keys(action.experiments).length * 80) + 53
+      const height = (Object.keys(action.experiments).length * 80) + FOOTER_HEIGHT
+      return Object.assign({}, state, { panelHeight: height })
 
     default:
       return state
   }
 }
 
-const newUUID = require('sdk/util/uuid').uuid().toString().slice(1, -1)
-function clientUUID(state = newUUID, action) {
-  return state
-}
-
 const reducers = combineReducers({
   experiments,
-  panelHeight,
   env,
   baseUrl,
-  clientUUID
+  clientUUID,
+  ui
 })
 
 module.exports = reducers

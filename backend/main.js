@@ -18,13 +18,19 @@ const configureStore = require('./lib/configureStore');
 const env = require('./lib/env');
 const Hub = require('./lib/hub');
 const _ = require('lodash/object');
+const { rootStateChanged } = require('./lib/watchers');
 const self = require('sdk/self');
 const { storage } = require('sdk/simple-storage')
 const { UI } = require('./lib/ui');
+const Watcher = require('./lib/watcher');
 const { WebApp } = require('./lib/webapp');
 
 const hub = new Hub()
-const store = configureStore(hub)
+const watcher = new Watcher({
+  onRoot: rootStateChanged
+})
+
+const store = configureStore({hub, watcher})
 const addons = new AddonListener(store)
 const ui = new UI(store)
 const startEnv = env.get()
@@ -53,14 +59,23 @@ hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
   .on(UNINSTALL_EXPERIMENT, a => store.dispatch(actions.uninstallExperiment(a.experiment)))
   .on(UNINSTALL_SELF, a => store.dispatch(actions.uninstallSelf()))
   .on(SET_BASE_URL, a => {
-    if (env.get().name === 'any' && a.url !== store.getState().baseUrl) {
-      store.dispatch(actions.loadExperiments('any', a.url))
-    }
+    // refresh experiments
+    const e = env.get()
+    const url = e.name === 'any' ? a.url : e.baseUrl
+    store.dispatch(actions.loadExperiments(e.name, url))
   })
-  .on(SYNC_INSTALLED, a => store.dispatch(actions.syncInstalled({
-    clientUUID: store.getState().clientUUID,
-    installed: _.pickBy(store.getState().experiments, x => x.active)
-  })))
+  .on(SYNC_INSTALLED, a => {
+    store.dispatch(actions.syncInstalled({
+      clientUUID: store.getState().clientUUID,
+      installed: _.pickBy(store.getState().experiments, x => x.active)
+    }))
+  })
+
+watcher.on('root->ui', change => {
+  if (change.prop === 'badge') {
+    ui.setBadge()
+  }
+})
 
 // TODO: write to storage after every change or just onUnload?
 // const unsubscribe = store.subscribe(() => storage.root = store.getState())

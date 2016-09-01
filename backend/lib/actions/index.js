@@ -272,6 +272,20 @@ function syncInstalled({clientUUID, installed}) {
   }
 }
 
+function setBadge(text) {
+  return {
+    type: actionTypes.SET_BADGE,
+    text
+  }
+}
+
+function mainButtonClicked() {
+  return {
+    type: actionTypes.MAIN_BUTTON_CLICKED,
+    time: Date.now()
+  }
+}
+
 module.exports = {
   experimentEnabled,
   experimentDisabled,
@@ -281,5 +295,7 @@ module.exports = {
   uninstallExperiment,
   uninstallSelf,
   loadExperiments,
-  syncInstalled
+  syncInstalled,
+  setBadge,
+  mainButtonClicked
 }

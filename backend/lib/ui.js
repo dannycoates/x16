@@ -36,8 +36,9 @@ const UI = Class({
            this.panel.show({
              position: this.button,
              width: this.panelWidth,
-             height: this.store.getState().panelHeight
+             height: this.store.getState().ui.panelHeight
            });
+           store.dispatch(actions.mainButtonClicked())
          }
        }
     });
@@ -54,6 +55,9 @@ const UI = Class({
   openTab: function (url) {
     tabs.open(url)
     this.panel.hide()
+  },
+  setBadge: function () {
+    this.button.badge = this.store.getState().ui.badge
   }
 })
 

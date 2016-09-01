@@ -4,7 +4,7 @@ import actionTypes from '../../../common/actionTypes'
 function experiments(experiments = {}, action) {
   let x, n
   switch (action.type) {
-    case actionTypes.LOADING_EXPERIMENTS:
+    case actionTypes.EXPERIMENTS_LOAD_ERROR:
       return {}
 
     case actionTypes.EXPERIMENTS_LOADED:

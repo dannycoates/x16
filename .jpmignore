@@ -3,6 +3,7 @@
 !/backend/lib/**
 !/backend/main.js
 !/backend/node_modules/lodash/**
+!/backend/node_modules/deep-diff/**
 !/backend/node_modules/redux/dist/redux.min.js
 !/backend/node_modules/redux-thunk/dist/redux-thunk.min.js
 !/common/**
