@@ -18,6 +18,7 @@ const configureStore = require('./lib/configureStore');
 const env = require('./lib/env');
 const Hub = require('./lib/hub');
 const _ = require('lodash/object');
+const notifier = require('./lib/notifier');
 const { rootStateChanged } = require('./lib/watchers');
 const self = require('sdk/self');
 const { storage } = require('sdk/simple-storage')
@@ -74,6 +75,32 @@ hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
 watcher.on('root->ui', change => {
   if (change.prop === 'badge') {
     ui.setBadge()
+  }
+})
+
+function setNextNotificationCheck() {
+  const nextCheck = store.getState().notifications.nextCheck
+  console.debug(`next notify check: ${new Date(nextCheck)}`)
+  notifier.createTimer(() => {
+    const state = store.getState()
+    const {
+      experiments,
+      notifications: {
+        lastNotified,
+        nextCheck
+      }
+    } = store
+    for (let name of Object.keys(experiments)) {
+      store.dispatch(actions.maybeNotify(experiments[name], lastNotified, nextCheck))
+    }
+  },
+  nextCheck)
+}
+setNextNotificationCheck()
+
+watcher.on('root->notifications', change => {
+  if (change.prop === 'nextCheck') {
+    setNextNotificationCheck()
   }
 })
 

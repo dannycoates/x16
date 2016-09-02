@@ -5,6 +5,7 @@ const { Class } = require('sdk/core/heritage');
 const { Request } = require('sdk/request');
 const self = require('sdk/self');
 const _ = require('lodash/object');
+const notifier = require('../notifier');
 
 const InstallListener = Class({
   initialize: function({install, dispatch}) {
@@ -286,6 +287,11 @@ function mainButtonClicked() {
   }
 }
 
+function maybeNotify(experiment, lastNotified, nextCheck) {
+  const action = notifier.maybeNotify(experiment, lastNotified, nextCheck)
+  return Object.assign(action, { type: actionTypes.NOTIFIED })
+}
+
 module.exports = {
   experimentEnabled,
   experimentDisabled,
@@ -297,5 +303,6 @@ module.exports = {
   loadExperiments,
   syncInstalled,
   setBadge,
-  mainButtonClicked
+  mainButtonClicked,
+  maybeNotify
 }

@@ -1,10 +1,25 @@
-const { setBadge } = require('../actions')
+const { setBadge, maybeNotify } = require('../actions')
+
+function getProp(selector, object) {
+  const keys = selector.split('->').slice(1)
+  let result = object
+  for (let key of keys) {
+    result = result[key]
+  }
+  return result
+}
+
+function checkNotifications(experimentSelector, store) {
+  const state = store.getState()
+  const experiment = getProp(experimentSelector, state)
+  const { lastNotified, nextCheck } = state.notifications
+  store.dispatch(maybeNotify(experiment, lastNotified, nextCheck))
+}
 
 function experimentChanged(change) {
   switch (change.prop) {
     case 'notifications':
-      // TODO
-      console.debug(change)
+      checkNotifications(change.target, this.store)
       break;
   }
 }
@@ -20,6 +35,7 @@ function experimentAdded(watcher, change) {
   if (created > lastClicked) {
     watcher.store.dispatch(setBadge('New'))
   }
+  checkNotifications(selector, watcher.store)
 }
 
 function experimentDeleted(watcher, change) {
@@ -57,5 +73,6 @@ function rootStateChanged(change) {
 
 module.exports = {
   rootStateChanged,
-  experimentListChanged
+  experimentListChanged,
+  experimentChanged
 }

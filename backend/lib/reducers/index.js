@@ -71,12 +71,26 @@ function ui(state = { panelHeight: FOOTER_HEIGHT }, action) {
   }
 }
 
+const tomorrow = Date.now() + (24 * 60 * 60 * 1000)
+function notifications(state = { lastNotified: tomorrow, nextCheck: tomorrow }, action) {
+  switch (action.type) {
+    case actionTypes.NOTIFIED:
+      return Object.assign({}, state, {
+        lastNotified: action.lastNotified,
+        nextCheck: action.nextCheck
+      })
+    default:
+      return state
+  }
+}
+
 const reducers = combineReducers({
   experiments,
   env,
   baseUrl,
   clientUUID,
-  ui
+  ui,
+  notifications
 })
 
 module.exports = reducers
