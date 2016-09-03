@@ -44,6 +44,7 @@ const Watcher = Class({
   middleware: function (initialState) {
     return (store) => {
       this.store = store
+      // kick off a diff to initialize the root watcher
       diffState(this, {}, initialState)
 
       return (next) => (action) => {

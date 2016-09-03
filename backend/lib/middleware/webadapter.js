@@ -1,4 +1,4 @@
-const actionTypes = require('../../common/actionTypes');
+const actionTypes = require('../../../common/actionTypes');
 
 function webToAction({type, data}) {
   switch (type) {

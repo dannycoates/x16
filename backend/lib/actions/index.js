@@ -292,6 +292,18 @@ function maybeNotify(experiment, lastNotified, nextCheck) {
   return Object.assign(action, { type: actionTypes.NOTIFIED })
 }
 
+function selfEnabled() {
+  return {
+    type: actionTypes.SELF_ENABLED
+  }
+}
+
+function selfDisabled() {
+  return {
+    type: actionTypes.SELF_DISABLED
+  }
+}
+
 module.exports = {
   experimentEnabled,
   experimentDisabled,
@@ -304,5 +316,7 @@ module.exports = {
   syncInstalled,
   setBadge,
   mainButtonClicked,
-  maybeNotify
+  maybeNotify,
+  selfEnabled,
+  selfDisabled
 }

@@ -1,4 +1,5 @@
 const { setBadge, maybeNotify } = require('../actions')
+const WebExtensionChannels = require('../metrics/webextension-channels')
 
 function getProp(selector, object) {
   const keys = selector.split('->').slice(1)
@@ -29,12 +30,20 @@ function experimentAdded(watcher, change) {
   watcher.on(selector, experimentChanged)
   console.debug(`added ${selector}`)
 
+  // maybe show the "New" badge
   const state = watcher.store.getState()
+  const experiment = state.experiments[change.prop]
   const lastClicked = state.ui.clicked
-  const created = (new Date(state.experiments[change.prop].created)).getTime()
+  const created = (new Date(experiment.created)).getTime()
   if (created > lastClicked) {
     watcher.store.dispatch(setBadge('New'))
   }
+
+  // wire up a webextension channel
+  if (experiment.active) {
+    WebExtensionChannels.add(experiment.addon_id)
+  }
+
   checkNotifications(selector, watcher.store)
 }
 
@@ -55,7 +64,6 @@ function experimentListChanged(change) {
 
 function rootStateChanged(change) {
   if (change.type !== 'DELETE' && change.prop === 'experiments') {
-    console.debug(change)
     this.on('root->experiments', experimentListChanged)
 
     const experiments = this.store.getState().experiments

@@ -15,23 +15,25 @@ const {
 } = require('../common/actionTypes');
 const AddonListener = require('./lib/AddonListener');
 const configureStore = require('./lib/configureStore');
+const createExperimentMetrics = require('./lib/metrics');
 const env = require('./lib/env');
-const Hub = require('./lib/hub');
+const Hub = require('./lib/middleware/hub');
 const _ = require('lodash/object');
+const Metrics = require('./lib/middleware/metrics');
 const notifier = require('./lib/notifier');
 const { rootStateChanged } = require('./lib/watchers');
 const self = require('sdk/self');
 const { storage } = require('sdk/simple-storage')
+const tabs = require('sdk/tabs');
 const { UI } = require('./lib/ui');
-const Watcher = require('./lib/watcher');
+const Watcher = require('./lib/middleware/watcher');
 const { WebApp } = require('./lib/webapp');
 
 const hub = new Hub()
-const watcher = new Watcher({
-  onRoot: rootStateChanged
-})
-
-const store = configureStore({hub, watcher})
+const watcher = new Watcher({ onRoot: rootStateChanged })
+const metrics = new Metrics()
+const store = configureStore({ hub, watcher, metrics })
+const experimentMetrics = createExperimentMetrics(store.getState().clientUUID)
 const addons = new AddonListener(store)
 const ui = new UI(store)
 const startEnv = env.get()
@@ -41,17 +43,6 @@ let webapp = new WebApp({
   whitelist: startEnv.whitelist,
   addonVersion: self.version,
   hub: hub
-})
-
-env.on('change', newEnv => {
-  webapp.destroy()
-  webapp = new WebApp({
-    baseUrl: newEnv.baseUrl,
-    whitelist: newEnv.whitelist,
-    addonVersion: self.version,
-    hub: hub
-  })
-  store.dispatch(actions.loadExperiments(newEnv.name, newEnv.baseUrl))
 })
 
 hub.connect(ui.panel.port)
@@ -72,12 +63,6 @@ hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
     }))
   })
 
-watcher.on('root->ui', change => {
-  if (change.prop === 'badge') {
-    ui.setBadge()
-  }
-})
-
 function setNextNotificationCheck() {
   const nextCheck = store.getState().notifications.nextCheck
   console.debug(`next notify check: ${new Date(nextCheck)}`)
@@ -89,7 +74,7 @@ function setNextNotificationCheck() {
         lastNotified,
         nextCheck
       }
-    } = store
+    } = state
     for (let name of Object.keys(experiments)) {
       store.dispatch(actions.maybeNotify(experiments[name], lastNotified, nextCheck))
     }
@@ -98,19 +83,62 @@ function setNextNotificationCheck() {
 }
 setNextNotificationCheck()
 
-watcher.on('root->notifications', change => {
-  if (change.prop === 'nextCheck') {
-    setNextNotificationCheck()
+exports.main = function (options) {
+  env.on('change', newEnv => {
+    webapp.destroy()
+    webapp = new WebApp({
+      baseUrl: newEnv.baseUrl,
+      whitelist: newEnv.whitelist,
+      addonVersion: self.version,
+      hub: hub
+    })
+    store.dispatch(actions.loadExperiments(newEnv.name, newEnv.baseUrl))
+  })
+
+  watcher.on('root->ui', change => {
+    if (change.prop === 'badge') {
+      ui.setBadge()
+    }
+  })
+
+  watcher.on('root->notifications', change => {
+    if (change.prop === 'nextCheck') {
+      setNextNotificationCheck()
+    }
+  })
+
+  switch(options.loadReason) {
+    case 'install':
+      store.dispatch(actions.selfEnabled())
+      tabs.open({
+        url: startEnv.baseUrl + '/onboarding',
+        inBackground: true
+      })
+      break;
+    case 'enable':
+      store.dispatch(actions.selfEnabled())
+      break;
   }
-})
+}
 
 // TODO: write to storage after every change or just onUnload?
 // const unsubscribe = store.subscribe(() => storage.root = store.getState())
 
 exports.onUnload = function (reason) {
+  switch (reason) {
+    case 'disable':
+      store.dispatch(actions.selfDisabled())
+      break;
+    case 'uninstall':
+      store.dispatch(actions.selfDisabled())
+      store.dispatch(actions.uninstallSelf())
+      break;
+  }
   storage.root = store.getState()
+  experimentMetrics.destroy()
   addons.destroy()
   webapp.destroy()
+  metrics.destroy()
   // unsubscribe()
 }
 

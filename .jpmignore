@@ -6,6 +6,7 @@
 !/backend/node_modules/deep-diff/**
 !/backend/node_modules/redux/dist/redux.min.js
 !/backend/node_modules/redux-thunk/dist/redux-thunk.min.js
+!/backend/node_modules/seedrandom/**
 !/common/**
 !/data/**
 !/install.rdf

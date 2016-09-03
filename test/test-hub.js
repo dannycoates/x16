@@ -1,7 +1,7 @@
 const { before } = require('sdk/test/utils')
 const MockUtils = require('./lib/mock-utils')
 const { SYNC_INSTALLED } = require('../common/actionTypes')
-const Hub = require('../backend/lib/hub')
+const Hub = require('../backend/lib/middleware/hub')
 
 const mocks = MockUtils.callbacks({
     port: ['on', 'off', 'emit']
