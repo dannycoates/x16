@@ -74,11 +74,33 @@ function ui(state = { panelHeight: FOOTER_HEIGHT }, action) {
 const tomorrow = Date.now() + (24 * 60 * 60 * 1000)
 function notifications(state = { lastNotified: tomorrow, nextCheck: tomorrow }, action) {
   switch (action.type) {
-    case actionTypes.NOTIFIED:
+    case actionTypes.MAYBE_NOTIFY:
       return Object.assign({}, state, {
         lastNotified: action.lastNotified,
         nextCheck: action.nextCheck
       })
+    default:
+      return state
+  }
+}
+
+function ratings(state = {}, action) {
+  let id, rating;
+  switch (action.type) {
+    case actionTypes.SHOW_RATING_PROMPT:
+      id = action.experiment.addon_id
+      rating = Object.assign({}, state[id], {[action.interval]: true})
+      return Object.assign({}, state, { [id]: rating })
+
+    case actionTypes.SET_RATING:
+      id = action.experiment.addon_id
+      rating = Object.assign({}, state[id], { rating: action.rating })
+      console.debug(`${id} rated: ${action.rating}`)
+      return Object.assign({}, state, {
+        lastRated: action.time,
+        [id]: rating
+      })
+
     default:
       return state
   }
@@ -90,7 +112,8 @@ const reducers = combineReducers({
   baseUrl,
   clientUUID,
   ui,
-  notifications
+  notifications,
+  ratings
 })
 
 module.exports = reducers

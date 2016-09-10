@@ -14,7 +14,7 @@ function pollPanel(port) {
   this.panel.port.emit('ping', ++pollCount)
 }
 
-const UI = Class({
+const PanelUI = Class({
   implements: [EventTarget],
   initialize: function (store) {
     setListeners(this)
@@ -61,4 +61,4 @@ const UI = Class({
   }
 })
 
-module.exports.UI = UI
+module.exports = PanelUI

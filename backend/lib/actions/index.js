@@ -2,10 +2,11 @@
 const actionTypes = require('../../../common/actionTypes');
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm');
 const { Class } = require('sdk/core/heritage');
+const feedbackUI = require('../feedbackUI');
 const { Request } = require('sdk/request');
 const self = require('sdk/self');
 const _ = require('lodash/object');
-const notifier = require('../notifier');
+const notificationUI = require('../notificationUI');
 
 const InstallListener = Class({
   initialize: function({install, dispatch}) {
@@ -288,8 +289,8 @@ function mainButtonClicked() {
 }
 
 function maybeNotify(experiment, lastNotified, nextCheck) {
-  const action = notifier.maybeNotify(experiment, lastNotified, nextCheck)
-  return Object.assign(action, { type: actionTypes.NOTIFIED })
+  const action = notificationUI.maybeNotify(experiment, lastNotified, nextCheck)
+  return Object.assign(action, { type: actionTypes.MAYBE_NOTIFY })
 }
 
 function selfEnabled() {
@@ -301,6 +302,34 @@ function selfEnabled() {
 function selfDisabled() {
   return {
     type: actionTypes.SELF_DISABLED
+  }
+}
+
+function setRating(experiment, rating) {
+  return {
+    type: actionTypes.SET_RATING,
+    time: Date.now(),
+    experiment,
+    rating
+  }
+}
+
+function showRating(interval, experiment) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: actionTypes.SHOW_RATING_PROMPT,
+      experiment,
+      interval
+    })
+    feedbackUI.showRating({ experiment })
+    .then(
+      rating => {
+        // TODO report rating to server
+        dispatch(setRating(experiment, rating))
+        feedbackUI.showFeedbackLink(interval, experiment)
+      }
+    )
+    .catch(() => {});
   }
 }
 
@@ -318,5 +347,6 @@ module.exports = {
   mainButtonClicked,
   maybeNotify,
   selfEnabled,
-  selfDisabled
+  selfDisabled,
+  showRating
 }

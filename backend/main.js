@@ -20,12 +20,13 @@ const env = require('./lib/env');
 const Hub = require('./lib/middleware/hub');
 const _ = require('lodash/object');
 const Metrics = require('./lib/middleware/metrics');
-const notifier = require('./lib/notifier');
+const notificationManager = require('./lib/notificationManager');
 const { rootStateChanged } = require('./lib/watchers');
 const self = require('sdk/self');
-const { storage } = require('sdk/simple-storage')
+const { storage } = require('sdk/simple-storage');
+const FeedbackManager = require('./lib/FeedbackManager');
 const tabs = require('sdk/tabs');
-const { UI } = require('./lib/ui');
+const PanelUI = require('./lib/PanelUI');
 const Watcher = require('./lib/middleware/watcher');
 const { WebApp } = require('./lib/webapp');
 
@@ -35,7 +36,8 @@ const metrics = new Metrics()
 const store = configureStore({ hub, watcher, metrics })
 const experimentMetrics = createExperimentMetrics(store.getState().clientUUID)
 const addons = new AddonListener(store)
-const ui = new UI(store)
+const ui = new PanelUI(store)
+const feedbackManager = new FeedbackManager(store)
 const startEnv = env.get()
 
 let webapp = new WebApp({
@@ -63,26 +65,6 @@ hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
     }))
   })
 
-function setNextNotificationCheck() {
-  const nextCheck = store.getState().notifications.nextCheck
-  console.debug(`next notify check: ${new Date(nextCheck)}`)
-  notifier.createTimer(() => {
-    const state = store.getState()
-    const {
-      experiments,
-      notifications: {
-        lastNotified,
-        nextCheck
-      }
-    } = state
-    for (let name of Object.keys(experiments)) {
-      store.dispatch(actions.maybeNotify(experiments[name], lastNotified, nextCheck))
-    }
-  },
-  nextCheck)
-}
-setNextNotificationCheck()
-
 exports.main = function (options) {
   env.on('change', newEnv => {
     webapp.destroy()
@@ -103,9 +85,11 @@ exports.main = function (options) {
 
   watcher.on('root->notifications', change => {
     if (change.prop === 'nextCheck') {
-      setNextNotificationCheck()
+      notificationManager.schedule(store);
     }
   })
+  notificationManager.schedule(store);
+  feedbackManager.start();
 
   switch(options.loadReason) {
     case 'install':

@@ -1,11 +1,14 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
 const Notifications = require('sdk/notifications');
 const querystring = require('sdk/querystring');
-const { setTimeout, clearTimeout } = require('sdk/timers');
 const tabs = require('sdk/tabs');
 const ONE_DAY = 24 * 60 * 60 * 1000
 const MAX_NOTIFICATION_DELAY_PERIOD = 14 * ONE_DAY;
-
-let timeout = null
 
 function notify(message) {
   Notifications.notify({
@@ -64,12 +67,6 @@ function maybeNotify(experiment, lastNotified, nextCheck) {
   }
 }
 
-function createTimer(fn, when) {
-  clearTimeout(timeout)
-  timeout = setTimeout(fn, when - Date.now())
-}
-
 module.exports = {
-  maybeNotify,
-  createTimer
+  maybeNotify
 }
