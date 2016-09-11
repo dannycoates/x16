@@ -1,7 +1,13 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
 const { setBadge, maybeNotify } = require('../actions')
 const WebExtensionChannels = require('../metrics/webextension-channels')
 
-function getProp(selector, object) {
+function getProp (selector, object) {
   const keys = selector.split('->').slice(1)
   let result = object
   for (let key of keys) {
@@ -10,22 +16,22 @@ function getProp(selector, object) {
   return result
 }
 
-function checkNotifications(experimentSelector, store) {
+function checkNotifications (experimentSelector, store) {
   const state = store.getState()
   const experiment = getProp(experimentSelector, state)
   const { lastNotified, nextCheck } = state.notifications
   store.dispatch(maybeNotify(experiment, lastNotified, nextCheck))
 }
 
-function experimentChanged(change) {
+function experimentChanged (change) {
   switch (change.prop) {
     case 'notifications':
       checkNotifications(change.target, this.store)
-      break;
+      break
   }
 }
 
-function experimentAdded(watcher, change) {
+function experimentAdded (watcher, change) {
   const selector = `${change.target}->${change.prop}`
   watcher.on(selector, experimentChanged)
   console.debug(`added ${selector}`)
@@ -47,13 +53,13 @@ function experimentAdded(watcher, change) {
   checkNotifications(selector, watcher.store)
 }
 
-function experimentDeleted(watcher, change) {
+function experimentDeleted (watcher, change) {
   const selector = `${change.target}->${change.prop}`
   console.debug(`deleted ${selector}`)
   watcher.off(selector, experimentChanged)
 }
 
-function experimentListChanged(change) {
+function experimentListChanged (change) {
   switch (change.type) {
     case 'ADD':
       return experimentAdded(this, change)
@@ -62,7 +68,7 @@ function experimentListChanged(change) {
   }
 }
 
-function rootStateChanged(change) {
+function rootStateChanged (change) {
   if (change.type !== 'DELETE' && change.prop === 'experiments') {
     this.on('root->experiments', experimentListChanged)
 

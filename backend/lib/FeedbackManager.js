@@ -4,37 +4,33 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('./actions');
-const { Class } = require('sdk/core/heritage');
-const { setTimeout } = require('sdk/timers');
-const _ = require('lodash/object');
+const actions = require('./actions')
+const { Class } = require('sdk/core/heritage')
+const { setTimeout } = require('sdk/timers')
+const _ = require('lodash/object')
 
-const TEN_MINUTES = 10 * 60 * 1000;
-const ONE_DAY = 24 * 60 * 60 * 1000;
-const MINIMUM_NAG_DELAY = ONE_DAY;
+const TEN_MINUTES = 10 * 60 * 1000
+const ONE_DAY = 24 * 60 * 60 * 1000
+const MINIMUM_NAG_DELAY = ONE_DAY
 
-function randomActiveExperiment(experiments) {
+function randomActiveExperiment (experiments) {
   const installed = _.pickBy(experiments, x => x.active)
   const installedKeys = Object.keys(installed)
   const id = installedKeys[Math.floor(Math.random() * installedKeys.length)]
   return installed[id]
 }
 
-function getInterval(installDate) {
+function getInterval (installDate) {
   const interval = Math.floor((Date.now() - installDate) / ONE_DAY)
   if (interval < 2) {
     return 0
-  }
-  else if (interval < 7) {
+  } else if (interval < 7) {
     return 2
-  }
-  else if (interval < 21) {
+  } else if (interval < 21) {
     return 7
-  }
-  else if (interval < 46) {
+  } else if (interval < 46) {
     return 21
-  }
-  else {
+  } else {
     return 46
   }
 }
@@ -61,7 +57,7 @@ const FeedbackManager = Class({
     const experimentRatings = ratings[x.addon_id]
     const interval = getInterval(x.installDate)
     if (interval > 0 && !experimentRatings[interval]) {
-      store.dispatch(actions.showRating(interval, x))
+      this.store.dispatch(actions.showRating(interval, x))
     }
   }
 })

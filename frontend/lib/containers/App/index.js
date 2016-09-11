@@ -1,3 +1,9 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import { showExperiment } from '../../actions'
@@ -12,19 +18,15 @@ class App extends Component {
     dispatch: PropTypes.func.isRequired
   }
 
-  constructor(props) {
-    super(props)
-  }
-
-  render() {
+  render () {
     const { baseUrl, experiments, dispatch } = this.props
     return (
       <div>
         <ExperimentList
-          experiments={ experiments }
-          onExperimentClick={ href => dispatch(showExperiment(href)) }
+          experiments={experiments}
+          onExperimentClick={href => dispatch(showExperiment(href))}
         />
-        <a className="view-all" href={ baseUrl } onClick={e => {
+        <a className='view-all' href={baseUrl} onClick={e => {
           e.preventDefault()
           e.stopPropagation()
           dispatch(showExperiment(baseUrl))
@@ -34,13 +36,11 @@ class App extends Component {
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps (state) {
   return {
     baseUrl: state.baseUrl,
     experiments: Object.keys(state.experiments).map(k => state.experiments[k])
   }
 }
 
-export default connect(
-  mapStateToProps
-)(App)
+export default connect(mapStateToProps)(App)

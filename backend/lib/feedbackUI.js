@@ -9,54 +9,53 @@
  *   https://github.com/lmorchard/fireriver/blob/master/lib/main.js#L369
  *   & https://dxr.mozilla.org/mozilla-central/source/browser/components/uitour/UITour.jsm
  */
-const { Cc, Ci } = require('chrome');
-const { setTimeout, clearTimeout } = require('sdk/timers');
-const tabs = require('sdk/tabs');
-const querystring = require('sdk/querystring');
 
-function getAnonEl(win, box, attrName) {
-  return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName);
+const { Services } = require('resource://gre/modules/Services.jsm')
+const { setTimeout, clearTimeout } = require('sdk/timers')
+const tabs = require('sdk/tabs')
+const querystring = require('sdk/querystring')
+
+function getAnonEl (win, box, attrName) {
+  return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName)
 }
 
-function createRatingUI(win, cb) {
+function createRatingUI (win, cb) {
   // Create the fragment holding the rating UI.
-  const frag = win.document.createDocumentFragment();
+  const frag = win.document.createDocumentFragment()
 
   // Build the star rating.
-  const ratingContainer = win.document.createElement('hbox');
-  ratingContainer.id = 'star-rating-container';
-  ratingContainer.setAttribute('style', 'margin-bottom: 2px');
+  const ratingContainer = win.document.createElement('hbox')
+  ratingContainer.id = 'star-rating-container'
+  ratingContainer.setAttribute('style', 'margin-bottom: 2px')
 
-  function ratingListener(evt) {
-    cb(Number(evt.target.getAttribute('data-score'), 10));
+  function ratingListener (evt) {
+    cb(Number(evt.target.getAttribute('data-score'), 10))
   }
 
   for (let starIndex = 5; starIndex > 0; starIndex--) {
     // Create a star rating element.
-    const ratingElement = win.document.createElement('toolbarbutton');
+    const ratingElement = win.document.createElement('toolbarbutton')
 
     // Style it.
-    ratingElement.className = 'plain star-x';
-    ratingElement.id = 'star' + starIndex;
-    ratingElement.setAttribute('data-score', starIndex);
+    ratingElement.className = 'plain star-x'
+    ratingElement.id = 'star' + starIndex
+    ratingElement.setAttribute('data-score', starIndex)
 
     // Add the click handler.
-    ratingElement.addEventListener('click', ratingListener);
+    ratingElement.addEventListener('click', ratingListener)
 
     // Add it to the container.
-    ratingContainer.appendChild(ratingElement);
+    ratingContainer.appendChild(ratingElement)
   }
 
-  frag.appendChild(ratingContainer);
+  frag.appendChild(ratingContainer)
 
-  return frag;
+  return frag
 }
 
-function createNotification(options) {
-  const WM = Cc['@mozilla.org/appshell/window-mediator;1'].
-    getService(Ci.nsIWindowMediator);
-  const win = WM.getMostRecentWindow('navigator:browser');
-  const notifyBox = win.gBrowser.getNotificationBox();
+function createNotification (options) {
+  const win = Services.wm.getMostRecentWindow('navigator:browser')
+  const notifyBox = win.gBrowser.getNotificationBox()
   const box = notifyBox.appendNotification(
     options.label,
     options.value || '',
@@ -64,37 +63,37 @@ function createNotification(options) {
     notifyBox.PRIORITY_INFO_LOW,
     options.buttons || [],
     options.callback
-  );
-  const messageText = getAnonEl(win, box, 'messageText');
-  const messageImage = getAnonEl(win, box, 'messageImage');
+  )
+  const messageText = getAnonEl(win, box, 'messageText')
+  const messageImage = getAnonEl(win, box, 'messageImage')
 
   if (options.child) {
     const child = options.child(win)
     // Make sure the child is not pushed to the right by the spacer.
-    const rightSpacer = win.document.createElement('spacer');
-    rightSpacer.flex = 20;
-    child.appendChild(rightSpacer);
-    box.appendChild(child);
+    const rightSpacer = win.document.createElement('spacer')
+    rightSpacer.flex = 20
+    child.appendChild(rightSpacer)
+    box.appendChild(child)
   }
-  messageText.flex = 0; // Collapse the space before the stars/button.
-  const leftSpacer = messageText.nextSibling;
-  leftSpacer.flex = 0;
-  box.classList.add('heartbeat');
-  messageImage.classList.add('heartbeat', 'pulse-onshow');
-  messageText.classList.add('heartbeat');
-  messageImage.setAttribute('style', 'filter: invert(80%)');
-  box.persistence = options.persistence || 0;
+  messageText.flex = 0 // Collapse the space before the stars/button.
+  const leftSpacer = messageText.nextSibling
+  leftSpacer.flex = 0
+  box.classList.add('heartbeat')
+  messageImage.classList.add('heartbeat', 'pulse-onshow')
+  messageText.classList.add('heartbeat')
+  messageImage.setAttribute('style', 'filter: invert(80%)')
+  box.persistence = options.persistence || 0
   return {
     notifyBox,
     box
-  };
+  }
 }
 
-function showRating(options) {
+function showRating (options) {
   return new Promise((resolve, reject) => {
-    const experiment = options.experiment;
-    const surveyTimeout = setTimeout(surveyClosed, options.duration || 60000);
-    let experimentRating = null;
+    const experiment = options.experiment
+    const surveyTimeout = setTimeout(surveyClosed, options.duration || 60000)
+    let experimentRating = null
 
     const { notifyBox, box } = createNotification({
       label: `Please rate ${experiment.title}`,
@@ -103,22 +102,22 @@ function showRating(options) {
       persistence: options.persistence,
       callback: reason => {
         if (experimentRating) {
-          resolve(experimentRating);
+          resolve(experimentRating)
         } else {
-          reject();
+          reject()
         }
       }
-    });
+    })
 
-    function surveyClosed(rating) {
-      clearTimeout(surveyTimeout);
+    function surveyClosed (rating) {
+      clearTimeout(surveyTimeout)
       experimentRating = rating
-      notifyBox.removeNotification(box);
+      notifyBox.removeNotification(box)
     }
-  });
+  })
 }
 
-function showFeedbackLink(interval, experiment) {
+function showFeedbackLink (interval, experiment) {
   const urlParams = querystring.stringify({
     id: experiment.addon_id,
     interval
@@ -133,7 +132,7 @@ function showFeedbackLink(interval, experiment) {
         tabs.open(`${experiment.survey_url}?${urlParams}`)
       }
     }]
-  });
+  })
   const button = box.getElementsByClassName('notification-button')[0]
   if (!button) {
     return console.error('missing feedback button')

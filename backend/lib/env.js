@@ -1,10 +1,15 @@
-const aboutConfig = require('sdk/preferences/service');
-const { Class } = require('sdk/core/heritage');
-const environments = require('../../common/environments');
-const { emit, setListeners } = require('sdk/event/core');
-const { EventTarget } = require('sdk/event/target');
-const { PrefsTarget } = require('sdk/preferences/event-target');
-const self = require('sdk/self');
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
+const aboutConfig = require('sdk/preferences/service')
+const environments = require('../../common/environments')
+const { emit } = require('sdk/event/core')
+const { EventTarget } = require('sdk/event/target')
+const { PrefsTarget } = require('sdk/preferences/event-target')
+const self = require('sdk/self')
 
 const prefs = PrefsTarget()
 const target = EventTarget()
@@ -13,7 +18,7 @@ target.get = function () {
 }
 
 if (!aboutConfig.has('testpilot.env')) {
-  aboutConfig.set('testpilot.env', target.get().name);
+  aboutConfig.set('testpilot.env', target.get().name)
 }
 
 if (aboutConfig.get('testpilot.dev') !== 'production') {
@@ -21,7 +26,7 @@ if (aboutConfig.get('testpilot.dev') !== 'production') {
 }
 
 prefs.on('testpilot.env', () => {
-  emit(target, 'change', target.get());
-});
+  emit(target, 'change', target.get())
+})
 
 module.exports = target

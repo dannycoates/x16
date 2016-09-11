@@ -1,7 +1,13 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
 import { combineReducers } from 'redux'
 import actionTypes from '../../../common/actionTypes'
 
-function experiments(experiments = {}, action) {
+function experiments (experiments = {}, action) {
   let x, n
   switch (action.type) {
     case actionTypes.EXPERIMENTS_LOAD_ERROR:
@@ -27,7 +33,7 @@ function experiments(experiments = {}, action) {
   }
 }
 
-function env(env = null, action) {
+function env (env = null, action) {
   switch (action.type) {
     case actionTypes.EXPERIMENTS_LOADED:
       return action.env
@@ -35,7 +41,7 @@ function env(env = null, action) {
   return env
 }
 
-function baseUrl(state = null, action) {
+function baseUrl (state = null, action) {
   switch (action.type) {
     case actionTypes.EXPERIMENTS_LOADED:
       return action.baseUrl

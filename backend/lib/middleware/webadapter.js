@@ -1,6 +1,12 @@
-const actionTypes = require('../../../common/actionTypes');
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
 
-function webToAction({type, data}) {
+const actionTypes = require('../../../common/actionTypes')
+
+function webToAction ({type, data}) {
   switch (type) {
     case 'install-experiment':
       return {
@@ -28,7 +34,7 @@ function webToAction({type, data}) {
   }
 }
 
-function actionToWeb(action) {
+function actionToWeb (action) {
   switch (action.type) {
     case actionTypes.INSTALL_ENDED:
       return {

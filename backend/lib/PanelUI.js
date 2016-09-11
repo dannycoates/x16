@@ -1,16 +1,20 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
 
-const actions = require('./actions');
-const { Class } = require('sdk/core/heritage');
-const { emit, setListeners } = require('sdk/event/core');
-const { EventTarget } = require('sdk/event/target');
-const { Panel } = require('sdk/panel');
-const tabs = require('sdk/tabs');
-const { ToggleButton } = require('sdk/ui/button/toggle');
-const { Request } = require('sdk/request');
-const { setInterval, clearInterval } = require('sdk/timers');
+const actions = require('./actions')
+const { Class } = require('sdk/core/heritage')
+const { emit, setListeners } = require('sdk/event/core')
+const { EventTarget } = require('sdk/event/target')
+const { Panel } = require('sdk/panel')
+const tabs = require('sdk/tabs')
+const { ToggleButton } = require('sdk/ui/button/toggle')
+const { setInterval, clearInterval } = require('sdk/timers')
 
-let pollCount = 0;
-function pollPanel(port) {
+let pollCount = 0
+function pollPanel (port) {
   this.panel.port.emit('ping', ++pollCount)
 }
 
@@ -23,25 +27,25 @@ const PanelUI = Class({
     this.panel = Panel({
       contentURL: './index.html',
       onHide: () => {
-        this.button.state('window', { checked: false });
+        this.button.state('window', { checked: false })
       }
-    });
+    })
 
     this.button = ToggleButton({
-       id: 'x16',
-       label: 'X-16',
-       icon: `./wolf.svg`,
-       onChange: state => {
-         if (state.checked) {
-           this.panel.show({
-             position: this.button,
-             width: this.panelWidth,
-             height: this.store.getState().ui.panelHeight
-           });
-           store.dispatch(actions.mainButtonClicked())
-         }
-       }
-    });
+      id: 'x16',
+      label: 'X-16',
+      icon: `./wolf.svg`,
+      onChange: state => {
+        if (state.checked) {
+          this.panel.show({
+            position: this.button,
+            width: this.panelWidth,
+            height: this.store.getState().ui.panelHeight
+          })
+          store.dispatch(actions.mainButtonClicked())
+        }
+      }
+    })
 
     // HACK
     this.pollInterval = setInterval(pollPanel.bind(this), 10)
@@ -50,7 +54,6 @@ const PanelUI = Class({
       console.info(`polled ${x} times`)
       emit(this, 'connected')
     })
-
   },
   openTab: function (url) {
     tabs.open(url)

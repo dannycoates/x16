@@ -1,11 +1,17 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
 const { before } = require('sdk/test/utils')
 const MockUtils = require('./lib/mock-utils')
 const { SYNC_INSTALLED } = require('../common/actionTypes')
 const Hub = require('../backend/lib/middleware/hub')
 
 const mocks = MockUtils.callbacks({
-    port: ['on', 'off', 'emit']
-  })
+  port: ['on', 'off', 'emit']
+})
 
 exports['test connect() events'] = (assert) => {
   const h = new Hub()
@@ -15,7 +21,7 @@ exports['test connect() events'] = (assert) => {
   assert.equal(onCalls[0][0], 'action')
   assert.equal(onCalls[1][0], 'from-web-to-addon')
   assert.equal(h.ports.size, 1)
-  assert.equal(typeof(h.ports.get(mocks.port)), 'function')
+  assert.equal(typeof (h.ports.get(mocks.port)), 'function')
 }
 
 exports['test disconnect() events'] = (assert) => {
@@ -29,7 +35,7 @@ exports['test disconnect() events'] = (assert) => {
   assert.equal(offCalls[0][0], 'action')
   assert.equal(offCalls[1][0], 'from-web-to-addon')
   assert.equal(h.ports.size, 0)
-  assert.equal(typeof(h.ports.get(mocks.port)), 'undefined')
+  assert.equal(typeof (h.ports.get(mocks.port)), 'undefined')
 }
 
 exports['test action dispatching'] = (assert, done) => {
@@ -113,8 +119,7 @@ exports['test middleware with web action'] = (assert, done) => {
   middleware()(next)(anAction)
 }
 
-
-before(module.exports, function(name, assert, done) {
+before(module.exports, function (name, assert, done) {
   MockUtils.resetCallbacks(mocks)
   done()
 })

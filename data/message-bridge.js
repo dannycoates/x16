@@ -4,20 +4,20 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-/* global cloneInto unsafeWindow */
+/* global cloneInto self CustomEvent */
 
 // Page script acts as messaging bridge between addon and web content.
 
-window.addEventListener('from-web-to-addon', function(event) {
+window.addEventListener('from-web-to-addon', function (event) {
   if (event && event.detail && event.detail.type === 'sync-installed') {
-    self.port.emit('from-web-to-addon', { type: 'base-url', data: window.location.origin });
+    self.port.emit('from-web-to-addon', { type: 'base-url', data: window.location.origin })
   }
-  self.port.emit('from-web-to-addon', event.detail);
-}, false);
+  self.port.emit('from-web-to-addon', event.detail)
+}, false)
 
-self.port.on('from-addon-to-web', function(data) {
-  const clonedData = cloneInto(data, document.defaultView);
+self.port.on('from-addon-to-web', function (data) {
+  const clonedData = cloneInto(data, document.defaultView)
   document.documentElement.dispatchEvent(new CustomEvent(
     'from-addon-to-web', { bubbles: true, detail: clonedData }
-  ));
-});
+  ))
+})

@@ -1,9 +1,14 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
 import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import reducers from './reducers'
-import { EventEmitter } from 'events'
 
-function commMiddleware(backend) {
+function commMiddleware (backend) {
   return (store) => {
     backend.store = store
     return (next) => (action) => {
@@ -18,7 +23,7 @@ function commMiddleware(backend) {
   }
 }
 
-export function configureStore(backend, preloadedState) {
+export function configureStore (backend, preloadedState) {
   return createStore(
     reducers,
     preloadedState,

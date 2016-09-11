@@ -1,10 +1,15 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
 
-const { Class } = require('sdk/core/heritage');
-const { emit, setListeners } = require('sdk/event/core');
-const { EventTarget } = require('sdk/event/target');
-const { actionToWeb, webToAction } = require('./webadapter');
+const { Class } = require('sdk/core/heritage')
+const { emit, setListeners } = require('sdk/event/core')
+const { EventTarget } = require('sdk/event/target')
+const { actionToWeb, webToAction } = require('./webadapter')
 
-function handler(hub, port, action) {
+function handler (hub, port, action) {
   // send to everyone else
   // for (let p of hub.ports.keys()) {
   //   if (p !== port) {
@@ -51,8 +56,7 @@ const Hub = Class({
             if (evt) {
               port.emit('from-addon-to-web', evt)
             }
-          }
-          catch(e) {
+          } catch (e) {
             this.ports.delete(port)
           }
         }

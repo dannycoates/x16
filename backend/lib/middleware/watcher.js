@@ -1,19 +1,24 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
 
-const { Class } = require('sdk/core/heritage');
-const { emit, setListeners } = require('sdk/event/core');
-const { EventTarget } = require('sdk/event/target');
-const { observableDiff } = require('deep-diff');
+const { Class } = require('sdk/core/heritage')
+const { emit, setListeners } = require('sdk/event/core')
+const { EventTarget } = require('sdk/event/target')
+const { observableDiff } = require('deep-diff')
 
-function toType(kind) {
+function toType (kind) {
   switch (kind) {
-    case 'N': return 'ADD';
-    case 'D': return 'DELETE';
-    case 'E': return 'EDIT';
-    case 'A': return 'ARRAY';
+    case 'N': return 'ADD'
+    case 'D': return 'DELETE'
+    case 'E': return 'EDIT'
+    case 'A': return 'ARRAY'
   }
 }
 
-function diffState(watcher, previous, current) {
+function diffState (watcher, previous, current) {
   observableDiff(
     previous,
     current,

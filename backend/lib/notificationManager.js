@@ -1,25 +1,30 @@
-const actions = require('./actions');
-const { setTimeout, clearTimeout } = require('sdk/timers');
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
 
-let timeout = null;
+const actions = require('./actions')
+const { setTimeout, clearTimeout } = require('sdk/timers')
 
-function createTimer(fn, when) {
+let timeout = null
+
+function createTimer (fn, when) {
   clearTimeout(timeout)
   timeout = setTimeout(fn, when - Date.now())
 }
 
-function schedule({ getState, dispatch }) {
+function schedule ({ getState, dispatch }) {
   const nextCheck = getState().notifications.nextCheck
   console.debug(`next notify check: ${new Date(nextCheck)}`)
   createTimer(() => {
-    const state = getState()
     const {
       experiments,
       notifications: {
         lastNotified,
         nextCheck
       }
-    } = state
+    } = getState()
     for (let name of Object.keys(experiments)) {
       dispatch(actions.maybeNotify(experiments[name], lastNotified, nextCheck))
     }

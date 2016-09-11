@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "cd frontend; npm i; cd ../backend; npm i",
     "start": "npm run addon",
+    "lint": "eslint . --ignore-path .gitignore",
     "pack": "cd frontend; npm run pack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",
     "test": "jpm test"
@@ -13,6 +14,14 @@
   "author": "",
   "license": "MPL-2.0",
   "devDependencies": {
+    "babel-eslint": "^6.1.2",
+    "eslint": "^3.5.0",
+    "eslint-config-standard": "^6.0.0",
+    "eslint-config-standard-jsx": "^3.0.0",
+    "eslint-config-standard-react": "^4.0.1",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-react": "^6.2.0",
+    "eslint-plugin-standard": "^2.0.0",
     "jpm": "^1.1.4"
   }
 }

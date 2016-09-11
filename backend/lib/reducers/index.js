@@ -1,7 +1,13 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
 const { combineReducers } = require('redux/dist/redux.min')
 const actionTypes = require('../../../common/actionTypes')
 
-function experiments(experiments = null, action) {
+function experiments (experiments = null, action) {
   let x, n
   switch (action.type) {
     case actionTypes.EXPERIMENTS_LOAD_ERROR:
@@ -27,7 +33,7 @@ function experiments(experiments = null, action) {
   }
 }
 
-function env(state = null, action) {
+function env (state = null, action) {
   switch (action.type) {
     case actionTypes.EXPERIMENTS_LOADED:
       return action.env
@@ -36,7 +42,7 @@ function env(state = null, action) {
   }
 }
 
-function baseUrl(state = null, action) {
+function baseUrl (state = null, action) {
   switch (action.type) {
     case actionTypes.EXPERIMENTS_LOADED:
       return action.baseUrl
@@ -46,12 +52,12 @@ function baseUrl(state = null, action) {
 }
 
 const newUUID = require('sdk/util/uuid').uuid().toString().slice(1, -1)
-function clientUUID(state = newUUID, action) {
+function clientUUID (state = newUUID, action) {
   return state
 }
 
 const FOOTER_HEIGHT = 53
-function ui(state = { panelHeight: FOOTER_HEIGHT }, action) {
+function ui (state = { panelHeight: FOOTER_HEIGHT }, action) {
   switch (action.type) {
     case actionTypes.SET_BADGE:
       return Object.assign({}, state, { badge: action.text })
@@ -72,7 +78,7 @@ function ui(state = { panelHeight: FOOTER_HEIGHT }, action) {
 }
 
 const tomorrow = Date.now() + (24 * 60 * 60 * 1000)
-function notifications(state = { lastNotified: tomorrow, nextCheck: tomorrow }, action) {
+function notifications (state = { lastNotified: tomorrow, nextCheck: tomorrow }, action) {
   switch (action.type) {
     case actionTypes.MAYBE_NOTIFY:
       return Object.assign({}, state, {
@@ -84,8 +90,8 @@ function notifications(state = { lastNotified: tomorrow, nextCheck: tomorrow }, 
   }
 }
 
-function ratings(state = {}, action) {
-  let id, rating;
+function ratings (state = {}, action) {
+  let id, rating
   switch (action.type) {
     case actionTypes.SHOW_RATING_PROMPT:
       id = action.experiment.addon_id

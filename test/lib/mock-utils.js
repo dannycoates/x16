@@ -1,103 +1,109 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
 const { Loader, Require, unload,
-        override, descriptor } = require('toolkit/loader');
-const { ensure } = require('sdk/system/unload');
+        override, descriptor } = require('toolkit/loader')
+const { ensure } = require('sdk/system/unload')
 
-let debug = false;
+let debug = false
 
-exports.setDebug = (flag) => debug = flag;
+exports.setDebug = (flag) => { debug = flag }
 
-exports.callback = function(name) {
-  let callState = [];
-  let implementCb = null;
+exports.callback = function (name) {
+  let callState = []
+  let implementCb = null
 
-  const fn = function() {
-    const args = Array.prototype.slice.call(arguments);
-    args.timestamp = Date.now();
+  const fn = function () {
+    const args = Array.prototype.slice.call(arguments)
+    args.timestamp = Date.now()
     if (debug) {
-      console.info(name, args);  // eslint-disable-line no-console
+      console.info(name, args)
     }
-    callState.push(args);
+    callState.push(args)
     if (implementCb) {
-      return implementCb.apply(fn, args);
+      return implementCb.apply(fn, args)
     }
-  };
+  }
 
   fn.reset = () => {
-    callState = [];
-    implementCb = null;
-  };
-  fn.calls = () => callState;
-  fn.implement = cb => implementCb = cb;
+    callState = []
+    implementCb = null
+  }
+  fn.calls = () => callState
+  fn.implement = cb => { implementCb = cb }
 
-  return fn;
-};
+  return fn
+}
 
-exports.callbacks = function(spec) {
-  const out = {};
+exports.callbacks = function (spec) {
+  const out = {}
   Object.keys(spec).forEach(prefix => {
-    out[prefix] = {};
+    out[prefix] = {}
     spec[prefix].forEach(name => {
-      out[prefix][name] = exports.callback(prefix + '.' + name);
-    });
-  });
-  return out;
-};
+      out[prefix][name] = exports.callback(prefix + '.' + name)
+    })
+  })
+  return out
+}
 
-exports.resetCallbacks = function(callbacks) {
+exports.resetCallbacks = function (callbacks) {
   Object.keys(callbacks).forEach(prefix => {
-    const items = callbacks[prefix];
-    Object.keys(items).forEach(name => items[name].reset());
-  });
-};
+    const items = callbacks[prefix]
+    Object.keys(items).forEach(name => items[name].reset())
+  })
+}
 
 // Build a custom module loader that substitutes mock modules for the test
 // subject's require() calls.
-exports.loader = function(testModule, subjectPath, modules) {
-  const loaderOptions = require('@loader/options');
+exports.loader = function (testModule, subjectPath, modules) {
+  const loaderOptions = require('@loader/options')
 
   // Get a handle on the original resolver created by default in Loader.
-  const realResolve = loaderOptions.isNative ?
-      (id, requirer) => Loader.nodeResolve(id, requirer, {rootURI: loaderOptions.rootURI}) :
-      Loader.resolve;
+  const realResolve = loaderOptions.isNative
+    ? (id, requirer) => Loader.nodeResolve(id, requirer, {rootURI: loaderOptions.rootURI})
+    : Loader.resolve
 
   // Custom resolver that substitutes mock modules, but only when the test
   // subject module is asking for them.
   const mockResolve = (id, requirer) => {
-    let resolvedPath = realResolve(id, requirer);
+    let resolvedPath = realResolve(id, requirer)
     // Only trigger mock module substitution for the test subject
     if (requirer === subjectPath) {
       // If the real resolver came up with no mapping, use the original ID
-      if (!resolvedPath) { resolvedPath = id; }
+      if (!resolvedPath) { resolvedPath = id }
       // If the path is in our set of mock substitutions, use the prefix.
       if (resolvedPath in modules) {
-        resolvedPath = 'mock:' + resolvedPath;
+        resolvedPath = 'mock:' + resolvedPath
         // Announce the substitution if debug is on.
         if (debug) {
-          console.info('Substituting mock', requirer, '<=', id);  // eslint-disable-line no-console
+          console.info('Substituting mock', requirer, '<=', id)
         }
       }
     }
-    return resolvedPath;
-  };
+    return resolvedPath
+  }
 
   // Prefix all the supplied mock modules for conditional injection
-  const mockModules = {};
+  const mockModules = {}
   Object.keys(modules).forEach(path => {
-    mockModules['mock:' + path] = modules[path];
-  });
+    mockModules['mock:' + path] = modules[path]
+  })
 
   // Build and return the mock module loader
-  const loader = Loader(override(  // eslint-disable-line new-cap
+  const loader = Loader(override(
     loaderOptions,
     {modules: mockModules, resolve: mockResolve}
-  ));
+  ))
 
   const mockLoader = Object.create(loader, descriptor({
-    require: Require(loader, testModule),  // eslint-disable-line new-cap
+    require: Require(loader, testModule),
     unload: reason => unload(loader, reason)
-  }));
+  }))
 
-  ensure(mockLoader);
+  ensure(mockLoader)
 
-  return mockLoader;
-};
+  return mockLoader
+}

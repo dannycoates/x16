@@ -4,13 +4,13 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const Notifications = require('sdk/notifications');
-const querystring = require('sdk/querystring');
-const tabs = require('sdk/tabs');
+const Notifications = require('sdk/notifications')
+const querystring = require('sdk/querystring')
+const tabs = require('sdk/tabs')
 const ONE_DAY = 24 * 60 * 60 * 1000
-const MAX_NOTIFICATION_DELAY_PERIOD = 14 * ONE_DAY;
+const MAX_NOTIFICATION_DELAY_PERIOD = 14 * ONE_DAY
 
-function notify(message) {
+function notify (message) {
   Notifications.notify({
     title: message.title,
     text: `via testpilot.firefox.com\n${message.text}`,
@@ -27,10 +27,9 @@ function notify(message) {
   })
 }
 
-function selectNotification(notifications, lastNotified) {
+function selectNotification (notifications, lastNotified) {
   const now = Date.now()
   const eligible = notifications.filter(n => {
-    const now = Date.now()
     const after = (new Date(n.notify_after)).getTime()
     return (now - after < MAX_NOTIFICATION_DELAY_PERIOD) &&
       (now > after) &&
@@ -39,7 +38,7 @@ function selectNotification(notifications, lastNotified) {
   return eligible[Math.floor(Math.random() * eligible.length)] // undefined is ok
 }
 
-function nextCheckTime(notifications, nextCheck) {
+function nextCheckTime (notifications, nextCheck) {
   const now = Date.now()
   return notifications.map(n => (new Date(n.notify_after)).getTime())
     .reduce((min, t) => {
@@ -47,7 +46,7 @@ function nextCheckTime(notifications, nextCheck) {
     }, nextCheck)
 }
 
-function maybeNotify(experiment, lastNotified, nextCheck) {
+function maybeNotify (experiment, lastNotified, nextCheck) {
   const n = selectNotification(experiment.notifications, lastNotified)
   if (n) {
     notify({

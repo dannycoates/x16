@@ -1,15 +1,20 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
 
-const actionTypes = require('../../../common/actionTypes');
-const { AddonManager } = require('resource://gre/modules/AddonManager.jsm');
-const { Class } = require('sdk/core/heritage');
-const feedbackUI = require('../feedbackUI');
-const { Request } = require('sdk/request');
-const self = require('sdk/self');
-const _ = require('lodash/object');
-const notificationUI = require('../notificationUI');
+const actionTypes = require('../../../common/actionTypes')
+const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
+const { Class } = require('sdk/core/heritage')
+const feedbackUI = require('../feedbackUI')
+const { Request } = require('sdk/request')
+const self = require('sdk/self')
+const _ = require('lodash/object')
+const notificationUI = require('../notificationUI')
 
 const InstallListener = Class({
-  initialize: function({install, dispatch}) {
+  initialize: function ({install, dispatch}) {
     this.dispatch = dispatch
     install.addListener(this)
   },
@@ -18,103 +23,103 @@ const InstallListener = Class({
       addon_id: addon.id
     }))
   },
-  onInstallFailed: function(install) {
+  onInstallFailed: function (install) {
     this.dispatch(installFailed(install))
   },
-  onInstallStarted: function(install) {
+  onInstallStarted: function (install) {
     this.dispatch(installStarted(install))
   },
-  onInstallCancelled: function(install) {
+  onInstallCancelled: function (install) {
     this.dispatch(installCancelled(install))
   },
-  onDownloadStarted: function(install) {
+  onDownloadStarted: function (install) {
     this.dispatch(downloadStarted(install))
   },
-  onDownloadProgress: function(install) {
+  onDownloadProgress: function (install) {
     this.dispatch(downloadProgress(install))
   },
-  onDownloadEnded: function(install) {
+  onDownloadEnded: function (install) {
     this.dispatch(downloadEnded(install))
   },
-  onDownloadCancelled: function(install) {
+  onDownloadCancelled: function (install) {
     this.dispatch(downloadCancelled(install))
   },
-  onDownloadFailed: function(install) {
+  onDownloadFailed: function (install) {
     this.dispatch(downloadFailed(install))
   }
 })
 
-function installEnded(experiment) {
+function installEnded (experiment) {
   return {
     type: actionTypes.INSTALL_ENDED,
     experiment
   }
 }
 
-function installFailed(install) {
+function installFailed (install) {
   return {
     type: actionTypes.INSTALL_FAILED,
     install
   }
 }
 
-function installStarted(install) {
+function installStarted (install) {
   return {
     type: actionTypes.INSTALL_STARTED,
     install
   }
 }
 
-function installCancelled(install) {
+function installCancelled (install) {
   return {
     type: actionTypes.INSTALL_CANCELLED,
     install
   }
 }
 
-function downloadStarted(install) {
+function downloadStarted (install) {
   return {
     type: actionTypes.DOWNLOAD_STARTED,
     install
   }
 }
 
-function downloadProgress(install) {
+function downloadProgress (install) {
   return {
     type: actionTypes.DOWNLOAD_PROGRESS,
     install
   }
 }
 
-function downloadEnded(install) {
+function downloadEnded (install) {
   return {
     type: actionTypes.DOWNLOAD_ENDED,
     install
   }
 }
 
-function downloadCancelled(install) {
+function downloadCancelled (install) {
   return {
     type: actionTypes.DOWNLOAD_CANCELLED,
     install
   }
 }
 
-function downloadFailed(install) {
+function downloadFailed (install) {
   return {
     type: actionTypes.DOWNLOAD_FAILED,
     install
   }
 }
 
-function loadingExperiments(env) {
+function loadingExperiments (env) {
   return {
     type: actionTypes.LOADING_EXPERIMENTS,
     env
   }
 }
 
-function experimentsLoaded(env, baseUrl, experiments) {
+function experimentsLoaded (env, baseUrl, experiments) {
   return {
     type: actionTypes.EXPERIMENTS_LOADED,
     env,
@@ -123,42 +128,42 @@ function experimentsLoaded(env, baseUrl, experiments) {
   }
 }
 
-function experimentsLoadError(res) {
+function experimentsLoadError (res) {
   return {
     type: actionTypes.EXPERIMENTS_LOAD_ERROR,
     res
   }
 }
 
-function experimentEnabled(experiment) {
+function experimentEnabled (experiment) {
   return {
     type: actionTypes.EXPERIMENT_ENABLED,
     experiment
   }
 }
 
-function experimentDisabled(experiment) {
+function experimentDisabled (experiment) {
   return {
     type: actionTypes.EXPERIMENT_DISABLED,
     experiment
   }
 }
 
-function experimentUninstalling(experiment) {
+function experimentUninstalling (experiment) {
   return {
     type: actionTypes.EXPERIMENT_UNINSTALLING,
     experiment
   }
 }
 
-function experimentUninstalled(experiment) {
+function experimentUninstalled (experiment) {
   return {
     type: actionTypes.EXPERIMENT_UNINSTALLED,
     experiment
   }
 }
 
-function installExperiment(experiment) {
+function installExperiment (experiment) {
   return (dispatch) => {
     AddonManager.getInstallForURL(
       experiment.xpi_url,
@@ -171,15 +176,15 @@ function installExperiment(experiment) {
   }
 }
 
-function uninstallExperiment(experiment) {
+function uninstallExperiment (experiment) {
   return () => {
     AddonManager.getAddonByID(experiment.addon_id, a => {
-      if (a) { a.uninstall(); }
-    });
+      if (a) { a.uninstall() }
+    })
   }
 }
 
-function uninstallSelf() {
+function uninstallSelf () {
   return (dispatch, getState) => {
     const xs = _.values(_.pickBy(getState().experiments, x => x.active))
     xs.forEach(x => uninstallExperiment(x)())
@@ -187,53 +192,53 @@ function uninstallSelf() {
   }
 }
 
-function urlify(baseUrl, experiment) {
+function urlify (baseUrl, experiment) {
   const urlFields = {
     '': ['thumbnail', 'url', 'html_url', 'installations_url', 'survey_url'],
     details: ['image'],
     tour_steps: ['image'],
     contributors: ['avatar']
-  };
+  }
   Object.keys(urlFields).forEach(key => {
-    const items = (key === '') ? [experiment] : experiment[key];
+    const items = (key === '') ? [experiment] : experiment[key]
     items.forEach(item => urlFields[key].forEach(field => {
       // If the URL is not absolute, prepend the environment's base URL.
       if (item[field].substr(0, 1) === '/') {
-        item[field] = baseUrl + item[field];
+        item[field] = baseUrl + item[field]
       }
-    }));
-  });
-  return experiment;
+    }))
+  })
+  return experiment
 }
 
-function fetchExperiments(baseUrl, path) {
+function fetchExperiments (baseUrl, path) {
   return new Promise(
     (resolve, reject) => {
       const r = new Request({
         headers: { 'Accept': 'application/json' },
         url: baseUrl + path
-      });
+      })
       r.on(
         'complete',
         res => {
           if (res.status === 200) {
-            const experiments = {};
+            const experiments = {}
             for (let xp of res.json.results) {
-              experiments[xp.addon_id] = urlify(baseUrl, xp);
+              experiments[xp.addon_id] = urlify(baseUrl, xp)
             }
             resolve(experiments)
           } else {
             reject(res)
           }
         }
-      );
-      r.get();
+      )
+      r.get()
     }
   )
 }
 
-function mergeAddonActiveState(experiments, addons) {
-  Object.keys(experiments).forEach(k => experiments[k].active = false)
+function mergeAddonActiveState (experiments, addons) {
+  Object.keys(experiments).forEach(k => { experiments[k].active = false })
   for (let addon of addons) {
     const x = experiments[addon.id]
     if (x) {
@@ -244,7 +249,7 @@ function mergeAddonActiveState(experiments, addons) {
   return experiments
 }
 
-function loadExperiments(newEnv, baseUrl) {
+function loadExperiments (newEnv, baseUrl) {
   return (dispatch) => {
     dispatch(loadingExperiments(newEnv))
     return fetchExperiments(baseUrl, '/api/experiments.json')
@@ -266,7 +271,7 @@ function loadExperiments(newEnv, baseUrl) {
   }
 }
 
-function syncInstalled({clientUUID, installed}) {
+function syncInstalled ({clientUUID, installed}) {
   return {
     type: actionTypes.SYNC_INSTALLED,
     clientUUID,
@@ -274,38 +279,38 @@ function syncInstalled({clientUUID, installed}) {
   }
 }
 
-function setBadge(text) {
+function setBadge (text) {
   return {
     type: actionTypes.SET_BADGE,
     text
   }
 }
 
-function mainButtonClicked() {
+function mainButtonClicked () {
   return {
     type: actionTypes.MAIN_BUTTON_CLICKED,
     time: Date.now()
   }
 }
 
-function maybeNotify(experiment, lastNotified, nextCheck) {
+function maybeNotify (experiment, lastNotified, nextCheck) {
   const action = notificationUI.maybeNotify(experiment, lastNotified, nextCheck)
   return Object.assign(action, { type: actionTypes.MAYBE_NOTIFY })
 }
 
-function selfEnabled() {
+function selfEnabled () {
   return {
     type: actionTypes.SELF_ENABLED
   }
 }
 
-function selfDisabled() {
+function selfDisabled () {
   return {
     type: actionTypes.SELF_DISABLED
   }
 }
 
-function setRating(experiment, rating) {
+function setRating (experiment, rating) {
   return {
     type: actionTypes.SET_RATING,
     time: Date.now(),
@@ -314,7 +319,7 @@ function setRating(experiment, rating) {
   }
 }
 
-function showRating(interval, experiment) {
+function showRating (interval, experiment) {
   return (dispatch, getState) => {
     dispatch({
       type: actionTypes.SHOW_RATING_PROMPT,
@@ -329,7 +334,7 @@ function showRating(interval, experiment) {
         feedbackUI.showFeedbackLink(interval, experiment)
       }
     )
-    .catch(() => {});
+    .catch(() => {})
   }
 }
 
