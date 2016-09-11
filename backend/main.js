@@ -10,8 +10,11 @@ const {
   INSTALL_EXPERIMENT,
   UNINSTALL_EXPERIMENT,
   UNINSTALL_SELF,
-  SYNC_INSTALLED,
-  SET_BASE_URL
+  GET_INSTALLED,
+  SET_BASE_URL,
+  SET_BADGE,
+  MAIN_BUTTON_CLICKED,
+  MAYBE_NOTIFY
 } = require('../common/actionTypes')
 const AddonListener = require('./lib/AddonListener')
 const configureStore = require('./lib/configureStore')
@@ -21,19 +24,16 @@ const Hub = require('./lib/middleware/hub')
 const _ = require('lodash/object')
 const Metrics = require('./lib/middleware/metrics')
 const notificationManager = require('./lib/notificationManager')
-const { rootStateChanged } = require('./lib/watchers')
 const self = require('sdk/self')
 const { storage } = require('sdk/simple-storage')
 const FeedbackManager = require('./lib/FeedbackManager')
 const tabs = require('sdk/tabs')
 const PanelUI = require('./lib/PanelUI')
-const Watcher = require('./lib/middleware/watcher')
 const { WebApp } = require('./lib/webapp')
 
 const hub = new Hub()
-const watcher = new Watcher({ onRoot: rootStateChanged })
 const metrics = new Metrics()
-const store = configureStore({ hub, watcher, metrics })
+const store = configureStore({ hub, metrics })
 const experimentMetrics = createExperimentMetrics(store.getState().clientUUID)
 const addons = new AddonListener(store)
 const ui = new PanelUI(store)
@@ -58,13 +58,16 @@ hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
     const url = e.name === 'any' ? a.url : e.baseUrl
     store.dispatch(actions.loadExperiments(e.name, url))
   })
-  .on(SYNC_INSTALLED, a => {
+  .on(GET_INSTALLED, a => {
     store.dispatch(actions.syncInstalled({
       clientUUID: store.getState().clientUUID,
       installed: _.pickBy(store.getState().experiments, x => x.active)
     }))
     // store.dispatch(actions.showRating(0, store.getState().experiments['universal-search@mozilla.com']))
   })
+  .on(SET_BADGE, a => ui.setBadge())
+  .on(MAIN_BUTTON_CLICKED, a => ui.setBadge())
+  .on(MAYBE_NOTIFY, a => notificationManager.schedule(store))
 
 exports.main = function (options) {
   env.on('change', newEnv => {
@@ -78,17 +81,6 @@ exports.main = function (options) {
     store.dispatch(actions.loadExperiments(newEnv.name, newEnv.baseUrl))
   })
 
-  watcher.on('root->ui', change => {
-    if (change.prop === 'badge') {
-      ui.setBadge()
-    }
-  })
-
-  watcher.on('root->notifications', change => {
-    if (change.prop === 'nextCheck') {
-      notificationManager.schedule(store)
-    }
-  })
   notificationManager.schedule(store)
   feedbackManager.start()
 

@@ -62,7 +62,9 @@ const Hub = Class({
         }
       }
       console.info(`backend processing ${action.type}:${action.meta.src}`)
-      return next(action)
+      const result = next(action)
+      emit(this, action.type, action)
+      return result
     }
   }
 })

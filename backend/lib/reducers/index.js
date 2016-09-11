@@ -19,7 +19,7 @@ function experiments (experiments = null, action) {
     case actionTypes.EXPERIMENT_ENABLED:
     case actionTypes.INSTALL_ENDED:
       x = experiments[action.experiment.addon_id]
-      n = Object.assign({}, x, { active: true })
+      n = Object.assign({}, x, { active: true, installDate: action.experiment.installDate })
       return Object.assign({}, experiments, { [n.addon_id]: n })
 
     case actionTypes.EXPERIMENT_DISABLED:

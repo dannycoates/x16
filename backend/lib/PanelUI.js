@@ -51,7 +51,7 @@ const PanelUI = Class({
     this.pollInterval = setInterval(pollPanel.bind(this), 10)
     this.panel.port.once('pong', x => {
       clearInterval(this.pollInterval)
-      console.info(`polled ${x} times`)
+      console.debug(`polled ${x} times`)
       emit(this, 'connected')
     })
   },

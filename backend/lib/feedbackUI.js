@@ -53,7 +53,7 @@ function createRatingUI (win, cb) {
   return frag
 }
 
-function createNotification (options) {
+function createNotificationBox (options) {
   const win = Services.wm.getMostRecentWindow('navigator:browser')
   const notifyBox = win.gBrowser.getNotificationBox()
   const box = notifyBox.appendNotification(
@@ -95,7 +95,7 @@ function showRating (options) {
     const surveyTimeout = setTimeout(surveyClosed, options.duration || 60000)
     let experimentRating = null
 
-    const { notifyBox, box } = createNotification({
+    const { notifyBox, box } = createNotificationBox({
       label: `Please rate ${experiment.title}`,
       image: experiment.thumbnail,
       child: win => createRatingUI(win, surveyClosed),
@@ -123,7 +123,7 @@ function showFeedbackLink (interval, experiment) {
     interval
     // TODO installed
   })
-  const { box } = createNotification({
+  const { box } = createNotificationBox({
     label: `Thank you for rating ${experiment.title}.`,
     image: experiment.thumbnail,
     buttons: [{

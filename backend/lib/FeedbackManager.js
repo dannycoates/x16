@@ -9,9 +9,8 @@ const { Class } = require('sdk/core/heritage')
 const { setTimeout } = require('sdk/timers')
 const _ = require('lodash/object')
 
-const TEN_MINUTES = 10 * 60 * 1000
-const ONE_DAY = 24 * 60 * 60 * 1000
-const MINIMUM_NAG_DELAY = ONE_DAY
+const TEN_MINUTES = 1000 * 60 * 10
+const ONE_DAY = 1000 * 60 * 60 * 24
 
 function randomActiveExperiment (experiments) {
   const installed = _.pickBy(experiments, x => x.active)
@@ -21,7 +20,8 @@ function randomActiveExperiment (experiments) {
 }
 
 function getInterval (installDate) {
-  const interval = Math.floor((Date.now() - installDate) / ONE_DAY)
+  const interval = Math.floor((Date.now() - installDate.getTime()) / ONE_DAY)
+  console.debug(`feedback ${interval} : ${installDate}`)
   if (interval < 2) {
     return 0
   } else if (interval < 7) {
@@ -39,22 +39,18 @@ const FeedbackManager = Class({
   initialize: function (store) {
     this.store = store
   },
-  start: function () {
-    this.checkTimer = setTimeout(
-      () => {
-        this.check()
-      },
-      TEN_MINUTES
-    )
+  start: function ({delay = TEN_MINUTES, dnd = ONE_DAY}) {
+    this.dnd = dnd
+    this.checkTimer = setTimeout(() => { this.check() }, delay)
   },
   check: function () {
     const { experiments, ratings } = this.store.getState()
-    if (Date.now() - ratings.lastRated < MINIMUM_NAG_DELAY) {
+    if (Date.now() - ratings.lastRated < this.dnd) {
       return
     }
     const x = randomActiveExperiment(experiments)
     if (!x) { return }
-    const experimentRatings = ratings[x.addon_id]
+    const experimentRatings = ratings[x.addon_id] || {}
     const interval = getInterval(x.installDate)
     if (interval > 0 && !experimentRatings[interval]) {
       this.store.dispatch(actions.showRating(interval, x))

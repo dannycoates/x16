@@ -24,7 +24,7 @@ function webToAction ({type, data}) {
       }
     case 'sync-installed':
       return {
-        type: actionTypes.SYNC_INSTALLED
+        type: actionTypes.GET_INSTALLED
       }
     case 'base-url':
       return {
