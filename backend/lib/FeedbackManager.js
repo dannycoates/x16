@@ -6,18 +6,12 @@
 
 const actions = require('./actions')
 const { Class } = require('sdk/core/heritage')
+const { experimentRating } = require('./reducers/ratings')
 const { setTimeout } = require('sdk/timers')
-const _ = require('lodash/object')
+const { randomActiveExperiment } = require('./reducers/experiments')
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_DAY = 1000 * 60 * 60 * 24
-
-function randomActiveExperiment (experiments) {
-  const installed = _.pickBy(experiments, x => x.active)
-  const installedKeys = Object.keys(installed)
-  const id = installedKeys[Math.floor(Math.random() * installedKeys.length)]
-  return installed[id]
-}
 
 function getInterval (installDate) {
   const interval = Math.floor((Date.now() - installDate.getTime()) / ONE_DAY)
@@ -39,20 +33,20 @@ const FeedbackManager = Class({
   initialize: function (store) {
     this.store = store
   },
-  start: function ({delay = TEN_MINUTES, dnd = ONE_DAY}) {
+  start: function ({delay = TEN_MINUTES, dnd = ONE_DAY} = {}) {
     this.dnd = dnd
     this.checkTimer = setTimeout(() => { this.check() }, delay)
   },
   check: function () {
-    const { experiments, ratings } = this.store.getState()
-    if (Date.now() - ratings.lastRated < this.dnd) {
+    const state = this.store.getState()
+    if (Date.now() - state.ratings.lastRated < this.dnd) {
       return
     }
-    const x = randomActiveExperiment(experiments)
+    const x = randomActiveExperiment(state)
     if (!x) { return }
-    const experimentRatings = ratings[x.addon_id] || {}
+    const rating = experimentRating(state, x.addon_id)
     const interval = getInterval(x.installDate)
-    if (interval > 0 && !experimentRatings[interval]) {
+    if (interval > 0 && !rating[interval]) {
       this.store.dispatch(actions.showRating(interval, x))
     }
   }

@@ -16,12 +16,12 @@ const {
   MAIN_BUTTON_CLICKED,
   MAYBE_NOTIFY
 } = require('../common/actionTypes')
+const { activeExperiments } = require('./lib/reducers/experiments')
 const AddonListener = require('./lib/AddonListener')
 const configureStore = require('./lib/configureStore')
 const createExperimentMetrics = require('./lib/metrics')
 const env = require('./lib/env')
 const Hub = require('./lib/middleware/hub')
-const _ = require('lodash/object')
 const Metrics = require('./lib/middleware/metrics')
 const notificationManager = require('./lib/notificationManager')
 const self = require('sdk/self')
@@ -61,7 +61,7 @@ hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
   .on(GET_INSTALLED, a => {
     store.dispatch(actions.syncInstalled({
       clientUUID: store.getState().clientUUID,
-      installed: _.pickBy(store.getState().experiments, x => x.active)
+      installed: activeExperiments(store.getState())
     }))
     // store.dispatch(actions.showRating(0, store.getState().experiments['universal-search@mozilla.com']))
   })

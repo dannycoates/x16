@@ -5,6 +5,7 @@
  */
 
 const actionTypes = require('../../../common/actionTypes')
+const { activeExperiments } = require('../reducers/experiments')
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
 const { Class } = require('sdk/core/heritage')
 const self = require('sdk/self')
@@ -161,7 +162,7 @@ function uninstallExperiment (experiment) {
 
 function uninstallSelf () {
   return (dispatch, getState) => {
-    const xs = _.values(_.pickBy(getState().experiments, x => x.active))
+    const xs = _.values(activeExperiments(getState()))
     xs.forEach(x => uninstallExperiment(x)())
     AddonManager.getAddonByID(self.id, a => a.uninstall())
   }

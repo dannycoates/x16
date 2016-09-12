@@ -79,7 +79,10 @@ function createNotificationBox (options) {
   const leftSpacer = messageText.nextSibling
   leftSpacer.flex = 0
   box.classList.add('heartbeat')
-  messageImage.classList.add('heartbeat', 'pulse-onshow')
+  messageImage.classList.add('heartbeat')
+  if (options.pulse) {
+    messageImage.classList.add('pulse-onshow')
+  }
   messageText.classList.add('heartbeat')
   messageImage.setAttribute('style', 'filter: invert(80%)')
   box.persistence = options.persistence || 0
@@ -100,6 +103,7 @@ function showRating (options) {
       image: experiment.thumbnail,
       child: win => createRatingUI(win, surveyClosed),
       persistence: options.persistence,
+      pulse: true,
       callback: reason => {
         if (experimentRating) {
           resolve(experimentRating)

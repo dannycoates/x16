@@ -126,10 +126,6 @@ function loadExperiments (newEnv, baseUrl) {
             notifications: { lastNotified, nextCheck }
           } = getState()
 
-          _.values(xs).forEach(x => {
-            if (x.active) { WebExtensionChannels.add(x.addon_id) }
-          })
-
           const newExperiments = diffExperimentList(experiments, xs)
           for (let x of newExperiments) {
             if ((new Date(x.created)).getTime() > clicked) {
@@ -138,6 +134,7 @@ function loadExperiments (newEnv, baseUrl) {
           }
 
           for (let x of _.values(xs)) {
+            if (x.active) { WebExtensionChannels.add(x.addon_id) }
             dispatch(maybeNotify(x, lastNotified, nextCheck))
           }
           return xs
