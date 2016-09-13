@@ -7,12 +7,14 @@
 const actionTypes = require('../../../common/actionTypes')
 
 const tomorrow = Date.now() + (24 * 60 * 60 * 1000)
-function notifications (state = { lastNotified: tomorrow, nextCheck: tomorrow }, action) {
-  switch (action.type) {
+function notifications (
+  state = { lastNotified: tomorrow, nextCheck: tomorrow },
+  { payload, type }) {
+  switch (type) {
     case actionTypes.MAYBE_NOTIFY:
       return Object.assign({}, state, {
-        lastNotified: action.lastNotified,
-        nextCheck: action.nextCheck
+        lastNotified: payload.lastNotified,
+        nextCheck: payload.nextCheck
       })
     default:
       return state

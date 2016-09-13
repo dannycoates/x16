@@ -48,14 +48,14 @@ let webapp = new WebApp({
 })
 
 hub.connect(ui.panel.port)
-hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.href))
-  .on(INSTALL_EXPERIMENT, a => store.dispatch(actions.installExperiment(a.experiment)))
-  .on(UNINSTALL_EXPERIMENT, a => store.dispatch(actions.uninstallExperiment(a.experiment)))
+hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.payload.href))
+  .on(INSTALL_EXPERIMENT, a => store.dispatch(actions.installExperiment(a.payload.experiment)))
+  .on(UNINSTALL_EXPERIMENT, a => store.dispatch(actions.uninstallExperiment(a.payload.experiment)))
   .on(UNINSTALL_SELF, a => store.dispatch(actions.uninstallSelf()))
   .on(SET_BASE_URL, a => {
     // refresh experiments
     const e = env.get()
-    const url = e.name === 'any' ? a.url : e.baseUrl
+    const url = e.name === 'any' ? a.payload.url : e.baseUrl
     store.dispatch(actions.loadExperiments(e.name, url))
   })
   .on(GET_INSTALLED, a => {

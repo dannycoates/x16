@@ -14,30 +14,38 @@ const WebExtensionChannels = require('../metrics/webextension-channels')
 function setBadge (text) {
   return {
     type: actionTypes.SET_BADGE,
-    text
+    payload: {
+      text
+    }
   }
 }
 
 function loadingExperiments (env) {
   return {
     type: actionTypes.LOADING_EXPERIMENTS,
-    env
+    payload: {
+      env
+    }
   }
 }
 
 function experimentsLoaded (env, baseUrl, experiments) {
   return {
     type: actionTypes.EXPERIMENTS_LOADED,
-    env,
-    baseUrl,
-    experiments
+    payload: {
+      env,
+      baseUrl,
+      experiments
+    }
   }
 }
 
 function experimentsLoadError (res) {
   return {
     type: actionTypes.EXPERIMENTS_LOAD_ERROR,
-    res
+    payload: {
+      res
+    }
   }
 }
 

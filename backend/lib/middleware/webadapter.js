@@ -11,12 +11,16 @@ function webToAction ({type, data}) {
     case 'install-experiment':
       return {
         type: actionTypes.INSTALL_EXPERIMENT,
-        experiment: data
+        payload: {
+          experiment: data
+        }
       }
     case 'uninstall-experiment':
       return {
         type: actionTypes.UNINSTALL_EXPERIMENT,
-        experiment: data
+        payload: {
+          experiment: data
+        }
       }
     case 'uninstall-self':
       return {
@@ -29,47 +33,57 @@ function webToAction ({type, data}) {
     case 'base-url':
       return {
         type: actionTypes.SET_BASE_URL,
-        url: data
+        payload: {
+          url: data
+        }
       }
   }
 }
 
-function actionToWeb (action) {
-  switch (action.type) {
+function actionToWeb ({ payload, type }) {
+  switch (type) {
     case actionTypes.INSTALL_ENDED:
       return {
         type: 'addon-install:install-ended',
-        data: action.addon
+        data: {
+          id: payload.experiment.addon_id,
+          name: payload.experiment.title,
+          version: payload.experiment.version
+        }
       }
     case actionTypes.EXPERIMENT_UNINSTALLED:
       return {
         type: 'addon-uninstall:uninstall-ended',
-        data: action.experiment
+        data: {
+          id: payload.experiment.addon_id,
+          name: payload.experiment.title,
+          version: payload.experiment.version
+        }
       }
     case actionTypes.SYNC_INSTALLED:
       return {
         type: 'sync-installed-result',
         data: {
-          clientUUID: action.clientUUID,
-          installed: action.installed
+          clientUUID: payload.clientUUID,
+          installed: payload.installed
         }
       }
     case actionTypes.EXPERIMENT_ENABLED:
       return {
         type: 'addon-manage:enabled',
         data: {
-          id: action.experiment.addon_id,
-          name: action.experiment.title,
-          version: action.experiment.version
+          id: payload.experiment.addon_id,
+          name: payload.experiment.title,
+          version: payload.experiment.version
         }
       }
     case actionTypes.EXPERIMENT_DISABLED:
       return {
         type: 'addon-manage:disabled',
         data: {
-          id: action.experiment.addon_id,
-          name: action.experiment.title,
-          version: action.experiment.version
+          id: payload.experiment.addon_id,
+          name: payload.experiment.title,
+          version: payload.experiment.version
         }
       }
   }

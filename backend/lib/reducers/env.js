@@ -6,10 +6,10 @@
 
 const actionTypes = require('../../../common/actionTypes')
 
-function env (state = null, action) {
-  switch (action.type) {
+function env (state = null, { payload, type }) {
+  switch (type) {
     case actionTypes.EXPERIMENTS_LOADED:
-      return action.env
+      return payload.env
     default:
       return state
   }

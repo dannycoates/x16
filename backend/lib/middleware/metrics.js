@@ -62,17 +62,18 @@ const Metrics = Class({
   },
   middleware: function () {
     return (store) => (next) => (action) => {
-      switch (action.type) {
+      const { payload, type } = action
+      switch (type) {
         case actionTypes.EXPERIMENT_ENABLED:
         case actionTypes.INSTALL_ENDED:
-          WebExtensionChannels.add(action.experiment.addon_id)
-          pingTelemetry(action.experiment.addon_id, 'enabled')
+          WebExtensionChannels.add(payload.experiment.addon_id)
+          pingTelemetry(payload.experiment.addon_id, 'enabled')
           break
 
         case actionTypes.EXPERIMENT_DISABLED:
         case actionTypes.EXPERIMENT_UNINSTALLING:
-          WebExtensionChannels.remove(action.experiment.addon_id)
-          pingTelemetry(action.experiment.addon_id, 'disabled')
+          WebExtensionChannels.remove(payload.experiment.addon_id)
+          pingTelemetry(payload.experiment.addon_id, 'disabled')
           break
 
         case actionTypes.MAIN_BUTTON_CLICKED:

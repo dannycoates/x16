@@ -51,91 +51,117 @@ const InstallListener = Class({
 function installEnded (experiment) {
   return {
     type: actionTypes.INSTALL_ENDED,
-    experiment
+    payload: {
+      experiment
+    }
   }
 }
 
 function installFailed (install) {
   return {
     type: actionTypes.INSTALL_FAILED,
-    install
+    payload: {
+      install
+    }
   }
 }
 
 function installStarted (install) {
   return {
     type: actionTypes.INSTALL_STARTED,
-    install
+    payload: {
+      install
+    }
   }
 }
 
 function installCancelled (install) {
   return {
     type: actionTypes.INSTALL_CANCELLED,
-    install
+    payload: {
+      install
+    }
   }
 }
 
 function downloadStarted (install) {
   return {
     type: actionTypes.DOWNLOAD_STARTED,
-    install
+    payload: {
+      install
+    }
   }
 }
 
 function downloadProgress (install) {
   return {
     type: actionTypes.DOWNLOAD_PROGRESS,
-    install
+    payload: {
+      install
+    }
   }
 }
 
 function downloadEnded (install) {
   return {
     type: actionTypes.DOWNLOAD_ENDED,
-    install
+    payload: {
+      install
+    }
   }
 }
 
 function downloadCancelled (install) {
   return {
     type: actionTypes.DOWNLOAD_CANCELLED,
-    install
+    payload: {
+      install
+    }
   }
 }
 
 function downloadFailed (install) {
   return {
     type: actionTypes.DOWNLOAD_FAILED,
-    install
+    payload: {
+      install
+    }
   }
 }
 
 function experimentEnabled (experiment) {
   return {
     type: actionTypes.EXPERIMENT_ENABLED,
-    experiment
+    payload: {
+      experiment
+    }
   }
 }
 
 function experimentDisabled (experiment) {
   return {
     type: actionTypes.EXPERIMENT_DISABLED,
-    experiment
+    payload: {
+      experiment
+    }
   }
 }
 
 function experimentUninstalling (experiment) {
   return {
     type: actionTypes.EXPERIMENT_UNINSTALLING,
-    experiment
+    payload: {
+      experiment
+    }
   }
 }
 
 function experimentUninstalled (experiment) {
   return {
     type: actionTypes.EXPERIMENT_UNINSTALLED,
-    experiment
+    payload: {
+      experiment
+    }
   }
 }
 

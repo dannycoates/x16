@@ -9,7 +9,10 @@ const notificationUI = require('../notificationUI')
 
 function maybeNotify (experiment, lastNotified, nextCheck) {
   const action = notificationUI.maybeNotify(experiment, lastNotified, nextCheck)
-  return Object.assign(action, { type: actionTypes.MAYBE_NOTIFY })
+  return {
+    type: actionTypes.MAYBE_NOTIFY,
+    payload: action
+  }
 }
 
 module.exports = {

@@ -7,24 +7,24 @@
 const actionTypes = require('../../../common/actionTypes')
 const _ = require('lodash/object')
 
-function experiments (experiments = null, action) {
+function experiments (experiments = null, { payload, type }) {
   let x, n
-  switch (action.type) {
+  switch (type) {
     case actionTypes.EXPERIMENTS_LOAD_ERROR:
       return {}
 
     case actionTypes.EXPERIMENTS_LOADED:
-      return Object.assign({}, action.experiments)
+      return Object.assign({}, payload.experiments)
 
     case actionTypes.EXPERIMENT_ENABLED:
     case actionTypes.INSTALL_ENDED:
-      x = experiments[action.experiment.addon_id]
-      n = Object.assign({}, x, { active: true, installDate: action.experiment.installDate })
+      x = experiments[payload.experiment.addon_id]
+      n = Object.assign({}, x, { active: true, installDate: payload.experiment.installDate })
       return Object.assign({}, experiments, { [n.addon_id]: n })
 
     case actionTypes.EXPERIMENT_DISABLED:
     case actionTypes.EXPERIMENT_UNINSTALLING:
-      x = experiments[action.experiment.addon_id]
+      x = experiments[payload.experiment.addon_id]
       n = Object.assign({}, x, { active: false })
       return Object.assign({}, experiments, { [n.addon_id]: n })
 

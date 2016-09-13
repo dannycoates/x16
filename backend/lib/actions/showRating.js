@@ -10,9 +10,11 @@ const feedbackUI = require('../feedbackUI')
 function setRating (experiment, rating) {
   return {
     type: actionTypes.SET_RATING,
-    time: Date.now(),
-    experiment,
-    rating
+    payload: {
+      time: Date.now(),
+      experiment,
+      rating
+    }
   }
 }
 
@@ -20,8 +22,10 @@ function showRating (interval, experiment) {
   return (dispatch, getState) => {
     dispatch({
       type: actionTypes.SHOW_RATING_PROMPT,
-      experiment,
-      interval
+      payload: {
+        experiment,
+        interval
+      }
     })
     feedbackUI.showRating({ experiment })
     .then(

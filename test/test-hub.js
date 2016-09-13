@@ -99,8 +99,10 @@ exports['test middleware with web action'] = (assert, done) => {
   const middleware = h.middleware()
   const anAction = {
     type: SYNC_INSTALLED,
-    clientUUID: 'clientUUID',
-    installed: []
+    payload: {
+      clientUUID: 'clientUUID',
+      installed: []
+    }
   }
   const next = action => {
     const emitCalls = mocks.port.emit.calls()

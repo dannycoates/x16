@@ -6,10 +6,10 @@
 
 const actionTypes = require('../../../common/actionTypes')
 
-function baseUrl (state = null, action) {
-  switch (action.type) {
+function baseUrl (state = null, { payload, type }) {
+  switch (type) {
     case actionTypes.EXPERIMENTS_LOADED:
-      return action.baseUrl
+      return payload.baseUrl
     default:
       return state
   }

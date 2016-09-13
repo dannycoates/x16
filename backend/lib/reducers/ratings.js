@@ -6,20 +6,20 @@
 
 const actionTypes = require('../../../common/actionTypes')
 
-function ratings (state = {}, action) {
+function ratings (state = {}, { payload, type }) {
   let id, rating
-  switch (action.type) {
+  switch (type) {
     case actionTypes.SHOW_RATING_PROMPT:
-      id = action.experiment.addon_id
-      rating = Object.assign({}, state[id], {[action.interval]: true})
+      id = payload.experiment.addon_id
+      rating = Object.assign({}, state[id], {[payload.interval]: true})
       return Object.assign({}, state, { [id]: rating })
 
     case actionTypes.SET_RATING:
-      id = action.experiment.addon_id
-      rating = Object.assign({}, state[id], { rating: action.rating })
-      console.debug(`${id} rated: ${action.rating}`)
+      id = payload.experiment.addon_id
+      rating = Object.assign({}, state[id], { rating: payload.rating })
+      console.debug(`${id} rated: ${payload.rating}`)
       return Object.assign({}, state, {
-        lastRated: action.time,
+        lastRated: payload.time,
         [id]: rating
       })
 
@@ -28,7 +28,7 @@ function ratings (state = {}, action) {
   }
 }
 
-function experimentRating(state, id) {
+function experimentRating (state, id) {
   return state.ratings[id] || {}
 }
 

@@ -9,15 +9,19 @@ const actionTypes = require('../../../common/actionTypes')
 function syncInstalled ({clientUUID, installed}) {
   return {
     type: actionTypes.SYNC_INSTALLED,
-    clientUUID,
-    installed
+    payload: {
+      clientUUID,
+      installed
+    }
   }
 }
 
 function mainButtonClicked () {
   return {
     type: actionTypes.MAIN_BUTTON_CLICKED,
-    time: Date.now()
+    payload: {
+      time: Date.now()
+    }
   }
 }
 
