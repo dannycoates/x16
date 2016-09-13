@@ -21,7 +21,7 @@ if (!aboutConfig.has('testpilot.env')) {
   aboutConfig.set('testpilot.env', target.get().name)
 }
 
-if (aboutConfig.get('testpilot.dev') !== 'production') {
+if (aboutConfig.get('testpilot.env') !== 'production') {
   aboutConfig.set(`extensions.${self.id}.sdk.console.logLevel`, 'debug')
 }
 

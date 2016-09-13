@@ -46,9 +46,7 @@ function actionToWeb ({ payload, type }) {
       return {
         type: 'addon-install:install-ended',
         data: {
-          id: payload.experiment.addon_id,
-          name: payload.experiment.title,
-          version: payload.experiment.version
+          id: payload.experiment.addon_id
         }
       }
     case actionTypes.EXPERIMENT_UNINSTALLED:

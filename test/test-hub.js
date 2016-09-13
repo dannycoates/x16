@@ -106,16 +106,16 @@ exports['test middleware with web action'] = (assert, done) => {
   }
   const next = action => {
     const emitCalls = mocks.port.emit.calls()
-    assert.equal(emitCalls.length, 2)
-    assert.equal(emitCalls[0][0], 'action')
-    assert.equal(emitCalls[0][1], anAction)
-    assert.equal(emitCalls[1][0], 'from-addon-to-web')
+    assert.equal(emitCalls.length, 2, 'emitted twice')
+    assert.equal(emitCalls[0][0], 'action', 'emitted action event')
+    assert.equal(emitCalls[0][1], anAction, 'emitted correct action')
+    assert.equal(emitCalls[1][0], 'from-addon-to-web', 'emitted from-addon-to-web event')
     const webAction = emitCalls[1][1]
-    assert.equal(webAction.type, 'sync-installed-result')
-    assert.equal(webAction.data.clientUUID, anAction.clientUUID)
-    assert.equal(webAction.data.installed, anAction.installed)
-    assert.equal(action.meta.src, 'backend')
-    assert.deepEqual(action, anAction)
+    assert.equal(webAction.type, 'sync-installed-result', 'type')
+    assert.equal(webAction.data.clientUUID, anAction.payload.clientUUID, 'clientUUID')
+    assert.equal(webAction.data.installed, anAction.payload.installed, 'installed')
+    assert.equal(action.meta.src, 'backend', 'meta')
+    assert.deepEqual(action, anAction, 'action')
     done()
   }
   middleware()(next)(anAction)
