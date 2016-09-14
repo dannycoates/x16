@@ -5,7 +5,11 @@
  */
 
 const actionTypes = require('../../../common/actionTypes')
+const { activeExperiments } = require('../reducers/experiments')
 const feedbackUI = require('../feedbackUI')
+const { Request } = require('sdk/request')
+const tabs = require('sdk/tabs')
+const querystring = require('sdk/querystring')
 
 function setRating (experiment, rating) {
   return {
@@ -30,9 +34,28 @@ function showRating (interval, experiment) {
     feedbackUI.showRating({ experiment })
     .then(
       rating => {
-        // TODO report rating to server
+        const urlParams = querystring.stringify({
+          id: experiment.addon_id,
+          installed: Object.keys(activeExperiments(getState())),
+          rating,
+          interval
+        })
+        const surveyUrl = `${experiment.survey_url}?${urlParams}`
         dispatch(setRating(experiment, rating))
-        feedbackUI.showFeedbackLink(interval, experiment)
+        return feedbackUI.showSurveyButton({ experiment })
+          .then(() => {
+            // button clicked. goto survey
+            tabs.open(surveyUrl)
+          },
+          () => {
+            // not clicked. report rating in background
+            const r = new Request({ url: surveyUrl })
+            r.on(
+              'complete',
+              res => console.info('rating sent', res)
+            )
+            r.get()
+          })
       }
     )
     .catch(() => {})

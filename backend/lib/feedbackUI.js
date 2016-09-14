@@ -12,8 +12,6 @@
 
 const { Services } = require('resource://gre/modules/Services.jsm')
 const { setTimeout, clearTimeout } = require('sdk/timers')
-const tabs = require('sdk/tabs')
-const querystring = require('sdk/querystring')
 
 function getAnonEl (win, box, attrName) {
   return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName)
@@ -95,56 +93,56 @@ function createNotificationBox (options) {
 function showRating (options) {
   return new Promise((resolve, reject) => {
     const experiment = options.experiment
-    const surveyTimeout = setTimeout(surveyClosed, options.duration || 60000)
+    const uiTimeout = setTimeout(uiClosed, options.duration || 60000)
     let experimentRating = null
 
     const { notifyBox, box } = createNotificationBox({
       label: `Please rate ${experiment.title}`,
       image: experiment.thumbnail,
-      child: win => createRatingUI(win, surveyClosed),
+      child: win => createRatingUI(win, uiClosed),
       persistence: options.persistence,
       pulse: true,
-      callback: reason => {
-        if (experimentRating) {
-          resolve(experimentRating)
-        } else {
-          reject()
-        }
+      callback: () => {
+        clearTimeout(uiTimeout)
+        experimentRating ? resolve(experimentRating) : reject()
       }
     })
 
-    function surveyClosed (rating) {
-      clearTimeout(surveyTimeout)
+    function uiClosed (rating) {
       experimentRating = rating
       notifyBox.removeNotification(box)
     }
   })
 }
 
-function showFeedbackLink (interval, experiment) {
-  const urlParams = querystring.stringify({
-    id: experiment.addon_id,
-    interval
-    // TODO installed
-  })
-  const { box } = createNotificationBox({
-    label: `Thank you for rating ${experiment.title}.`,
-    image: experiment.thumbnail,
-    buttons: [{
-      label: 'Take a Quick Survey',
+function showSurveyButton (options) {
+  return new Promise((resolve, reject) => {
+    let clicked = false
+    const { experiment, duration } = options
+
+    const { notifyBox, box } = createNotificationBox({
+      label: `Thank you for rating ${experiment.title}.`,
+      image: experiment.thumbnail,
+      buttons: [{
+        label: 'Take a Quick Survey',
+        callback: () => { clicked = true }
+      }],
       callback: () => {
-        tabs.open(`${experiment.survey_url}?${urlParams}`)
+        clearTimeout(uiTimeout)
+        clicked ? resolve() : reject()
       }
-    }]
+    })
+    const button = box.getElementsByClassName('notification-button')[0]
+    if (!button) {
+      return reject('missing feedback button')
+    }
+    button.setAttribute('style', 'background: #0095dd; color: #fff; height: 30px; font-size: 13px; border-radius: 2px; border: 0px; text-shadow: 0 0px; box-shadow: 0 0px;')
+
+    const uiTimeout = setTimeout(() => { notifyBox.removeNotification(box) }, duration || 60000)
   })
-  const button = box.getElementsByClassName('notification-button')[0]
-  if (!button) {
-    return console.error('missing feedback button')
-  }
-  button.setAttribute('style', 'background: #0095dd; color: #fff; height: 30px; font-size: 13px; border-radius: 2px; border: 0px; text-shadow: 0 0px; box-shadow: 0 0px;')
 }
 
 module.exports = {
   showRating,
-  showFeedbackLink
+  showSurveyButton
 }
