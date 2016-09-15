@@ -132,13 +132,12 @@ function showSurveyButton (options) {
         clicked ? resolve() : reject()
       }
     })
+    const uiTimeout = setTimeout(() => { notifyBox.removeNotification(box) }, duration || 60000)
     const button = box.getElementsByClassName('notification-button')[0]
     if (!button) {
       return reject('missing feedback button')
     }
     button.setAttribute('style', 'background: #0095dd; color: #fff; height: 30px; font-size: 13px; border-radius: 2px; border: 0px; text-shadow: 0 0px; box-shadow: 0 0px;')
-
-    const uiTimeout = setTimeout(() => { notifyBox.removeNotification(box) }, duration || 60000)
   })
 }
 

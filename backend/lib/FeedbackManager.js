@@ -30,11 +30,12 @@ function getInterval (installDate) {
 }
 
 const FeedbackManager = Class({
-  initialize: function (store) {
+  initialize: function ({ store, dnd = ONE_DAY }) {
     this.store = store
-  },
-  start: function ({delay = TEN_MINUTES, dnd = ONE_DAY} = {}) {
     this.dnd = dnd
+    this.checkTimer = null
+  },
+  start: function ({ delay = TEN_MINUTES } = {}) {
     this.checkTimer = setTimeout(() => { this.check() }, delay)
   },
   check: function () {

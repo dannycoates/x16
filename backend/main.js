@@ -37,7 +37,7 @@ const store = configureStore({ hub, metrics })
 const experimentMetrics = createExperimentMetrics(store.getState().clientUUID)
 const addons = new AddonListener(store)
 const ui = new PanelUI(store)
-const feedbackManager = new FeedbackManager(store)
+const feedbackManager = new FeedbackManager({ store })
 const startEnv = env.get()
 
 let webapp = new WebApp({
