@@ -10,12 +10,6 @@ const { EventTarget } = require('sdk/event/target')
 const { actionToWeb, webToAction } = require('./webadapter')
 
 function handler (hub, port, action) {
-  // send to everyone else
-  // for (let p of hub.ports.keys()) {
-  //   if (p !== port) {
-  //     port.emit('action', action)
-  //   }
-  // }
   emit(hub, action.type, action)
 }
 
