@@ -5,28 +5,20 @@
  */
 
 const { Class } = require('sdk/core/heritage')
-const { emit, setListeners } = require('sdk/event/core')
-const { EventTarget } = require('sdk/event/target')
 const { actionToWeb, webToAction } = require('./webadapter')
 
-function handler (hub, port, action) {
-  emit(hub, action.type, action)
-}
-
 const Hub = Class({
-  implements: [EventTarget],
-  initialize: function (options) {
-    setListeners(this, options)
+  initialize: function () {
+    this.dispatch = () => {}
     this.ports = new Map()
+    this.context = {}
   },
   connect: function (port) {
-    const fn = handler.bind(null, this, port)
+    const fn = (action) => this.dispatch(action)
     port.on('action', fn)
     // HACK
     port.on('from-web-to-addon', evt => {
-      const action = webToAction(evt)
-      console.info(`webapp action ${action.type}`)
-      emit(this, action.type, action)
+      fn(webToAction(evt))
     })
     this.ports.set(port, fn)
   },
@@ -37,28 +29,28 @@ const Hub = Class({
     this.ports.delete(port)
   },
   middleware: function () {
-    return (store) => (next) => (action) => {
-      action.meta = action.meta || {}
-      action.meta.src = action.meta.src || 'backend'
-      if (action.meta.src === 'backend') {
-        for (let port of this.ports.keys()) {
-          try {
-            port.emit('action', action)
-            // HACK
-            const evt = actionToWeb(action)
+    return ({dispatch}) => {
+      this.dispatch = dispatch
+      return (next) => (action) => {
+        action.meta = action.meta || {}
+        action.meta.src = action.meta.src || 'backend'
+        if (action.meta.src === 'backend') {
+          for (let port of this.ports.keys()) {
+            try {
+              port.emit('action', action)
+              // HACK
+              const evt = actionToWeb(action)
 
-            if (evt) {
-              port.emit('from-addon-to-web', evt)
+              if (evt) {
+                port.emit('from-addon-to-web', evt)
+              }
+            } catch (e) {
+              this.ports.delete(port)
             }
-          } catch (e) {
-            this.ports.delete(port)
           }
         }
+        return next(action)
       }
-      console.info(`backend processing ${action.type}:${action.meta.src}`)
-      const result = next(action)
-      emit(this, action.type, action)
-      return result
     }
   }
 })

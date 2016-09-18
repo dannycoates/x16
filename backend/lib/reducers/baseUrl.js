@@ -6,7 +6,7 @@
 
 const actionTypes = require('../../../common/actionTypes')
 
-function baseUrl (state = null, { payload, type }) {
+module.exports = function baseUrl (state = null, { payload, type }) {
   switch (type) {
     case actionTypes.EXPERIMENTS_LOADED:
       return payload.baseUrl
@@ -15,6 +15,6 @@ function baseUrl (state = null, { payload, type }) {
   }
 }
 
-module.exports = {
-  baseUrl
-}
+// module.exports = {
+//   baseUrl
+// }

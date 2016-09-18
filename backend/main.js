@@ -5,24 +5,13 @@
  */
 
 const actions = require('./lib/actions')
-const {
-  SHOW_EXPERIMENT,
-  INSTALL_EXPERIMENT,
-  UNINSTALL_EXPERIMENT,
-  UNINSTALL_SELF,
-  GET_INSTALLED,
-  SET_BASE_URL,
-  SET_BADGE,
-  MAIN_BUTTON_CLICKED,
-  MAYBE_NOTIFY
-} = require('../common/actionTypes')
-const { activeExperiments } = require('./lib/reducers/experiments')
 const AddonListener = require('./lib/AddonListener')
 const configureStore = require('./lib/configureStore')
 const createExperimentMetrics = require('./lib/metrics')
+const SideEffects = require('./lib/middleware/SideEffects')
 const env = require('./lib/env')
-const Hub = require('./lib/middleware/hub')
-const Metrics = require('./lib/middleware/metrics')
+const Hub = require('./lib/middleware/Hub')
+const Metrics = require('./lib/middleware/Metrics')
 const notificationManager = require('./lib/notificationManager')
 const self = require('sdk/self')
 const { storage } = require('sdk/simple-storage')
@@ -31,9 +20,10 @@ const tabs = require('sdk/tabs')
 const MainUI = require('./lib/MainUI')
 const { WebApp } = require('./lib/webapp')
 
+const sideEffects = new SideEffects()
 const hub = new Hub()
 const metrics = new Metrics()
-const store = configureStore({ hub, metrics })
+const store = configureStore({ hub, metrics, sideEffects })
 const experimentMetrics = createExperimentMetrics(store.getState().clientUUID)
 const addons = new AddonListener(store)
 const ui = new MainUI(store)
@@ -48,26 +38,12 @@ let webapp = new WebApp({
 })
 
 hub.connect(ui.panel.port)
-hub.on(SHOW_EXPERIMENT, a => ui.openTab(a.payload.href))
-  .on(INSTALL_EXPERIMENT, a => store.dispatch(actions.installExperiment(a.payload.experiment)))
-  .on(UNINSTALL_EXPERIMENT, a => store.dispatch(actions.uninstallExperiment(a.payload.experiment)))
-  .on(UNINSTALL_SELF, a => store.dispatch(actions.uninstallSelf()))
-  .on(SET_BASE_URL, a => {
-    // refresh experiments
-    const e = env.get()
-    const url = e.name === 'any' ? a.payload.url : e.baseUrl
-    store.dispatch(actions.loadExperiments(e.name, url))
-  })
-  .on(GET_INSTALLED, a => {
-    store.dispatch(actions.syncInstalled({
-      clientUUID: store.getState().clientUUID,
-      installed: activeExperiments(store.getState())
-    }))
-    // store.dispatch(actions.showRating(0, store.getState().experiments['universal-search@mozilla.com']))
-  })
-  .on(SET_BADGE, a => ui.setBadge())
-  .on(MAIN_BUTTON_CLICKED, a => ui.setBadge())
-  .on(MAYBE_NOTIFY, a => notificationManager.schedule(store))
+
+sideEffects.context = {
+  notificationManager,
+  env,
+  ui
+}
 
 exports.main = function (options) {
   env.on('change', newEnv => {

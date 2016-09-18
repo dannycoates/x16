@@ -7,7 +7,7 @@
 const { before } = require('sdk/test/utils')
 const MockUtils = require('./lib/mock-utils')
 const { SYNC_INSTALLED } = require('../common/actionTypes')
-const Hub = require('../backend/lib/middleware/hub')
+const Hub = require('../backend/lib/middleware/Hub')
 
 const mocks = MockUtils.callbacks({
   port: ['on', 'off', 'emit']
@@ -41,14 +41,14 @@ exports['test disconnect() events'] = (assert) => {
 exports['test action dispatching'] = (assert, done) => {
   const h = new Hub()
   h.connect(mocks.port)
+  h.dispatch = (action) => {
+    assert.deepEqual(action, anAction)
+    done()
+  }
   const anAction = {
     type: 'testAction',
     data: 'testData'
   }
-  h.on('testAction', action => {
-    assert.deepEqual(action, anAction)
-    done()
-  })
   h.ports.get(mocks.port)(anAction)
 }
 
@@ -69,7 +69,8 @@ exports['test basic middleware'] = (assert, done) => {
     assert.deepEqual(action, anAction)
     done()
   }
-  middleware()(next)(anAction)
+  const store = { dispatch: () => {}, getState: () => { return {} } }
+  middleware(store)(next)(anAction)
 }
 
 exports['test middleware with frontend action'] = (assert, done) => {
@@ -90,7 +91,8 @@ exports['test middleware with frontend action'] = (assert, done) => {
     assert.deepEqual(action, anAction)
     done()
   }
-  middleware()(next)(anAction)
+  const store = { dispatch: () => {}, getState: () => { return {} } }
+  middleware(store)(next)(anAction)
 }
 
 exports['test middleware with web action'] = (assert, done) => {
@@ -118,7 +120,8 @@ exports['test middleware with web action'] = (assert, done) => {
     assert.deepEqual(action, anAction, 'action')
     done()
   }
-  middleware()(next)(anAction)
+  const store = { dispatch: () => {}, getState: () => { return {} } }
+  middleware(store)(next)(anAction)
 }
 
 before(module.exports, function (name, assert, done) {

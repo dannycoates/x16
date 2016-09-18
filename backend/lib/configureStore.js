@@ -10,14 +10,15 @@ const reducers = require('./reducers')
 const { storage } = require('sdk/simple-storage')
 const initialState = Object.assign({}, storage.root)
 
-module.exports = function configureStore ({hub, metrics}) {
+module.exports = function configureStore ({hub, metrics, sideEffects}) {
   return redux.createStore(
     reducers,
     initialState,
     redux.applyMiddleware(
       thunkMiddleware,
       hub.middleware(),
-      metrics.middleware()
+      metrics.middleware(),
+      sideEffects.middleware()
     )
   )
 }

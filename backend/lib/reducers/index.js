@@ -7,13 +7,14 @@
 const { combineReducers } = require('redux/dist/redux.min')
 
 const reducers = combineReducers({
+  baseUrl: require('./baseUrl'),
+  clientUUID: require('./clientUUID'),
+  env: require('./env'),
   experiments: require('./experiments').experiments,
-  env: require('./env').env,
-  baseUrl: require('./baseUrl').baseUrl,
-  clientUUID: require('./clientUUID').clientUUID,
-  ui: require('./ui').ui,
-  notifications: require('./notifications').notifications,
-  ratings: require('./ratings').ratings
+  notifications: require('./notifications'),
+  ratings: require('./ratings').ratings,
+  sideEffects: require('./sideEffects'),
+  ui: require('./ui')
 })
 
 module.exports = reducers

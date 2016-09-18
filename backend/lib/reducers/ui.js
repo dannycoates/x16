@@ -7,7 +7,7 @@
 const actionTypes = require('../../../common/actionTypes')
 
 const FOOTER_HEIGHT = 53
-function ui (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
+module.exports = function ui (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
   switch (type) {
     case actionTypes.SET_BADGE:
       return Object.assign({}, state, { badge: payload.text })
@@ -25,8 +25,4 @@ function ui (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
     default:
       return state
   }
-}
-
-module.exports = {
-  ui
 }

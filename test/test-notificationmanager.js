@@ -7,9 +7,6 @@
 const { before } = require('sdk/test/utils')
 const MockUtils = require('./lib/mock-utils')
 
-const TEN_MINUTES = 1000 * 60 * 10
-const ONE_DAY = 1000 * 60 * 60 * 24
-
 const mocks = MockUtils.callbacks({
   store: ['dispatch', 'getState'],
   timers: ['setTimeout', 'clearTimeout'],
