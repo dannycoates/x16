@@ -11,6 +11,9 @@ function webToAction ({type, data}) {
     case 'install-experiment':
       return {
         type: actionTypes.INSTALL_EXPERIMENT,
+        meta: {
+          src: 'web'
+        },
         payload: {
           experiment: data
         }
@@ -18,21 +21,33 @@ function webToAction ({type, data}) {
     case 'uninstall-experiment':
       return {
         type: actionTypes.UNINSTALL_EXPERIMENT,
+        meta: {
+          src: 'web'
+        },
         payload: {
           experiment: data
         }
       }
     case 'uninstall-self':
       return {
-        type: actionTypes.UNINSTALL_SELF
+        type: actionTypes.UNINSTALL_SELF,
+        meta: {
+          src: 'web'
+        }
       }
     case 'sync-installed':
       return {
-        type: actionTypes.GET_INSTALLED
+        type: actionTypes.GET_INSTALLED,
+        meta: {
+          src: 'web'
+        }
       }
     case 'base-url':
       return {
         type: actionTypes.SET_BASE_URL,
+        meta: {
+          src: 'web'
+        },
         payload: {
           url: data
         }
