@@ -38,35 +38,15 @@ let webapp = new WebApp({
 })
 
 hub.connect(ui.panel.port)
+notificationManager.schedule(store)
+feedbackManager.start()
 
-sideEffects.context = {
-  notificationManager,
-  env,
-  ui
-}
+sideEffects.context = { env, notificationManager, tabs, ui }
 
 exports.main = function (options) {
-  env.on('change', newEnv => {
-    webapp.destroy()
-    webapp = new WebApp({
-      baseUrl: newEnv.baseUrl,
-      whitelist: newEnv.whitelist,
-      addonVersion: self.version,
-      hub: hub
-    })
-    store.dispatch(actions.loadExperiments(newEnv.name, newEnv.baseUrl))
-  })
-
-  notificationManager.schedule(store)
-  feedbackManager.start()
-
   switch (options.loadReason) {
     case 'install':
-      store.dispatch(actions.selfEnabled())
-      tabs.open({
-        url: startEnv.baseUrl + '/onboarding',
-        inBackground: true
-      })
+      store.dispatch(actions.selfInstalled(startEnv.baseUrl + '/onboarding'))
       break
     case 'enable':
       store.dispatch(actions.selfEnabled())
@@ -83,8 +63,7 @@ exports.onUnload = function (reason) {
       store.dispatch(actions.selfDisabled())
       break
     case 'uninstall':
-      store.dispatch(actions.selfDisabled())
-      store.dispatch(actions.uninstallSelf())
+      store.dispatch(actions.selfUninstalled())
       break
   }
   storage.root = store.getState()
@@ -94,6 +73,17 @@ exports.onUnload = function (reason) {
   metrics.destroy()
   // unsubscribe()
 }
+
+env.on('change', newEnv => {
+  webapp.destroy()
+  webapp = new WebApp({
+    baseUrl: newEnv.baseUrl,
+    whitelist: newEnv.whitelist,
+    addonVersion: self.version,
+    hub: hub
+  })
+  store.dispatch(actions.loadExperiments(newEnv.name, newEnv.baseUrl))
+})
 
 // Need to wait a tick for the ui port to "connect"
 ui.once('connected', () => {

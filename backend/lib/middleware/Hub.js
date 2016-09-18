@@ -49,6 +49,7 @@ const Hub = Class({
             }
           }
         }
+        console.debug('action', action)
         return next(action)
       }
     }

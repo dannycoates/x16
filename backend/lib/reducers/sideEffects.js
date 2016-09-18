@@ -44,6 +44,12 @@ module.exports = function sideEffects (state = null, { payload, type }) {
     case actionTypes.MAYBE_NOTIFY:
       return ({dispatch, getState, notificationManager}) => notificationManager.schedule({dispatch, getState})
 
+    case actionTypes.SELF_INSTALLED:
+      return ({tabs}) => tabs.open({
+        url: payload.url,
+        inBackground: true
+      })
+
     default:
       return null
   }

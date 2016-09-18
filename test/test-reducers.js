@@ -305,6 +305,19 @@ exports['test UNINSTALL_SELF'] = (assert) => {
   testAction(assert, action, initialState, expectedState)
 }
 
+exports['test SELF_INSTALLED'] = (assert) => {
+  const initialState = DEFAULT_STATE
+  const expectedState = Object.assign({}, DEFAULT_STATE, {
+    sideEffects: true
+  })
+  const action = {
+    type: actionTypes.SELF_INSTALLED,
+    payload: {}
+  }
+
+  testAction(assert, action, initialState, expectedState)
+}
+
 exports['test SET_BASE_URL'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = Object.assign({}, DEFAULT_STATE, {
@@ -329,6 +342,18 @@ exports['test GET_INSTALLED'] = (assert) => {
   }
 
   testAction(assert, action, initialState, expectedState)
+}
+
+exports['test SELF_UNINSTALLED'] = (assert) => {
+  const initialState = DEFAULT_STATE
+  const action = {
+    type: actionTypes.SELF_UNINSTALLED,
+    payload: {
+      install: {}
+    }
+  }
+  // Not implemented, no change expected
+  testAction(assert, action, initialState, initialState)
 }
 
 exports['test INSTALL_FAILED'] = (assert) => {

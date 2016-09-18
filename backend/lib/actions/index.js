@@ -25,6 +25,15 @@ function mainButtonClicked () {
   }
 }
 
+function selfInstalled (onboardingUrl) {
+  return {
+    type: actionTypes.SELF_INSTALLED,
+    payload: {
+      url: onboardingUrl
+    }
+  }
+}
+
 function selfEnabled () {
   return {
     type: actionTypes.SELF_ENABLED
@@ -47,7 +56,8 @@ const {
   experimentUninstalled,
   installExperiment,
   uninstallExperiment,
-  uninstallSelf
+  uninstallSelf,
+  selfUninstalled
 } = require('./installation')
 
 module.exports = {
@@ -63,6 +73,8 @@ module.exports = {
   setBadge,
   mainButtonClicked,
   maybeNotify,
+  selfInstalled,
+  selfUninstalled,
   selfEnabled,
   selfDisabled,
   showRating

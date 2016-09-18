@@ -194,6 +194,16 @@ function uninstallSelf () {
   }
 }
 
+function selfUninstalled () {
+  return (dispatch, getState) => {
+    const xs = _.values(activeExperiments(getState()))
+    xs.forEach(x => uninstallExperiment(x)())
+    dispatch({
+      type: actionTypes.SELF_UNINSTALLED
+    })
+  }
+}
+
 module.exports = {
   experimentEnabled,
   experimentDisabled,
@@ -201,5 +211,6 @@ module.exports = {
   experimentUninstalled,
   installExperiment,
   uninstallExperiment,
-  uninstallSelf
+  uninstallSelf,
+  selfUninstalled
 }

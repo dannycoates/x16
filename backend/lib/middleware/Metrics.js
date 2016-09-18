@@ -80,10 +80,12 @@ const Metrics = Class({
           pingTelemetry('txp_toolbar_menu_1', 'clicked')
           break
 
+        case actionTypes.SELF_INSTALLED:
         case actionTypes.SELF_ENABLED:
           pingTelemetry(self.id, 'enabled')
           break
 
+        case actionTypes.SELF_UNINSTALLED:
         case actionTypes.SELF_DISABLED:
           pingTelemetry(self.id, 'disabled')
           break
