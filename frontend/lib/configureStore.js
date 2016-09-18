@@ -17,7 +17,6 @@ function commMiddleware (backend) {
       if (action.meta.src === 'frontend') {
         backend.send(action)
       }
-      console.info(`frontend processing ${action.type}:${action.meta.src}`)
       return next(action)
     }
   }

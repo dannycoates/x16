@@ -17,7 +17,6 @@ function ratings (state = {}, { payload, type }) {
     case actionTypes.SET_RATING:
       id = payload.experiment.addon_id
       rating = Object.assign({}, state[id], { rating: payload.rating })
-      console.debug(`${id} rated: ${payload.rating}`)
       return Object.assign({}, state, {
         lastRated: payload.time,
         [id]: rating

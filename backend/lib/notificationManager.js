@@ -16,7 +16,6 @@ function createTimer (fn, when) {
 
 function schedule ({ getState, dispatch }) {
   const nextCheck = getState().notifications.nextCheck
-  console.debug(`next notify check: ${new Date(nextCheck)}`)
   createTimer(() => {
     const {
       experiments,

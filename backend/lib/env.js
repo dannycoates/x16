@@ -23,6 +23,7 @@ if (!aboutConfig.has('testpilot.env')) {
 
 if (aboutConfig.get('testpilot.env') !== 'production') {
   aboutConfig.set(`extensions.${self.id}.sdk.console.logLevel`, 'debug')
+  // TODO: set back on change? worth it?
 }
 
 prefs.on('testpilot.env', () => {

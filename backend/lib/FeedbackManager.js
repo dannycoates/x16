@@ -15,7 +15,6 @@ const ONE_DAY = 1000 * 60 * 60 * 24
 
 function getInterval (installDate) {
   const interval = Math.floor((Date.now() - installDate.getTime()) / ONE_DAY)
-  console.debug(`feedback ${interval} : ${installDate}`)
   if (interval < 2) {
     return 0
   } else if (interval < 7) {

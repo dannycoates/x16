@@ -139,7 +139,6 @@ module.exports = {
       channels[id] = channel
       channel.registerPingListener(data =>
         this.handleWebExtensionPing(id, data))
-      console.debug(`added web-ex ${id}`)
     }
   },
 
