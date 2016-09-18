@@ -49,4 +49,4 @@ const WebApp = Class({
   }
 })
 
-exports.WebApp = WebApp
+module.exports = WebApp
