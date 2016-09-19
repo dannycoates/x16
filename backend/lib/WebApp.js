@@ -43,7 +43,7 @@ const WebApp = Class({
       }
     })
   },
-  destroy: function () {
+  teardown: function () {
     this.page.destroy()
     this.beacon.destroy()
   }

@@ -37,9 +37,7 @@ function testAction (assert, action, initialState, expectedState) {
   const store = redux.createStore(reducers, initialState)
   store.dispatch(action)
   let state = store.getState()
-  if (expectedState.sideEffects) {
-    assert.equal(typeof (state.sideEffects), 'function', `${action.type} has sideEffects`)
-  }
+  // side effects are tested in test-sideeffects.js
   delete state.sideEffects
   delete expectedState.sideEffects
   assert.deepEqual(state, expectedState, `${action.type} matched`)
@@ -165,8 +163,7 @@ exports['test EXPERIMENT_UNINSTALLING'] = (assert) => {
 exports['test SET_BADGE'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = Object.assign({}, DEFAULT_STATE, {
-    ui: Object.assign({}, DEFAULT_STATE.ui, { badge: 'Hey' }),
-    sideEffects: true
+    ui: Object.assign({}, DEFAULT_STATE.ui, { badge: 'Hey' })
   })
   const action = {
     type: actionTypes.SET_BADGE,
@@ -180,8 +177,7 @@ exports['test SET_BADGE'] = (assert) => {
 exports['test MAIN_BUTTON_CLICKED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = Object.assign({}, DEFAULT_STATE, {
-    ui: Object.assign({}, DEFAULT_STATE.ui, { badge: null, clicked: 1 }),
-    sideEffects: true
+    ui: Object.assign({}, DEFAULT_STATE.ui, { badge: null, clicked: 1 })
   })
   const action = {
     type: actionTypes.MAIN_BUTTON_CLICKED,
@@ -192,18 +188,17 @@ exports['test MAIN_BUTTON_CLICKED'] = (assert) => {
   testAction(assert, action, initialState, expectedState)
 }
 
-exports['test MAYBE_NOTIFY'] = (assert) => {
+exports['test SCHEDULE_NOTIFIER'] = (assert) => {
   const now = Date.now()
   const initialState = DEFAULT_STATE
   const expectedState = Object.assign({}, DEFAULT_STATE, {
     notifications: {
       lastNotified: now,
       nextCheck: now + 1
-    },
-    sideEffects: true
+    }
   })
   const action = {
-    type: actionTypes.MAYBE_NOTIFY,
+    type: actionTypes.SCHEDULE_NOTIFIER,
     payload: {
       lastNotified: now,
       nextCheck: now + 1
@@ -255,9 +250,7 @@ exports['test SHOW_RATING_PROMPT'] = (assert) => {
 
 exports['test SHOW_EXPERIMENT'] = (assert) => {
   const initialState = DEFAULT_STATE
-  const expectedState = Object.assign({}, DEFAULT_STATE, {
-    sideEffects: true
-  })
+  const expectedState = initialState
   const action = {
     type: actionTypes.SHOW_EXPERIMENT,
     payload: {}
@@ -268,9 +261,7 @@ exports['test SHOW_EXPERIMENT'] = (assert) => {
 
 exports['test INSTALL_EXPERIMENT'] = (assert) => {
   const initialState = DEFAULT_STATE
-  const expectedState = Object.assign({}, DEFAULT_STATE, {
-    sideEffects: true
-  })
+  const expectedState = initialState
   const action = {
     type: actionTypes.INSTALL_EXPERIMENT,
     payload: {}
@@ -281,9 +272,7 @@ exports['test INSTALL_EXPERIMENT'] = (assert) => {
 
 exports['test UNINSTALL_EXPERIMENT'] = (assert) => {
   const initialState = DEFAULT_STATE
-  const expectedState = Object.assign({}, DEFAULT_STATE, {
-    sideEffects: true
-  })
+  const expectedState = initialState
   const action = {
     type: actionTypes.UNINSTALL_EXPERIMENT,
     payload: {}
@@ -294,9 +283,7 @@ exports['test UNINSTALL_EXPERIMENT'] = (assert) => {
 
 exports['test UNINSTALL_SELF'] = (assert) => {
   const initialState = DEFAULT_STATE
-  const expectedState = Object.assign({}, DEFAULT_STATE, {
-    sideEffects: true
-  })
+  const expectedState = initialState
   const action = {
     type: actionTypes.UNINSTALL_SELF,
     payload: {}
@@ -307,9 +294,7 @@ exports['test UNINSTALL_SELF'] = (assert) => {
 
 exports['test SELF_INSTALLED'] = (assert) => {
   const initialState = DEFAULT_STATE
-  const expectedState = Object.assign({}, DEFAULT_STATE, {
-    sideEffects: true
-  })
+  const expectedState = initialState
   const action = {
     type: actionTypes.SELF_INSTALLED,
     payload: {}
@@ -320,9 +305,7 @@ exports['test SELF_INSTALLED'] = (assert) => {
 
 exports['test SET_BASE_URL'] = (assert) => {
   const initialState = DEFAULT_STATE
-  const expectedState = Object.assign({}, DEFAULT_STATE, {
-    sideEffects: true
-  })
+  const expectedState = initialState
   const action = {
     type: actionTypes.SET_BASE_URL,
     payload: {}
@@ -333,9 +316,7 @@ exports['test SET_BASE_URL'] = (assert) => {
 
 exports['test GET_INSTALLED'] = (assert) => {
   const initialState = DEFAULT_STATE
-  const expectedState = Object.assign({}, DEFAULT_STATE, {
-    sideEffects: true
-  })
+  const expectedState = initialState
   const action = {
     type: actionTypes.GET_INSTALLED,
     payload: {}

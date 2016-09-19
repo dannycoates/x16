@@ -8,36 +8,52 @@ const actionTypes = require('../common/actionTypes')
 const { before } = require('sdk/test/utils')
 const MockUtils = require('./lib/mock-utils')
 
+const X = {
+  id: 1,
+  addon_id: 'X'
+}
+
 const mocks = MockUtils.callbacks({
-  actions: [
-    'installExperiment',
-    'uninstallExperiment',
-    'uninstallSelf',
-    'loadExperiments',
-    'syncInstalled'
-  ]
+  channels: ['add', 'remove'],
+  tabs: ['open']
 })
 
 const mockLoader = MockUtils.loader(module, './backend/lib/reducers/sideEffects.js', {
-  './backend/lib/actions/index.js': mocks.actions
+  './backend/lib/metrics/webextension-channels.js': mocks.channels,
+  'sdk/tabs': mocks.tabs
 })
 
 const reducer = mockLoader.require('../backend/lib/reducers/sideEffects')
 
-exports['test EXPERIMENTS_LOADED'] = (assert) => {
+exports['test EXPERIMENTS_LOADED'] = (assert, done) => {
   const action = {
     type: actionTypes.EXPERIMENTS_LOADED
   }
+  const loader = {
+    schedule: done
+  }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({loader})
 }
 
 exports['test INSTALL_ENDED'] = (assert) => {
   const action = {
-    type: actionTypes.INSTALL_ENDED
+    type: actionTypes.INSTALL_ENDED,
+    payload: {
+      experiment: X
+    }
+  }
+  const telemetry = {
+    ping: (id, name) => {
+      assert.equal(id, X.addon_id)
+      assert.equal(name, 'enabled')
+    }
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({telemetry})
+  const add = mocks.channels.add.calls()
+  assert.equal(add.length, 1, 'added channel')
+  assert.equal(add[0][0], X.addon_id, 'passed correct id')
 }
 
 exports['test EXPERIMENTS_LOAD_ERROR'] = (assert) => {
@@ -50,26 +66,62 @@ exports['test EXPERIMENTS_LOAD_ERROR'] = (assert) => {
 
 exports['test EXPERIMENT_ENABLED'] = (assert) => {
   const action = {
-    type: actionTypes.EXPERIMENT_ENABLED
+    type: actionTypes.EXPERIMENT_ENABLED,
+    payload: {
+      experiment: X
+    }
+  }
+  const telemetry = {
+    ping: (id, name) => {
+      assert.equal(id, X.addon_id)
+      assert.equal(name, 'enabled')
+    }
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({telemetry})
+  const add = mocks.channels.add.calls()
+  assert.equal(add.length, 1, 'added channel')
+  assert.equal(add[0][0], X.addon_id, 'passed correct id')
 }
 
 exports['test EXPERIMENT_DISABLED'] = (assert) => {
   const action = {
-    type: actionTypes.EXPERIMENT_DISABLED
+    type: actionTypes.EXPERIMENT_DISABLED,
+    payload: {
+      experiment: X
+    }
+  }
+  const telemetry = {
+    ping: (id, name) => {
+      assert.equal(id, X.addon_id)
+      assert.equal(name, 'disabled')
+    }
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({telemetry})
+  const remove = mocks.channels.remove.calls()
+  assert.equal(remove.length, 1, 'removed channel')
+  assert.equal(remove[0][0], X.addon_id, 'passed correct id')
 }
 
 exports['test EXPERIMENT_UNINSTALLING'] = (assert) => {
   const action = {
-    type: actionTypes.EXPERIMENT_UNINSTALLING
+    type: actionTypes.EXPERIMENT_UNINSTALLING,
+    payload: {
+      experiment: X
+    }
+  }
+  const telemetry = {
+    ping: (id, name) => {
+      assert.equal(id, X.addon_id)
+      assert.equal(name, 'disabled')
+    }
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({telemetry})
+  const remove = mocks.channels.remove.calls()
+  assert.equal(remove.length, 1, 'removed channel')
+  assert.equal(remove[0][0], X.addon_id, 'passed correct id')
 }
 
 exports['test SET_BADGE'] = (assert, done) => {
@@ -84,28 +136,34 @@ exports['test SET_BADGE'] = (assert, done) => {
   state({ ui })
 }
 
-exports['test MAIN_BUTTON_CLICKED'] = (assert, done) => {
+exports['test MAIN_BUTTON_CLICKED'] = (assert) => {
   const action = {
     type: actionTypes.MAIN_BUTTON_CLICKED
   }
   const ui = {
-    setBadge: done
+    setBadge: () => {}
+  }
+  const telemetry = {
+    ping: (id, name) => {
+      assert.equal(id, 'txp_toolbar_menu_1')
+      assert.equal(name, 'clicked')
+    }
   }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ ui })
+  state({ ui, telemetry })
 }
 
-exports['test MAYBE_NOTIFY'] = (assert, done) => {
+exports['test SCHEDULE_NOTIFIER'] = (assert, done) => {
   const action = {
-    type: actionTypes.MAYBE_NOTIFY
+    type: actionTypes.SCHEDULE_NOTIFIER
   }
   const notificationManager = {
     schedule: done
   }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ dispatch: null, getState: null, notificationManager })
+  state({ notificationManager })
 }
 
 exports['test SET_RATING'] = (assert) => {
@@ -116,12 +174,15 @@ exports['test SET_RATING'] = (assert) => {
   assert.equal(state, null)
 }
 
-exports['test SHOW_RATING_PROMPT'] = (assert) => {
+exports['test SHOW_RATING_PROMPT'] = (assert, done) => {
   const action = {
     type: actionTypes.SHOW_RATING_PROMPT
   }
+  const feedbackManager = {
+    prompt: () => done()
+  }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({feedbackManager})
 }
 
 exports['test SHOW_EXPERIMENT'] = (assert) => {
@@ -146,13 +207,12 @@ exports['test INSTALL_EXPERIMENT'] = (assert) => {
       experiment: {}
     }
   }
-  const dispatch = () => {}
+  const installManager = {
+    installExperiment: (x) => assert.equal(x, action.payload.experiment)
+  }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ dispatch })
-  const calls = mocks.actions.installExperiment.calls()
-  assert.equal(calls.length, 1, 'installExperiment called')
-  assert.equal(calls[0][0], action.payload.experiment)
+  state({ installManager })
 }
 
 exports['test UNINSTALL_EXPERIMENT'] = (assert) => {
@@ -162,25 +222,24 @@ exports['test UNINSTALL_EXPERIMENT'] = (assert) => {
       experiment: {}
     }
   }
-  const dispatch = () => {}
+  const installManager = {
+    uninstallExperiment: (x) => assert.equal(x, action.payload.experiment)
+  }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ dispatch })
-  const calls = mocks.actions.uninstallExperiment.calls()
-  assert.equal(calls.length, 1, 'uninstallExperiment called')
-  assert.equal(calls[0][0], action.payload.experiment)
+  state({ installManager })
 }
 
-exports['test UNINSTALL_SELF'] = (assert) => {
+exports['test UNINSTALL_SELF'] = (assert, done) => {
   const action = {
     type: actionTypes.UNINSTALL_SELF
   }
-  const dispatch = () => {}
+  const installManager = {
+    uninstallSelf: done
+  }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ dispatch })
-  const calls = mocks.actions.uninstallSelf.calls()
-  assert.equal(calls.length, 1, 'uninstallSelf called')
+  state({ installManager })
 }
 
 exports['test SELF_INSTALLED'] = (assert) => {
@@ -190,12 +249,16 @@ exports['test SELF_INSTALLED'] = (assert) => {
       url: 'it'
     }
   }
-  const tabs = {
-    open: x => assert.equal(x.url, action.payload.url)
+  const telemetry = {
+    ping: (id, name) => {
+      assert.equal(name, 'enabled')
+    }
   }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ tabs })
+  state({telemetry})
+  const open = mocks.tabs.open.calls()
+  assert.equal(open.length, 1)
 }
 
 exports['test SET_BASE_URL'] = (assert) => {
@@ -205,38 +268,59 @@ exports['test SET_BASE_URL'] = (assert) => {
       url: 'it'
     }
   }
-  const dispatch = () => {}
+  const loader = {
+    loadExperiments: (n, url) => {
+      assert.equal(n, 'any')
+      assert.equal(url, action.payload.url)
+    }
+  }
   const env = {
     get: () => { return { name: 'any' } }
   }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ dispatch, env })
-  const calls = mocks.actions.loadExperiments.calls()
-  assert.equal(calls.length, 1, 'loadExperiments called')
-  assert.equal(calls[0][0], 'any')
-  assert.equal(calls[0][1], action.payload.url)
+  state({ loader, env })
 }
 
-exports['test GET_INSTALLED'] = (assert) => {
+exports['test GET_INSTALLED'] = (assert, done) => {
   const action = {
     type: actionTypes.GET_INSTALLED
   }
-  const dispatch = () => {}
-  const getState = () => { return { clientUUID: 'XX', experiments: {} } }
+  const installManager = {
+    syncInstalled: done
+  }
+
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ dispatch, getState })
-  const calls = mocks.actions.syncInstalled.calls()
-  assert.equal(calls.length, 1, 'syncInstalled called')
+  state({ installManager })
 }
 
-exports['test SELF_UNINSTALLED'] = (assert) => {
+exports['test SELF_UNINSTALLED'] = (assert, done) => {
   const action = {
     type: actionTypes.SELF_UNINSTALLED
   }
+  const installManager = {
+    uninstallAll: done
+  }
+  const telemetry = {
+    ping: (id, name) => assert.equal(name, 'disabled')
+  }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({installManager, telemetry})
+}
+
+exports['test MAYBE_NOTIFY'] = (assert) => {
+  const action = {
+    type: actionTypes.MAYBE_NOTIFY,
+    payload: {
+      experiment: {}
+    }
+  }
+  const notificationManager = {
+    maybeNotify: x => assert.equal(x, action.payload.experiment)
+  }
+  const state = reducer(null, action)
+  state({notificationManager})
 }
 
 exports['test INSTALL_FAILED'] = (assert) => {
@@ -339,16 +423,26 @@ exports['test SELF_ENABLED'] = (assert) => {
   const action = {
     type: actionTypes.SELF_ENABLED
   }
+  const telemetry = {
+    ping: (id, name) => {
+      assert.equal(name, 'enabled')
+    }
+  }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({telemetry})
 }
 
 exports['test SELF_DISABLED'] = (assert) => {
   const action = {
     type: actionTypes.SELF_DISABLED
   }
+  const telemetry = {
+    ping: (id, name) => {
+      assert.equal(name, 'disabled')
+    }
+  }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  state({telemetry})
 }
 
 exports['test SYNC_INSTALLED'] = (assert) => {

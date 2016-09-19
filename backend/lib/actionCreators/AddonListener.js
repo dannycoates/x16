@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('./actions')
+const actions = require('../actions')
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
 const { Class } = require('sdk/core/heritage')
 
@@ -51,7 +51,7 @@ const AddonListener = Class({
       }
     }
   },
-  destroy: function () {
+  teardown: function () {
     AddonManager.removeAddonListener(this)
   }
 })

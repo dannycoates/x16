@@ -13,14 +13,14 @@ const mocks = MockUtils.callbacks({
   actions: ['experimentEnabled', 'experimentDisabled', 'experimentUninstalling', 'experimentUninstalled']
 })
 
-const mockLoader = MockUtils.loader(module, './backend/lib/AddonListener.js', {
+const mockLoader = MockUtils.loader(module, './backend/lib/actionCreators/AddonListener.js', {
   'resource://gre/modules/AddonManager.jsm': {
     AddonManager: mocks.AddonManager
   },
-  './backend/lib/actions/index.js': mocks.actions
+  './backend/lib/actions.js': mocks.actions
 })
 
-const AddonListener = mockLoader.require('../backend/lib/AddonListener')
+const AddonListener = mockLoader.require('../backend/lib/actionCreators/AddonListener')
 
 exports['test initialize'] = (assert) => {
   const l = new AddonListener(mocks.store)
@@ -98,9 +98,9 @@ exports['test onOperationCancelled without pending enable'] = assert => {
   delete mocks.AddonManager.PENDING_ENABLE
 }
 
-exports['test destroy'] = assert => {
+exports['test teardown'] = assert => {
   const l = new AddonListener(mocks.store)
-  l.destroy()
+  l.teardown()
   const calls = mocks.AddonManager.removeAddonListener.calls()
   assert.equal(calls.length, 1, 'called removeAddonListener')
   assert.equal(calls[0][0], l, 'this passed to removeAddonListener')

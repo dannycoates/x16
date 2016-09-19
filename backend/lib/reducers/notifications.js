@@ -11,7 +11,7 @@ module.exports = function notifications (
   state = { lastNotified: tomorrow, nextCheck: tomorrow },
   { payload, type }) {
   switch (type) {
-    case actionTypes.MAYBE_NOTIFY:
+    case actionTypes.SCHEDULE_NOTIFIER:
       return Object.assign({}, state, {
         lastNotified: payload.lastNotified,
         nextCheck: payload.nextCheck

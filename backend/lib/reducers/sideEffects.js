@@ -4,51 +4,90 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../actions')
 const actionTypes = require('../../../common/actionTypes')
-const { activeExperiments } = require('./experiments')
+const self = require('sdk/self')
+const tabs = require('sdk/tabs')
+const WebExtensionChannels = require('../metrics/webextension-channels')
 
 module.exports = function sideEffects (state = null, { payload, type }) {
   switch (type) {
+    case actionTypes.EXPERIMENT_ENABLED:
+    case actionTypes.INSTALL_ENDED:
+      return ({telemetry}) => {
+        WebExtensionChannels.add(payload.experiment.addon_id)
+        telemetry.ping(payload.experiment.addon_id, 'enabled')
+      }
+
+    case actionTypes.EXPERIMENT_DISABLED:
+    case actionTypes.EXPERIMENT_UNINSTALLING:
+      return ({telemetry}) => {
+        WebExtensionChannels.remove(payload.experiment.addon_id)
+        telemetry.ping(payload.experiment.addon_id, 'disabled')
+      }
+
     case actionTypes.SHOW_EXPERIMENT:
       return ({ui}) => ui.openTab(payload.href)
 
+    case actionTypes.EXPERIMENTS_LOADED:
+      return ({loader}) => loader.schedule()
+
     case actionTypes.INSTALL_EXPERIMENT:
-      return ({dispatch}) => dispatch(actions.installExperiment(payload.experiment))
+      return ({installManager}) => installManager.installExperiment(payload.experiment)
 
     case actionTypes.UNINSTALL_EXPERIMENT:
-      return ({dispatch}) => dispatch(actions.uninstallExperiment(payload.experiment))
+      return ({installManager}) => installManager.uninstallExperiment(payload.experiment)
 
     case actionTypes.UNINSTALL_SELF:
-      return ({dispatch}) => dispatch(actions.uninstallSelf())
+      return ({installManager}) => installManager.uninstallSelf()
+
+    case actionTypes.SELF_UNINSTALLED:
+      return ({installManager, telemetry}) => {
+        telemetry.ping(self.id, 'disabled')
+        installManager.uninstallAll()
+      }
 
     case actionTypes.SET_BASE_URL:
-      return ({dispatch, env}) => {
+      return ({loader, env}) => {
         const e = env.get()
         const url = e.name === 'any' ? payload.url : e.baseUrl
-        dispatch(actions.loadExperiments(e.name, url))
+        loader.loadExperiments(e.name, url)
       }
 
     case actionTypes.GET_INSTALLED:
-      return ({dispatch, getState}) => dispatch(actions.syncInstalled({
-        clientUUID: getState().clientUUID,
-        installed: activeExperiments(getState())
-      }))
+      return ({installManager}) => installManager.syncInstalled()
+
+    case actionTypes.SHOW_RATING_PROMPT:
+      return ({feedbackManager}) => feedbackManager.prompt(payload)
 
     case actionTypes.SET_BADGE:
       return ({ui}) => ui.setBadge()
 
     case actionTypes.MAIN_BUTTON_CLICKED:
-      return ({ui}) => ui.setBadge()
+      return ({ui, telemetry}) => {
+        ui.setBadge()
+        telemetry.ping('txp_toolbar_menu_1', 'clicked')
+      }
 
     case actionTypes.MAYBE_NOTIFY:
-      return ({dispatch, getState, notificationManager}) => notificationManager.schedule({dispatch, getState})
+      return ({notificationManager}) => notificationManager.maybeNotify(payload.experiment)
+
+    case actionTypes.SCHEDULE_NOTIFIER:
+      return ({notificationManager}) => notificationManager.schedule()
 
     case actionTypes.SELF_INSTALLED:
-      return ({tabs}) => tabs.open({
-        url: payload.url,
-        inBackground: true
-      })
+      return ({telemetry}) => {
+        tabs.open({
+          url: payload.url,
+          inBackground: true
+        })
+        telemetry.ping(self.id, 'enabled')
+      }
+
+    case actionTypes.SELF_ENABLED:
+      return ({telemetry}) => telemetry.ping(self.id, 'enabled')
+
+    case actionTypes.SELF_DISABLED:
+      return ({telemetry}) => telemetry.ping(self.id, 'disabled')
 
     default:
       return null

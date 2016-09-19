@@ -18,25 +18,26 @@ const mocks = MockUtils.callbacks({
   actions: ['showRating']
 })
 
-const mockLoader = MockUtils.loader(module, './backend/lib/FeedbackManager.js', {
+const mockLoader = MockUtils.loader(module, './backend/lib/actionCreators/FeedbackManager.js', {
   'sdk/timers': mocks.timers,
   './backend/lib/reducers/experiments.js': mocks.experiments,
-  './backend/lib/actions/index.js': mocks.actions,
+  './backend/lib/actions.js': mocks.actions,
   './backend/lib/reducers/ratings.js': mocks.ratings
 })
 
-const FeedbackManager = mockLoader.require('../backend/lib/FeedbackManager')
+const FeedbackManager = mockLoader.require('../backend/lib/actionCreators/FeedbackManager')
 
 exports['test initialize'] = (assert) => {
-  const fm = new FeedbackManager({ store: mocks.store })
-  assert.equal(fm.store, mocks.store, 'store is set')
+  const fm = new FeedbackManager(mocks.store)
+  assert.equal(fm.dispatch, mocks.store.dispatch, 'dispatch is set')
+  assert.equal(fm.getState, mocks.store.getState, 'getState is set')
   assert.equal(fm.dnd, ONE_DAY, 'dnd defaults to 1 day')
 }
 
-exports['test start'] = (assert) => {
-  const fm = new FeedbackManager({ store: mocks.store })
+exports['test schedule'] = (assert) => {
+  const fm = new FeedbackManager(mocks.store)
   mocks.timers.setTimeout.implement(() => 99)
-  fm.start()
+  fm.schedule()
   assert.equal(fm.checkTimer, 99, 'checkTimer is set by setTimeout')
   const calls = mocks.timers.setTimeout.calls()
   assert.equal(calls.length, 1, 'setTimeout was called')
@@ -44,7 +45,7 @@ exports['test start'] = (assert) => {
 }
 
 exports['test lastRated < dnd'] = (assert) => {
-  const fm = new FeedbackManager({ store: mocks.store })
+  const fm = new FeedbackManager(mocks.store)
   const lastRated = (Date.now() - ONE_DAY) + 1000
   mocks.store.getState.implement(() => { return { ratings: { lastRated } } })
   fm.check()
@@ -53,7 +54,7 @@ exports['test lastRated < dnd'] = (assert) => {
 }
 
 exports['test no active experiments'] = (assert) => {
-  const fm = new FeedbackManager({ store: mocks.store })
+  const fm = new FeedbackManager(mocks.store)
   const lastRated = (Date.now() - ONE_DAY) - 1000
   mocks.store.getState.implement(() => { return { ratings: { lastRated } } })
   mocks.experiments.randomActiveExperiment.implement(() => null)
@@ -64,7 +65,7 @@ exports['test no active experiments'] = (assert) => {
 
 exports['test open interval'] = (assert) => {
   const x = { installDate: new Date(Date.now() - (ONE_DAY * 2)) }
-  const fm = new FeedbackManager({ store: mocks.store })
+  const fm = new FeedbackManager(mocks.store)
   const lastRated = (Date.now() - ONE_DAY) - 1000
   mocks.store.getState.implement(() => { return { ratings: { lastRated } } })
   mocks.experiments.randomActiveExperiment.implement(() => x)
@@ -80,7 +81,7 @@ exports['test open interval'] = (assert) => {
 
 exports['test completed interval does not dispatch'] = (assert) => {
   const x = { installDate: new Date(Date.now() - (ONE_DAY * 2)) }
-  const fm = new FeedbackManager({ store: mocks.store })
+  const fm = new FeedbackManager(mocks.store)
   const lastRated = (Date.now() - ONE_DAY) - 1000
   mocks.store.getState.implement(() => { return { ratings: { lastRated } } })
   mocks.experiments.randomActiveExperiment.implement(() => x)

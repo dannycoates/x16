@@ -4,50 +4,15 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../../../common/actionTypes')
+const actions = require('../actions')
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
-const { maybeNotify } = require('./maybeNotify')
+const { Class } = require('sdk/core/heritage')
 const { Request } = require('sdk/request')
-const _ = require('lodash')
+const { setTimeout, clearTimeout } = require('sdk/timers')
+const difference = require('lodash/difference')
 const WebExtensionChannels = require('../metrics/webextension-channels')
 
-function setBadge (text) {
-  return {
-    type: actionTypes.SET_BADGE,
-    payload: {
-      text
-    }
-  }
-}
-
-function loadingExperiments (env) {
-  return {
-    type: actionTypes.LOADING_EXPERIMENTS,
-    payload: {
-      env
-    }
-  }
-}
-
-function experimentsLoaded (env, baseUrl, experiments) {
-  return {
-    type: actionTypes.EXPERIMENTS_LOADED,
-    payload: {
-      env,
-      baseUrl,
-      experiments
-    }
-  }
-}
-
-function experimentsLoadError (res) {
-  return {
-    type: actionTypes.EXPERIMENTS_LOAD_ERROR,
-    payload: {
-      res
-    }
-  }
-}
+const SIX_HOURS = 6 * 60 * 60 * 1000
 
 function urlify (baseUrl, experiment) {
   const urlFields = {
@@ -107,55 +72,65 @@ function mergeAddonActiveState (experiments, addons) {
 }
 
 function diffExperimentList (oldSet, newSet) {
-  const addedIds = _.difference(Object.keys(newSet), Object.keys(oldSet))
+  const addedIds = difference(Object.keys(newSet), Object.keys(oldSet))
   return addedIds.map(id => newSet[id])
 }
 
-function loadExperiments (newEnv, baseUrl) {
-  return (dispatch, getState) => {
-    dispatch(loadingExperiments(newEnv))
+const Loader = Class({
+  initialize: function (store) {
+    this.store = store
+    this.timeout = null
+  },
+  schedule: function (interval = SIX_HOURS) {
+    clearTimeout(this.timeout)
+    this.timeout = setTimeout(
+      () => {
+        const { env, baseUrl } = this.store.getState()
+        this.loadExperiments(env, baseUrl)
+      },
+      interval
+    )
+  },
+  loadExperiments: function (env, baseUrl) {
+    const { dispatch, getState } = this.store
     return fetchExperiments(baseUrl, '/api/experiments.json')
-      .then(
-        xs => new Promise(
-          (resolve, reject) => {
-            AddonManager.getAllAddons(
-              addons => {
-                resolve(mergeAddonActiveState(xs, addons))
-              }
-            )
-          }
-        )
-      )
-      .then(
-        xs => {
-          const {
-            experiments,
-            ui: { clicked },
-            notifications: { lastNotified, nextCheck }
-          } = getState()
-
-          const newExperiments = diffExperimentList(experiments, xs)
-          for (let x of newExperiments) {
-            if ((new Date(x.created)).getTime() > clicked) {
-              dispatch(setBadge('New'))
+    .then(
+      xs => new Promise(
+        (resolve, reject) => {
+          AddonManager.getAllAddons(
+            addons => {
+              resolve(mergeAddonActiveState(xs, addons))
             }
-          }
-
-          for (let x of _.values(xs)) {
-            if (x.active) { WebExtensionChannels.add(x.addon_id) }
-            dispatch(maybeNotify(x, lastNotified, nextCheck))
-          }
-          return xs
+          )
         }
       )
-      .then(
-        xs => dispatch(experimentsLoaded(newEnv, baseUrl, xs)),
-        err => dispatch(experimentsLoadError(err))
-      )
-  }
-}
+    )
+    .then(
+      xs => {
+        const {
+          experiments,
+          ui: { clicked }
+        } = getState()
 
-module.exports = {
-  loadExperiments,
-  setBadge
-}
+        const newExperiments = diffExperimentList(experiments, xs)
+        for (let x of newExperiments) {
+          if ((new Date(x.created)).getTime() > clicked) {
+            dispatch(actions.setBadge('New'))
+          }
+        }
+
+        for (let x of Object.keys(xs).map(n => xs[n])) {
+          if (x.active) { WebExtensionChannels.add(x.addon_id) }
+          dispatch(actions.maybeNotify(x))
+        }
+        return xs
+      }
+    )
+    .then(
+      xs => dispatch(actions.experimentsLoaded(env, baseUrl, xs)),
+      err => dispatch(actions.experimentsLoadError(err))
+    )
+  }
+})
+
+module.exports = Loader

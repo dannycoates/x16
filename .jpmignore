@@ -4,7 +4,6 @@
 !/backend/main.js
 !/backend/node_modules/lodash/**
 !/node_modules/redux/dist/redux.min.js
-!/backend/node_modules/redux-thunk/dist/redux-thunk.min.js
 !/backend/node_modules/seedrandom/**
 !/common/**
 !/data/**

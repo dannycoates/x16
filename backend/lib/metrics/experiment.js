@@ -16,8 +16,7 @@ const EVENT_SEND_METRIC = 'testpilot::send-metric'
 const EVENT_RECEIVE_VARIANT_DEFS = 'testpilot::register-variants'
 const EVENT_SEND_VARIANTS = 'testpilot::receive-variants'
 
-function makeTimestamp (time) {
-  const timestamp = typeof time !== 'undefined' ? time : Date.now()
+function makeTimestamp (timestamp = Date.now()) {
   return Math.round((timestamp - Services.startup.getStartupInfo().process) / 1000)
 }
 
@@ -65,7 +64,7 @@ const Experiment = Class({
     Events.on(EVENT_SEND_METRIC, experimentPing)
     Events.on(EVENT_RECEIVE_VARIANT_DEFS, this.receiveVariantDefs)
   },
-  destroy: function () {
+  teardown: function () {
     Events.off(EVENT_SEND_METRIC, experimentPing)
     Events.off(EVENT_RECEIVE_VARIANT_DEFS, this.receiveVariantDefs)
   }

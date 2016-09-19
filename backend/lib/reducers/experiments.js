@@ -5,7 +5,7 @@
  */
 
 const actionTypes = require('../../../common/actionTypes')
-const _ = require('lodash/object')
+const pickBy = require('lodash/pickBy')
 
 function experiments (experiments = null, { payload, type }) {
   let x, n
@@ -34,7 +34,7 @@ function experiments (experiments = null, { payload, type }) {
 }
 
 function activeExperiments (state) {
-  return _.pickBy(state.experiments, x => x.active)
+  return pickBy(state.experiments, x => x.active)
 }
 
 function randomActiveExperiment (state) {

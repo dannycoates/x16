@@ -4,31 +4,49 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('./lib/actions')
-const AddonListener = require('./lib/AddonListener')
+const AddonListener = require('./lib/actionCreators/AddonListener')
 const configureStore = require('./lib/configureStore')
 const createExperimentMetrics = require('./lib/metrics')
 const env = require('./lib/env')
+const FeedbackManager = require('./lib/actionCreators/FeedbackManager')
 const Hub = require('./lib/middleware/Hub')
-const Metrics = require('./lib/middleware/Metrics')
-const notificationManager = require('./lib/notificationManager')
-const SideEffects = require('./lib/middleware/SideEffects')
+const InstallManager = require('./lib/actionCreators/InstallManager')
+const Loader = require('./lib/actionCreators/Loader')
+const MainUI = require('./lib/MainUI')
+const NotificationManager = require('./lib/actionCreators/NotificationManager')
 const self = require('sdk/self')
 const { storage } = require('sdk/simple-storage')
-const FeedbackManager = require('./lib/FeedbackManager')
-const tabs = require('sdk/tabs')
-const MainUI = require('./lib/MainUI')
+const Telemetry = require('./lib/Telemetry')
 const WebApp = require('./lib/WebApp')
 
-const sideEffects = new SideEffects()
-const hub = new Hub()
-const metrics = new Metrics()
-const store = configureStore({ hub, metrics, sideEffects })
-const experimentMetrics = createExperimentMetrics(store.getState().clientUUID)
-const addons = new AddonListener(store)
-const ui = new MainUI(store)
-const feedbackManager = new FeedbackManager({ store })
 const startEnv = env.get()
+const hub = new Hub()
+const store = configureStore({ startEnv, hub })
+const addons = new AddonListener(store)
+const experimentMetrics = createExperimentMetrics(store.getState().clientUUID)
+const feedbackManager = new FeedbackManager(store)
+const installManager = new InstallManager(store)
+const loader = new Loader(store)
+const notificationManager = new NotificationManager(store)
+const telemetry = new Telemetry()
+const ui = new MainUI(store)
+
+const context = Object.assign({}, store, {
+  env,
+  feedbackManager,
+  installManager,
+  loader,
+  notificationManager,
+  telemetry,
+  ui
+})
+
+const unsubscribe = store.subscribe(() => {
+  const { sideEffects } = store.getState()
+  if (typeof (sideEffects) === 'function') {
+    sideEffects(context)
+  }
+})
 
 let webapp = new WebApp({
   baseUrl: startEnv.baseUrl,
@@ -37,56 +55,36 @@ let webapp = new WebApp({
   hub
 })
 
-hub.connect(ui.panel.port)
-notificationManager.schedule(store)
-feedbackManager.start()
-
-sideEffects.context = { env, notificationManager, tabs, ui }
-
 exports.main = function (options) {
-  switch (options.loadReason) {
-    case 'install':
-      store.dispatch(actions.selfInstalled(startEnv.baseUrl + '/onboarding'))
-      break
-    case 'enable':
-      store.dispatch(actions.selfEnabled())
-      break
-  }
+  installManager.selfLoaded(options.loadReason)
+  hub.connect(ui.panel.port)
+  notificationManager.schedule()
+  feedbackManager.schedule()
 }
 
-// TODO: write to storage after every change or just onUnload?
-// const unsubscribe = store.subscribe(() => storage.root = store.getState())
-
 exports.onUnload = function (reason) {
-  switch (reason) {
-    case 'disable':
-      store.dispatch(actions.selfDisabled())
-      break
-    case 'uninstall':
-      store.dispatch(actions.selfUninstalled())
-      break
-  }
+  installManager.selfUnloaded(reason)
   storage.root = store.getState()
-  experimentMetrics.destroy()
-  addons.destroy()
-  webapp.destroy()
-  metrics.destroy()
-  // unsubscribe()
+  addons.teardown()
+  experimentMetrics.teardown()
+  telemetry.teardown()
+  webapp.teardown()
+  unsubscribe()
 }
 
 env.on('change', newEnv => {
-  webapp.destroy()
+  webapp.teardown()
   webapp = new WebApp({
     baseUrl: newEnv.baseUrl,
     whitelist: newEnv.whitelist,
     addonVersion: self.version,
-    hub: hub
+    hub
   })
-  store.dispatch(actions.loadExperiments(newEnv.name, newEnv.baseUrl))
+  loader.loadExperiments(newEnv.name, newEnv.baseUrl)
 })
 
 // Need to wait a tick for the ui port to "connect"
 ui.once('connected', () => {
   const baseUrl = startEnv.name === 'any' ? store.getState().baseUrl : startEnv.baseUrl
-  store.dispatch(actions.loadExperiments(startEnv.name, baseUrl))
+  loader.loadExperiments(startEnv.name, baseUrl)
 })

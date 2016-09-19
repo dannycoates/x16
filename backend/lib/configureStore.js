@@ -5,20 +5,19 @@
  */
 
 const redux = require('redux/dist/redux.min')
-const thunkMiddleware = require('redux-thunk/dist/redux-thunk.min').default
 const reducers = require('./reducers')
 const { storage } = require('sdk/simple-storage')
 const initialState = Object.assign({}, storage.root)
 
-module.exports = function configureStore ({hub, metrics, sideEffects}) {
+module.exports = function configureStore ({hub, startEnv}) {
+  if (!initialState.baseUrl) {
+    initialState.baseUrl = startEnv.baseUrl
+  }
   return redux.createStore(
     reducers,
     initialState,
     redux.applyMiddleware(
-      thunkMiddleware,
-      hub.middleware(),
-      metrics.middleware(),
-      sideEffects.middleware()
+      hub.middleware()
     )
   )
 }
