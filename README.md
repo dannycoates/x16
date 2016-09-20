@@ -30,26 +30,28 @@ An experiment in addon design using React/Redux.
 
 ## Design Notes
 
-Both the backend and frontend use Redux to manage app state and each have their own copy. In the future the webapp portion (testpilot.firefox.com) would also use Redux. In the meantime  `/backend/lib/webadapter.js` does a 2-way conversion. The `/backend/lib/hub.js` code handles the action routing between ends.
+Both the backend and frontend use [Redux](http://redux.js.org) to manage app state and each have their own copy. In the future the webapp portion (testpilot.firefox.com) would also use Redux. In the meantime  `/backend/lib/webadapter.js` does a 2-way conversion. The `/backend/lib/hub.js` code handles the action routing between ends.
 
-Actions get dispatched on both sides and each side has reducers to update their state. Doing it this way is up for question. Another option is to only dispatch on the backend and have the frontend subscribe to the store to receive state updates. There are tradeoffs with both approaches.
+All [actions](http://redux.js.org/docs/basics/Actions.html) are [dispatched](http://redux.js.org/docs/basics/Store.html#dispatching-actions) and [reduced](http://redux.js.org/docs/basics/Reducers.html) by the backend in the same way regardless of the source, backend, frontend, or web. This allows reducers to handle actions from different sources without any special consideration.
 
-One quirk of using the broadcast action approach is that an actions from the frontends (web or panel) are more like RPC calls to the backend than actions that can just get reduced. Its too early for me to tell if that's bad or not... We could always change it to explicit RPC and have the same effect.
+Side effects are handled in a similar way to the [Elm Architecture Effects Model](https://guide.elm-lang.org/architecture/effects/). Actions that trigger side effects do so by returning a function from the `sideEffects` reducer. That function gets executed by a store subscriber after the dispatch has completed, keeping the reducers pure. You'll notice that the default return value of the reducer is `null` which prevents the previous side effect from running again.
 
 Frontend is mostly a vanilla React/Redux app with the exception of the connection to the backend. Conceptually it could run just as easily on the web, which might make testing and debugging it easier.
 
 ### Files of note
 
-- `/backend/lib/webapp.js`
+- `/backend/lib/WebApp.js`
   - Contains the code for communicating with the web page.
   - Connects workers to the hub
-- `/backend/lib/webadapter.js`
+- `/backend/lib/middleware/webadapter.js`
   - converts between Redux actions and the web page's messages
   - this would go away if the page used actions like frontend
-- `/backend/lib/ui.js`
+- `/backend/lib/MainUI.js`
   - contains the addon button and panel elements
   - gets connected to the hub
-- `/backend/lib/hub.js`
+- `/backend/lib/middleware/Hub.js`
   - manages communication between backend, frontend, and webend
+- `/backend/lib/reducers/sideEffects.js`
+  - actions trigger side effects here
 - `/frontend/lib/backend.js`
   - communicates with the backend
