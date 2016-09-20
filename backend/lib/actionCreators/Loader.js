@@ -60,7 +60,7 @@ function fetchExperiments (baseUrl, path) {
 }
 
 function mergeAddonState (experiments, addons) {
-  Object.keys(experiments).forEach(k => { experiments[k].active = false })
+  Object.values(experiments).forEach(x => { x.active = false })
   for (let addon of addons) {
     const x = experiments[addon.id]
     if (x) {
@@ -119,7 +119,7 @@ const Loader = Class({
           }
         }
 
-        for (let x of Object.keys(xs).map(n => xs[n])) {
+        for (let x of Object.values(xs)) {
           if (x.active) { WebExtensionChannels.add(x.addon_id) }
           dispatch(actions.maybeNotify(x))
         }

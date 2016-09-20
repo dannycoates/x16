@@ -6,11 +6,11 @@
 
 import actionTypes from '../../../common/actionTypes'
 
-export function showExperiment (href) {
+export function showExperiment (url) {
   return {
     type: actionTypes.SHOW_EXPERIMENT,
     payload: {
-      href
+      url
     }
   }
 }

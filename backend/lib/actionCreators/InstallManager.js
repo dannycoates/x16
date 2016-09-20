@@ -34,8 +34,8 @@ const InstallManager = Class({
   uninstallAll: function () {
     const { getState } = this.store
     const active = activeExperiments(getState())
-    for (let key of Object.keys(active)) {
-      this.uninstallExperiment(active[key])
+    for (let x of Object.values(active)) {
+      this.uninstallExperiment(x)
     }
   },
   uninstallSelf: function () {

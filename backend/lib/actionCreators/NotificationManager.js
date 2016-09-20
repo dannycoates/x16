@@ -20,8 +20,8 @@ const NotificationManager = Class({
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       const { experiments } = getState()
-      for (let name of Object.keys(experiments)) {
-        this.maybeNotify(experiments[name])
+      for (let x of Object.values(experiments)) {
+        this.maybeNotify(x)
       }
     },
     nextCheck - Date.now())

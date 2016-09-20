@@ -164,7 +164,7 @@ module.exports = {
     }
   },
 
-  selfUninstalled (experiments) {
+  selfUninstalled () {
     return {
       type: actionTypes.SELF_UNINSTALLED
     }

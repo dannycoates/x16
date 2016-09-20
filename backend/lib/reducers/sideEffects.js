@@ -26,7 +26,7 @@ module.exports = function sideEffects (state = null, { payload, type }) {
       }
 
     case actionTypes.SHOW_EXPERIMENT:
-      return ({ui}) => ui.openTab(payload.href)
+      return ({ui}) => ui.openTab(payload.url)
 
     case actionTypes.EXPERIMENTS_LOADED:
       return ({loader}) => loader.schedule()
