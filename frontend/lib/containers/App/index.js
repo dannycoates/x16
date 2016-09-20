@@ -6,7 +6,7 @@
 
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import { showExperiment } from '../../actions'
+import { SHOW_EXPERIMENT } from '../../../../common/actions'
 import ExperimentList from '../../components/ExperimentList'
 
 import './App.css'
@@ -24,12 +24,12 @@ class App extends Component {
       <div>
         <ExperimentList
           experiments={experiments}
-          onExperimentClick={href => dispatch(showExperiment(href))}
+          onExperimentClick={url => dispatch(SHOW_EXPERIMENT({url}))}
         />
         <a className='view-all' href={baseUrl} onClick={e => {
           e.preventDefault()
           e.stopPropagation()
-          dispatch(showExperiment(baseUrl))
+          dispatch(SHOW_EXPERIMENT({url: baseUrl}))
         }}>View all experiments</a>
       </div>
     )

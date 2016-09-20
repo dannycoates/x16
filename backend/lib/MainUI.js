@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('./actions')
+const actions = require('../../common/actions')
 const { Class } = require('sdk/core/heritage')
 const { emit, setListeners } = require('sdk/event/core')
 const { EventTarget } = require('sdk/event/target')
@@ -42,7 +42,7 @@ const MainUI = Class({
             width: this.panelWidth,
             height: this.store.getState().ui.panelHeight
           })
-          store.dispatch(actions.mainButtonClicked())
+          store.dispatch(actions.MAIN_BUTTON_CLICKED({ time: Date.now() }))
         }
       }
     })

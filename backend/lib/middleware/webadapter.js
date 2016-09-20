@@ -4,67 +4,38 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../../../common/actionTypes')
+const actions = require('../../../common/actions')
 
 function webToAction ({type, data}) {
+  const meta = { src: 'web' }
   switch (type) {
     case 'install-experiment':
-      return {
-        type: actionTypes.INSTALL_EXPERIMENT,
-        meta: {
-          src: 'web'
-        },
-        payload: {
-          experiment: data
-        }
-      }
+      return actions.INSTALL_EXPERIMENT({experiment: data}, meta)
+
     case 'uninstall-experiment':
-      return {
-        type: actionTypes.UNINSTALL_EXPERIMENT,
-        meta: {
-          src: 'web'
-        },
-        payload: {
-          experiment: data
-        }
-      }
+      return actions.UNINSTALL_EXPERIMENT({experiment: data}, meta)
+
     case 'uninstall-self':
-      return {
-        type: actionTypes.UNINSTALL_SELF,
-        meta: {
-          src: 'web'
-        }
-      }
+      return actions.UNINSTALL_SELF({}, meta)
+
     case 'sync-installed':
-      return {
-        type: actionTypes.GET_INSTALLED,
-        meta: {
-          src: 'web'
-        }
-      }
+      return actions.GET_INSTALLED({}, meta)
+
     case 'base-url':
-      return {
-        type: actionTypes.SET_BASE_URL,
-        meta: {
-          src: 'web'
-        },
-        payload: {
-          url: data
-        }
-      }
+      return actions.SET_BASE_URL({url: data}, meta)
   }
 }
 
 function actionToWeb ({ payload, type }) {
   switch (type) {
-    case actionTypes.INSTALL_ENDED:
+    case actions.INSTALL_ENDED.type:
       return {
         type: 'addon-install:install-ended',
         data: {
           id: payload.experiment.addon_id
         }
       }
-    case actionTypes.EXPERIMENT_UNINSTALLED:
+    case actions.EXPERIMENT_UNINSTALLED.type:
       return {
         type: 'addon-uninstall:uninstall-ended',
         data: {
@@ -73,7 +44,7 @@ function actionToWeb ({ payload, type }) {
           version: payload.experiment.version
         }
       }
-    case actionTypes.SYNC_INSTALLED:
+    case actions.SYNC_INSTALLED.type:
       return {
         type: 'sync-installed-result',
         data: {
@@ -81,7 +52,7 @@ function actionToWeb ({ payload, type }) {
           installed: payload.installed
         }
       }
-    case actionTypes.EXPERIMENT_ENABLED:
+    case actions.EXPERIMENT_ENABLED.type:
       return {
         type: 'addon-manage:enabled',
         data: {
@@ -90,7 +61,7 @@ function actionToWeb ({ payload, type }) {
           version: payload.experiment.version
         }
       }
-    case actionTypes.EXPERIMENT_DISABLED:
+    case actions.EXPERIMENT_DISABLED.type:
       return {
         type: 'addon-manage:disabled',
         data: {

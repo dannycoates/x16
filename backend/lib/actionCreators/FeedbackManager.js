@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../actions')
+const actions = require('../../../common/actions')
 const { activeExperiments, randomActiveExperiment } = require('../reducers/experiments')
 const { Class } = require('sdk/core/heritage')
 const { experimentRating } = require('../reducers/ratings')
@@ -47,12 +47,12 @@ const FeedbackManager = Class({
     if (Date.now() - state.ratings.lastRated < this.dnd) {
       return
     }
-    const x = randomActiveExperiment(state)
-    if (!x) { return }
-    const rating = experimentRating(state, x.addon_id)
-    const interval = getInterval(x.installDate)
+    const experiment = randomActiveExperiment(state)
+    if (!experiment) { return }
+    const rating = experimentRating(state, experiment.addon_id)
+    const interval = getInterval(experiment.installDate)
     if (interval > 0 && !rating[interval]) {
-      this.dispatch(actions.showRating(interval, x))
+      this.dispatch(actions.SHOW_RATING_PROMPT({interval, experiment}))
     }
   },
   prompt: function ({interval, experiment}) {
@@ -60,7 +60,7 @@ const FeedbackManager = Class({
       .then(
         rating => {
           if (!rating) { return Promise.resolve() }
-          this.dispatch(actions.setRating(experiment, rating))
+          this.dispatch(actions.SET_RATING({experiment, rating, time: Date.now()}))
           return feedbackUI.showSurveyButton({ experiment })
             .then((clicked) => {
               if (clicked) {

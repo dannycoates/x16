@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../common/actionTypes')
+const actions = require('../common/actions')
 const reducers = require('../backend/lib/reducers')
 const redux = require('redux/dist/redux.min')
 
@@ -54,7 +54,7 @@ exports['test EXPERIMENTS_LOADED'] = (assert) => {
     }
   })
   const action = {
-    type: actionTypes.EXPERIMENTS_LOADED,
+    type: actions.EXPERIMENTS_LOADED.type,
     payload: {
       env: 'test',
       baseUrl: 'testpilot.dev:8000',
@@ -76,7 +76,7 @@ exports['test INSTALL_ENDED'] = (assert) => {
     }
   })
   const action = {
-    type: actionTypes.INSTALL_ENDED,
+    type: actions.INSTALL_ENDED.type,
     payload: {
       experiment: Object.assign({}, X, { installDate })
     }
@@ -96,9 +96,9 @@ exports['test EXPERIMENTS_LOAD_ERROR'] = (assert) => {
     ui: { panelHeight: 53 }
   })
   const action = {
-    type: actionTypes.EXPERIMENTS_LOAD_ERROR,
+    type: actions.EXPERIMENTS_LOAD_ERROR.type,
     payload: {
-      res: {}
+      err: {}
     }
   }
   testAction(assert, action, initialState, expectedState)
@@ -116,7 +116,7 @@ exports['test EXPERIMENT_ENABLED'] = (assert) => {
     }
   })
   const action = {
-    type: actionTypes.EXPERIMENT_ENABLED,
+    type: actions.EXPERIMENT_ENABLED.type,
     payload: {
       experiment: Object.assign({}, X, { installDate })
     }
@@ -134,7 +134,7 @@ exports['test EXPERIMENT_DISABLED'] = (assert) => {
     }
   })
   const action = {
-    type: actionTypes.EXPERIMENT_DISABLED,
+    type: actions.EXPERIMENT_DISABLED.type,
     payload: {
       experiment: X
     }
@@ -152,7 +152,7 @@ exports['test EXPERIMENT_UNINSTALLING'] = (assert) => {
     }
   })
   const action = {
-    type: actionTypes.EXPERIMENT_UNINSTALLING,
+    type: actions.EXPERIMENT_UNINSTALLING.type,
     payload: {
       experiment: X
     }
@@ -166,7 +166,7 @@ exports['test SET_BADGE'] = (assert) => {
     ui: Object.assign({}, DEFAULT_STATE.ui, { badge: 'Hey' })
   })
   const action = {
-    type: actionTypes.SET_BADGE,
+    type: actions.SET_BADGE.type,
     payload: {
       text: 'Hey'
     }
@@ -180,7 +180,7 @@ exports['test MAIN_BUTTON_CLICKED'] = (assert) => {
     ui: Object.assign({}, DEFAULT_STATE.ui, { badge: null, clicked: 1 })
   })
   const action = {
-    type: actionTypes.MAIN_BUTTON_CLICKED,
+    type: actions.MAIN_BUTTON_CLICKED.type,
     payload: {
       time: 1
     }
@@ -198,7 +198,7 @@ exports['test SCHEDULE_NOTIFIER'] = (assert) => {
     }
   })
   const action = {
-    type: actionTypes.SCHEDULE_NOTIFIER,
+    type: actions.SCHEDULE_NOTIFIER.type,
     payload: {
       lastNotified: now,
       nextCheck: now + 1
@@ -219,7 +219,7 @@ exports['test SET_RATING'] = (assert) => {
     }
   })
   const action = {
-    type: actionTypes.SET_RATING,
+    type: actions.SET_RATING.type,
     payload: {
       time: now,
       rating: 5,
@@ -239,7 +239,7 @@ exports['test SHOW_RATING_PROMPT'] = (assert) => {
     }
   })
   const action = {
-    type: actionTypes.SHOW_RATING_PROMPT,
+    type: actions.SHOW_RATING_PROMPT.type,
     payload: {
       interval: 2,
       experiment: X
@@ -252,7 +252,7 @@ exports['test SHOW_EXPERIMENT'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = initialState
   const action = {
-    type: actionTypes.SHOW_EXPERIMENT,
+    type: actions.SHOW_EXPERIMENT.type,
     payload: {}
   }
 
@@ -263,7 +263,7 @@ exports['test INSTALL_EXPERIMENT'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = initialState
   const action = {
-    type: actionTypes.INSTALL_EXPERIMENT,
+    type: actions.INSTALL_EXPERIMENT.type,
     payload: {}
   }
 
@@ -274,7 +274,7 @@ exports['test UNINSTALL_EXPERIMENT'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = initialState
   const action = {
-    type: actionTypes.UNINSTALL_EXPERIMENT,
+    type: actions.UNINSTALL_EXPERIMENT.type,
     payload: {}
   }
 
@@ -285,7 +285,7 @@ exports['test UNINSTALL_SELF'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = initialState
   const action = {
-    type: actionTypes.UNINSTALL_SELF,
+    type: actions.UNINSTALL_SELF.type,
     payload: {}
   }
 
@@ -296,7 +296,7 @@ exports['test SELF_INSTALLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = initialState
   const action = {
-    type: actionTypes.SELF_INSTALLED,
+    type: actions.SELF_INSTALLED.type,
     payload: {}
   }
 
@@ -307,7 +307,7 @@ exports['test SET_BASE_URL'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = initialState
   const action = {
-    type: actionTypes.SET_BASE_URL,
+    type: actions.SET_BASE_URL.type,
     payload: {}
   }
 
@@ -318,7 +318,7 @@ exports['test GET_INSTALLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const expectedState = initialState
   const action = {
-    type: actionTypes.GET_INSTALLED,
+    type: actions.GET_INSTALLED.type,
     payload: {}
   }
 
@@ -328,7 +328,7 @@ exports['test GET_INSTALLED'] = (assert) => {
 exports['test SELF_UNINSTALLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.SELF_UNINSTALLED,
+    type: actions.SELF_UNINSTALLED.type,
     payload: {
       install: {}
     }
@@ -340,7 +340,7 @@ exports['test SELF_UNINSTALLED'] = (assert) => {
 exports['test INSTALL_FAILED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.INSTALL_FAILED,
+    type: actions.INSTALL_FAILED.type,
     payload: {
       install: {}
     }
@@ -352,7 +352,7 @@ exports['test INSTALL_FAILED'] = (assert) => {
 exports['test INSTALL_STARTED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.INSTALL_STARTED,
+    type: actions.INSTALL_STARTED.type,
     payload: {
       install: {}
     }
@@ -364,7 +364,7 @@ exports['test INSTALL_STARTED'] = (assert) => {
 exports['test INSTALL_CANCELLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.INSTALL_CANCELLED,
+    type: actions.INSTALL_CANCELLED.type,
     payload: {
       install: {}
     }
@@ -376,7 +376,7 @@ exports['test INSTALL_CANCELLED'] = (assert) => {
 exports['test DOWNLOAD_STARTED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.DOWNLOAD_STARTED,
+    type: actions.DOWNLOAD_STARTED.type,
     payload: {
       install: {}
     }
@@ -388,7 +388,7 @@ exports['test DOWNLOAD_STARTED'] = (assert) => {
 exports['test DOWNLOAD_PROGRESS'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.DOWNLOAD_PROGRESS,
+    type: actions.DOWNLOAD_PROGRESS.type,
     payload: {
       install: {}
     }
@@ -400,7 +400,7 @@ exports['test DOWNLOAD_PROGRESS'] = (assert) => {
 exports['test DOWNLOAD_ENDED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.DOWNLOAD_ENDED,
+    type: actions.DOWNLOAD_ENDED.type,
     payload: {
       install: {}
     }
@@ -412,7 +412,7 @@ exports['test DOWNLOAD_ENDED'] = (assert) => {
 exports['test DOWNLOAD_CANCELLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.DOWNLOAD_CANCELLED,
+    type: actions.DOWNLOAD_CANCELLED.type,
     payload: {
       install: {}
     }
@@ -424,7 +424,7 @@ exports['test DOWNLOAD_CANCELLED'] = (assert) => {
 exports['test DOWNLOAD_FAILED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.DOWNLOAD_FAILED,
+    type: actions.DOWNLOAD_FAILED.type,
     payload: {
       install: {}
     }
@@ -436,7 +436,7 @@ exports['test DOWNLOAD_FAILED'] = (assert) => {
 exports['test LOAD_EXPERIMENTS'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.LOAD_EXPERIMENTS,
+    type: actions.LOAD_EXPERIMENTS.type,
     payload: {
       install: {}
     }
@@ -448,7 +448,7 @@ exports['test LOAD_EXPERIMENTS'] = (assert) => {
 exports['test INSTALL_STARTED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.INSTALL_STARTED,
+    type: actions.INSTALL_STARTED.type,
     payload: {
       install: {}
     }
@@ -460,7 +460,7 @@ exports['test INSTALL_STARTED'] = (assert) => {
 exports['test LOADING_EXPERIMENTS'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.LOADING_EXPERIMENTS,
+    type: actions.LOADING_EXPERIMENTS.type,
     payload: {
       install: {}
     }
@@ -472,7 +472,7 @@ exports['test LOADING_EXPERIMENTS'] = (assert) => {
 exports['test EXPERIMENT_UNINSTALLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.EXPERIMENT_UNINSTALLED,
+    type: actions.EXPERIMENT_UNINSTALLED.type,
     payload: {
       experiment: {}
     }
@@ -484,7 +484,7 @@ exports['test EXPERIMENT_UNINSTALLED'] = (assert) => {
 exports['test SELF_ENABLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.SELF_ENABLED,
+    type: actions.SELF_ENABLED.type,
     payload: {}
   }
   // Not implemented, no change expected
@@ -494,7 +494,7 @@ exports['test SELF_ENABLED'] = (assert) => {
 exports['test SELF_DISABLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.SELF_DISABLED,
+    type: actions.SELF_DISABLED.type,
     payload: {}
   }
   // Not implemented, no change expected
@@ -504,7 +504,7 @@ exports['test SELF_DISABLED'] = (assert) => {
 exports['test SYNC_INSTALLED'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
-    type: actionTypes.SYNC_INSTALLED,
+    type: actions.SYNC_INSTALLED.type,
     payload: {}
   }
   // Not implemented, no change expected

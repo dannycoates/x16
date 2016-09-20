@@ -4,26 +4,26 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../../../common/actionTypes')
+const actions = require('../../../common/actions')
 const pickBy = require('lodash/pickBy')
 
 function reducer (experiments = null, { payload, type }) {
   let x, n
   switch (type) {
-    case actionTypes.EXPERIMENTS_LOAD_ERROR:
+    case actions.EXPERIMENTS_LOAD_ERROR.type:
       return {}
 
-    case actionTypes.EXPERIMENTS_LOADED:
+    case actions.EXPERIMENTS_LOADED.type:
       return Object.assign({}, payload.experiments)
 
-    case actionTypes.EXPERIMENT_ENABLED:
-    case actionTypes.INSTALL_ENDED:
+    case actions.EXPERIMENT_ENABLED.type:
+    case actions.INSTALL_ENDED.type:
       x = experiments[payload.experiment.addon_id]
       n = Object.assign({}, x, { active: true, installDate: payload.experiment.installDate })
       return Object.assign({}, experiments, { [n.addon_id]: n })
 
-    case actionTypes.EXPERIMENT_DISABLED:
-    case actionTypes.EXPERIMENT_UNINSTALLING:
+    case actions.EXPERIMENT_DISABLED.type:
+    case actions.EXPERIMENT_UNINSTALLING.type:
       x = experiments[payload.experiment.addon_id]
       n = Object.assign({}, x, { active: false })
       return Object.assign({}, experiments, { [n.addon_id]: n })

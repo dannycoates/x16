@@ -10,13 +10,13 @@ const MockUtils = require('./lib/mock-utils')
 const mocks = MockUtils.callbacks({
   store: ['dispatch', 'getState'],
   timers: ['setTimeout', 'clearTimeout'],
-  actions: ['maybeNotify', 'scheduleNotifier'],
+  actions: ['MAYBE_NOTIFY', 'SCHEDULE_NOTIFIER'],
   notificationUI: ['maybeNotify']
 })
 
 const mockLoader = MockUtils.loader(module, './backend/lib/actionCreators/NotificationManager.js', {
   'sdk/timers': mocks.timers,
-  './backend/lib/actions.js': mocks.actions,
+  './common/actions.js': mocks.actions,
   './backend/lib/notificationUI.js': mocks.notificationUI
 })
 
@@ -39,11 +39,11 @@ exports['test schedule'] = (assert) => {
   nm.schedule(mocks.store)
 
   const setTimeout = mocks.timers.setTimeout.calls()
-  const scheduleNotifier = mocks.actions.scheduleNotifier.calls()
+  const SCHEDULE_NOTIFIER = mocks.actions.SCHEDULE_NOTIFIER.calls()
   const dispatch = mocks.store.dispatch.calls()
   assert.equal(setTimeout.length, 1, 'timer created')
   assert.ok(setTimeout[0][1] < 1000, 'timer is set ok')
-  assert.equal(scheduleNotifier.length, 2, 'actions created')
+  assert.equal(SCHEDULE_NOTIFIER.length, 2, 'actions created')
   assert.equal(dispatch.length, 2, 'actions dispatched')
 }
 

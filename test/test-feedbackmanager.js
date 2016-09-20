@@ -15,13 +15,13 @@ const mocks = MockUtils.callbacks({
   timers: ['setTimeout', 'clearTimeout'],
   experiments: ['randomActiveExperiment'],
   ratings: ['experimentRating'],
-  actions: ['showRating']
+  actions: ['SHOW_RATING_PROMPT']
 })
 
 const mockLoader = MockUtils.loader(module, './backend/lib/actionCreators/FeedbackManager.js', {
   'sdk/timers': mocks.timers,
   './backend/lib/reducers/experiments.js': mocks.experiments,
-  './backend/lib/actions.js': mocks.actions,
+  './common/actions.js': mocks.actions,
   './backend/lib/reducers/ratings.js': mocks.ratings
 })
 
@@ -71,11 +71,11 @@ exports['test open interval'] = (assert) => {
   mocks.experiments.randomActiveExperiment.implement(() => x)
   mocks.ratings.experimentRating.implement(() => { return {} })
   fm.check()
-  const showRating = mocks.actions.showRating.calls()
+  const SHOW_RATING_PROMPT = mocks.actions.SHOW_RATING_PROMPT.calls()
   const dispatch = mocks.store.dispatch.calls()
-  assert.equal(showRating.length, 1, 'action was created')
-  assert.equal(showRating[0][0], 2, 'interval is correct')
-  assert.equal(showRating[0][1], x, 'experiment was passed')
+  assert.equal(SHOW_RATING_PROMPT.length, 1, 'action was created')
+  assert.equal(SHOW_RATING_PROMPT[0][0].interval, 2, 'interval is correct')
+  assert.equal(SHOW_RATING_PROMPT[0][0].experiment, x, 'experiment was passed')
   assert.equal(dispatch.length, 1, 'action was dispatched')
 }
 
@@ -87,9 +87,9 @@ exports['test completed interval does not dispatch'] = (assert) => {
   mocks.experiments.randomActiveExperiment.implement(() => x)
   mocks.ratings.experimentRating.implement(() => { return { '2': true } })
   fm.check()
-  const showRating = mocks.actions.showRating.calls()
+  const SHOW_RATING_PROMPT = mocks.actions.SHOW_RATING_PROMPT.calls()
   const dispatch = mocks.store.dispatch.calls()
-  assert.equal(showRating.length, 0, 'action was not created')
+  assert.equal(SHOW_RATING_PROMPT.length, 0, 'action was not created')
   assert.equal(dispatch.length, 0, 'action was not dispatched')
 }
 

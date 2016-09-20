@@ -4,14 +4,14 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../../../common/actionTypes')
+const actions = require('../../../common/actions')
 
 const tomorrow = Date.now() + (24 * 60 * 60 * 1000)
 function reducer (
   state = { lastNotified: tomorrow, nextCheck: tomorrow },
   { payload, type }) {
   switch (type) {
-    case actionTypes.SCHEDULE_NOTIFIER:
+    case actions.SCHEDULE_NOTIFIER.type:
       return Object.assign({}, state, {
         lastNotified: payload.lastNotified,
         nextCheck: payload.nextCheck

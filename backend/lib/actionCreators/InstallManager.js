@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../actions')
+const actions = require('../../../common/actions')
 const { activeExperiments } = require('../reducers/experiments')
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
 const { Class } = require('sdk/core/heritage')
@@ -45,22 +45,22 @@ const InstallManager = Class({
     const { dispatch, getState } = this.store
     if (reason === 'install') {
       const { baseUrl } = getState()
-      dispatch(actions.selfInstalled(baseUrl + '/onboarding'))
+      dispatch(actions.SELF_INSTALLED({url: baseUrl + '/onboarding'}))
     } else if (reason === 'enable') {
-      dispatch(actions.selfEnabled())
+      dispatch(actions.SELF_ENABLED())
     }
   },
   selfUnloaded: function (reason) {
     const { dispatch } = this.store
     if (reason === 'disable') {
-      dispatch(actions.selfDisabled())
+      dispatch(actions.SELF_DISABLED())
     } else if (reason === 'uninstall') {
-      dispatch(actions.selfUninstalled())
+      dispatch(actions.SELF_UNINSTALLED())
     }
   },
   syncInstalled: function () {
     const { dispatch, getState } = this.store
-    dispatch(actions.syncInstalled({
+    dispatch(actions.SYNC_INSTALLED({
       clientUUID: getState().clientUUID,
       installed: activeExperiments(getState())
     }))

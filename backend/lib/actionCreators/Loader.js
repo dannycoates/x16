@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../actions')
+const actions = require('../../../common/actions')
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
 const { Class } = require('sdk/core/heritage')
 const { Request } = require('sdk/request')
@@ -113,22 +113,22 @@ const Loader = Class({
         } = getState()
 
         const newExperiments = diffExperimentList(experiments, xs)
-        for (let x of newExperiments) {
-          if ((new Date(x.created)).getTime() > clicked) {
-            dispatch(actions.setBadge('New'))
+        for (let experiment of newExperiments) {
+          if ((new Date(experiment.created)).getTime() > clicked) {
+            dispatch(actions.SET_BADGE({ text: 'New' }))
           }
         }
 
-        for (let x of Object.values(xs)) {
-          if (x.active) { WebExtensionChannels.add(x.addon_id) }
-          dispatch(actions.maybeNotify(x))
+        for (let experiment of Object.values(xs)) {
+          if (experiment.active) { WebExtensionChannels.add(experiment.addon_id) }
+          dispatch(actions.MAYBE_NOTIFY({experiment}))
         }
         return xs
       }
     )
     .then(
-      xs => dispatch(actions.experimentsLoaded(env, baseUrl, xs)),
-      err => dispatch(actions.experimentsLoadError(err))
+      experiments => dispatch(actions.EXPERIMENTS_LOADED({env, baseUrl, experiments})),
+      err => dispatch(actions.EXPERIMENTS_LOAD_ERROR({err}))
     )
   }
 })

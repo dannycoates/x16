@@ -4,17 +4,17 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../../../common/actionTypes')
+const actions = require('../../../common/actions')
 
 function reducer (state = {}, { payload, type }) {
   let id, rating
   switch (type) {
-    case actionTypes.SHOW_RATING_PROMPT:
+    case actions.SHOW_RATING_PROMPT.type:
       id = payload.experiment.addon_id
       rating = Object.assign({}, state[id], {[payload.interval]: true})
       return Object.assign({}, state, { [id]: rating })
 
-    case actionTypes.SET_RATING:
+    case actions.SET_RATING.type:
       id = payload.experiment.addon_id
       rating = Object.assign({}, state[id], { rating: payload.rating })
       return Object.assign({}, state, {

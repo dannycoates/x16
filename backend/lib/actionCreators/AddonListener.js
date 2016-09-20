@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../actions')
+const actions = require('../../../common/actions')
 const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
 const { Class } = require('sdk/core/heritage')
 
@@ -20,34 +20,34 @@ const AddonListener = Class({
     AddonManager.addAddonListener(this)
   },
   onEnabled: function (addon) {
-    const x = this.getExperiment(addon)
-    if (x) {
-      this.dispatch(actions.experimentEnabled(x))
+    const experiment = this.getExperiment(addon)
+    if (experiment) {
+      this.dispatch(actions.EXPERIMENT_ENABLED({experiment}))
     }
   },
   onDisabled: function (addon) {
-    const x = this.getExperiment(addon)
-    if (x) {
-      this.dispatch(actions.experimentDisabled(x))
+    const experiment = this.getExperiment(addon)
+    if (experiment) {
+      this.dispatch(actions.EXPERIMENT_DISABLED({experiment}))
     }
   },
   onUninstalling: function (addon) {
-    const x = this.getExperiment(addon)
-    if (x) {
-      this.dispatch(actions.experimentUninstalling(x))
+    const experiment = this.getExperiment(addon)
+    if (experiment) {
+      this.dispatch(actions.EXPERIMENT_UNINSTALLING({experiment}))
     }
   },
   onUninstalled: function (addon) {
-    const x = this.getExperiment(addon)
-    if (x) {
-      this.dispatch(actions.experimentUninstalled(x))
+    const experiment = this.getExperiment(addon)
+    if (experiment) {
+      this.dispatch(actions.EXPERIMENT_UNINSTALLED({experiment}))
     }
   },
   onOperationCancelled: function (addon) {
-    const x = this.getExperiment(addon)
-    if (x) {
+    const experiment = this.getExperiment(addon)
+    if (experiment) {
       if (addon.pendingOperations & AddonManager.PENDING_ENABLE) {
-        this.dispatch(actions.experimentEnabled(x))
+        this.dispatch(actions.EXPERIMENT_ENABLED({experiment}))
       }
     }
   },

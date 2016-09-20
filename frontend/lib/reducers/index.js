@@ -5,25 +5,25 @@
  */
 
 import { combineReducers } from 'redux'
-import actionTypes from '../../../common/actionTypes'
+import actions from '../../../common/actions'
 
 function experiments (experiments = {}, { payload, type }) {
   let x, n
   switch (type) {
-    case actionTypes.EXPERIMENTS_LOAD_ERROR:
+    case actions.EXPERIMENTS_LOAD_ERROR.type:
       return {}
 
-    case actionTypes.EXPERIMENTS_LOADED:
+    case actions.EXPERIMENTS_LOADED.type:
       return Object.assign({}, payload.experiments)
 
-    case actionTypes.EXPERIMENT_ENABLED:
-    case actionTypes.INSTALL_ENDED:
+    case actions.EXPERIMENT_ENABLED.type:
+    case actions.INSTALL_ENDED.type:
       x = experiments[payload.experiment.addon_id]
       n = { ...x, active: true }
       return { ...experiments, [n.addon_id]: n }
 
-    case actionTypes.EXPERIMENT_DISABLED:
-    case actionTypes.EXPERIMENT_UNINSTALLING:
+    case actions.EXPERIMENT_DISABLED.type:
+    case actions.EXPERIMENT_UNINSTALLING.type:
       x = experiments[payload.experiment.addon_id]
       n = { ...x, active: false }
       return { ...experiments, [n.addon_id]: n }
@@ -35,7 +35,7 @@ function experiments (experiments = {}, { payload, type }) {
 
 function env (env = null, { payload, type }) {
   switch (type) {
-    case actionTypes.EXPERIMENTS_LOADED:
+    case actions.EXPERIMENTS_LOADED.type:
       return payload.env
   }
   return env
@@ -43,7 +43,7 @@ function env (env = null, { payload, type }) {
 
 function baseUrl (state = null, { payload, type }) {
   switch (type) {
-    case actionTypes.EXPERIMENTS_LOADED:
+    case actions.EXPERIMENTS_LOADED.type:
       return payload.baseUrl
   }
   return state

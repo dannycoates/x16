@@ -6,7 +6,7 @@
 
 const { before } = require('sdk/test/utils')
 const MockUtils = require('./lib/mock-utils')
-const { SYNC_INSTALLED } = require('../common/actionTypes')
+const { SYNC_INSTALLED } = require('../common/actions')
 const Hub = require('../backend/lib/middleware/Hub')
 
 const mocks = MockUtils.callbacks({
@@ -84,7 +84,7 @@ exports['test middleware with web action'] = (assert, done) => {
   h.connect(mocks.port)
   const middleware = h.middleware()
   const anAction = {
-    type: SYNC_INSTALLED,
+    type: SYNC_INSTALLED.type,
     payload: {
       clientUUID: 'clientUUID',
       installed: []

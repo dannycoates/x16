@@ -4,11 +4,11 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../../../common/actionTypes')
+const actions = require('../../../common/actions')
 
 function reducer (state = null, { payload, type }) {
   switch (type) {
-    case actionTypes.EXPERIMENTS_LOADED:
+    case actions.EXPERIMENTS_LOADED.type:
       return payload.env
     default:
       return state

@@ -4,21 +4,21 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../../../common/actionTypes')
+const actions = require('../../../common/actions')
 
 const FOOTER_HEIGHT = 53
 function reducer (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
   switch (type) {
-    case actionTypes.SET_BADGE:
+    case actions.SET_BADGE.type:
       return Object.assign({}, state, { badge: payload.text })
 
-    case actionTypes.MAIN_BUTTON_CLICKED:
+    case actions.MAIN_BUTTON_CLICKED.type:
       return Object.assign({}, state, { badge: null, clicked: payload.time })
 
-    case actionTypes.EXPERIMENTS_LOAD_ERROR:
+    case actions.EXPERIMENTS_LOAD_ERROR.type:
       return Object.assign({}, state, { panelHeight: FOOTER_HEIGHT })
 
-    case actionTypes.EXPERIMENTS_LOADED:
+    case actions.EXPERIMENTS_LOADED.type:
       const height = (Object.keys(payload.experiments).length * 80) + FOOTER_HEIGHT
       return Object.assign({}, state, { panelHeight: height })
 

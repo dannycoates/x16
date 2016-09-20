@@ -10,14 +10,14 @@ const MockUtils = require('./lib/mock-utils')
 const mocks = MockUtils.callbacks({
   AddonManager: ['addAddonListener', 'removeAddonListener'],
   store: ['dispatch', 'getState'],
-  actions: ['experimentEnabled', 'experimentDisabled', 'experimentUninstalling', 'experimentUninstalled']
+  actions: ['EXPERIMENT_ENABLED', 'EXPERIMENT_DISABLED', 'EXPERIMENT_UNINSTALLING', 'EXPERIMENT_UNINSTALLED']
 })
 
 const mockLoader = MockUtils.loader(module, './backend/lib/actionCreators/AddonListener.js', {
   'resource://gre/modules/AddonManager.jsm': {
     AddonManager: mocks.AddonManager
   },
-  './backend/lib/actions.js': mocks.actions
+  './common/actions.js': mocks.actions
 })
 
 const AddonListener = mockLoader.require('../backend/lib/actionCreators/AddonListener')
@@ -34,10 +34,10 @@ function testListeners (assert, listener, addon) {
   const experiment = {}
   const getState = () => { return { experiments: { x: experiment } } }
   const listeners = new Map([
-    ['onEnabled', 'experimentEnabled'],
-    ['onDisabled', 'experimentDisabled'],
-    ['onUninstalling', 'experimentUninstalling'],
-    ['onUninstalled', 'experimentUninstalled']
+    ['onEnabled', 'EXPERIMENT_ENABLED'],
+    ['onDisabled', 'EXPERIMENT_DISABLED'],
+    ['onUninstalling', 'EXPERIMENT_UNINSTALLING'],
+    ['onUninstalled', 'EXPERIMENT_UNINSTALLED']
   ])
   const dispatch = mocks.store.dispatch.calls()
 
@@ -48,7 +48,7 @@ function testListeners (assert, listener, addon) {
     if (addon.id === 'x') {
       assert.equal(dispatch.length, 1, 'dispatch called')
       assert.equal(a.length, 1, `${action} called`)
-      assert.equal(a[0][0], experiment, `experiment passed to ${action}`)
+      assert.equal(a[0][0].experiment, experiment, `experiment passed to ${action}`)
     } else {
       assert.equal(dispatch.length, 0, 'dispatch not called')
       assert.equal(a.length, 0, `${action} not called`)
@@ -75,10 +75,10 @@ exports['test onOperationCancelled with pending enable'] = assert => {
   l.onOperationCancelled({ id: 'x', pendingOperations: 1 })
 
   const dispatch = mocks.store.dispatch.calls()
-  const experimentEnabled = mocks.actions.experimentEnabled.calls()
+  const EXPERIMENT_ENABLED = mocks.actions.EXPERIMENT_ENABLED.calls()
   assert.equal(dispatch.length, 1, 'dispatch called')
-  assert.equal(experimentEnabled.length, 1, 'experimentEnabled called')
-  assert.equal(experimentEnabled[0][0], experiment, 'experiment passed to experimentEnabled')
+  assert.equal(EXPERIMENT_ENABLED.length, 1, 'EXPERIMENT_ENABLED called')
+  assert.equal(EXPERIMENT_ENABLED[0][0].experiment, experiment, 'experiment passed to EXPERIMENT_ENABLED')
   delete mocks.AddonManager.PENDING_ENABLE
 }
 
@@ -92,9 +92,9 @@ exports['test onOperationCancelled without pending enable'] = assert => {
   l.onOperationCancelled({ id: 'x', pendingOperations: 0 })
 
   const dispatch = mocks.store.dispatch.calls()
-  const experimentEnabled = mocks.actions.experimentEnabled.calls()
+  const EXPERIMENT_ENABLED = mocks.actions.EXPERIMENT_ENABLED.calls()
   assert.equal(dispatch.length, 0, 'dispatch not called')
-  assert.equal(experimentEnabled.length, 0, 'experimentEnabled not called')
+  assert.equal(EXPERIMENT_ENABLED.length, 0, 'EXPERIMENT_ENABLED not called')
   delete mocks.AddonManager.PENDING_ENABLE
 }
 

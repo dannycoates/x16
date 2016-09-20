@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../actions')
+const actions = require('../../../common/actions')
 const { Class } = require('sdk/core/heritage')
 const notificationUI = require('../notificationUI')
 const { setTimeout, clearTimeout } = require('sdk/timers')
@@ -30,7 +30,7 @@ const NotificationManager = Class({
     const { dispatch, getState } = this.store
     const { lastNotified, nextCheck } = getState().notifications
     const payload = notificationUI.maybeNotify(experiment, lastNotified, nextCheck)
-    dispatch(actions.scheduleNotifier(payload.nextCheck, payload.lastNotified))
+    dispatch(actions.SCHEDULE_NOTIFIER(payload))
   }
 })
 

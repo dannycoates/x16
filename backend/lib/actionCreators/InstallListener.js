@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../actions')
+const actions = require('../../../common/actions')
 const { Class } = require('sdk/core/heritage')
 
 const InstallListener = Class({
@@ -13,34 +13,36 @@ const InstallListener = Class({
     install.addListener(this)
   },
   onInstallEnded: function (install, addon) {
-    this.dispatch(actions.installEnded({
-      addon_id: addon.id,
-      installDate: addon.installDate
+    this.dispatch(actions.INSTALL_ENDED({
+      experiment: {
+        addon_id: addon.id,
+        installDate: addon.installDate
+      }
     }))
   },
   onInstallFailed: function (install) {
-    this.dispatch(actions.installFailed(install))
+    this.dispatch(actions.INSTALL_FAILED({install}))
   },
   onInstallStarted: function (install) {
-    this.dispatch(actions.installStarted(install))
+    this.dispatch(actions.INSTALL_STARTED({install}))
   },
   onInstallCancelled: function (install) {
-    this.dispatch(actions.installCancelled(install))
+    this.dispatch(actions.INSTALL_CANCELLED({install}))
   },
   onDownloadStarted: function (install) {
-    this.dispatch(actions.downloadStarted(install))
+    this.dispatch(actions.DOWNLOAD_STARTED({install}))
   },
   onDownloadProgress: function (install) {
-    this.dispatch(actions.downloadProgress(install))
+    this.dispatch(actions.DOWNLOAD_PROGRESS({install}))
   },
   onDownloadEnded: function (install) {
-    this.dispatch(actions.downloadEnded(install))
+    this.dispatch(actions.DOWNLOAD_ENDED({install}))
   },
   onDownloadCancelled: function (install) {
-    this.dispatch(actions.downloadCancelled(install))
+    this.dispatch(actions.DOWNLOAD_CANCELLED({install}))
   },
   onDownloadFailed: function (install) {
-    this.dispatch(actions.downloadFailed(install))
+    this.dispatch(actions.DOWNLOAD_FAILED({install}))
   }
 })
 

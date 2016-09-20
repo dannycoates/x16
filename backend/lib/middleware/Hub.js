@@ -9,9 +9,8 @@ const { actionToWeb, webToAction } = require('./webadapter')
 
 const Hub = Class({
   initialize: function () {
-    this.dispatch = () => console.error('cannot use dispatch before middleware')
+    this.dispatch = () => console.error('Hub cannot use dispatch() before middleware()')
     this.ports = new Set()
-    this.context = {}
   },
   connect: function (port) {
     port.on('action', this.dispatch)

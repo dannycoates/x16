@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actionTypes = require('../common/actionTypes')
+const actions = require('../common/actions')
 const { before } = require('sdk/test/utils')
 const MockUtils = require('./lib/mock-utils')
 
@@ -27,7 +27,7 @@ const { reducer, nothing } = mockLoader.require('../backend/lib/reducers/sideEff
 
 exports['test EXPERIMENTS_LOADED'] = (assert, done) => {
   const action = {
-    type: actionTypes.EXPERIMENTS_LOADED
+    type: actions.EXPERIMENTS_LOADED.type
   }
   const loader = {
     schedule: done
@@ -38,7 +38,7 @@ exports['test EXPERIMENTS_LOADED'] = (assert, done) => {
 
 exports['test INSTALL_ENDED'] = (assert) => {
   const action = {
-    type: actionTypes.INSTALL_ENDED,
+    type: actions.INSTALL_ENDED.type,
     payload: {
       experiment: X
     }
@@ -58,7 +58,7 @@ exports['test INSTALL_ENDED'] = (assert) => {
 
 exports['test EXPERIMENTS_LOAD_ERROR'] = (assert) => {
   const action = {
-    type: actionTypes.EXPERIMENTS_LOAD_ERROR
+    type: actions.EXPERIMENTS_LOAD_ERROR.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -66,7 +66,7 @@ exports['test EXPERIMENTS_LOAD_ERROR'] = (assert) => {
 
 exports['test EXPERIMENT_ENABLED'] = (assert) => {
   const action = {
-    type: actionTypes.EXPERIMENT_ENABLED,
+    type: actions.EXPERIMENT_ENABLED.type,
     payload: {
       experiment: X
     }
@@ -86,7 +86,7 @@ exports['test EXPERIMENT_ENABLED'] = (assert) => {
 
 exports['test EXPERIMENT_DISABLED'] = (assert) => {
   const action = {
-    type: actionTypes.EXPERIMENT_DISABLED,
+    type: actions.EXPERIMENT_DISABLED.type,
     payload: {
       experiment: X
     }
@@ -106,7 +106,7 @@ exports['test EXPERIMENT_DISABLED'] = (assert) => {
 
 exports['test EXPERIMENT_UNINSTALLING'] = (assert) => {
   const action = {
-    type: actionTypes.EXPERIMENT_UNINSTALLING,
+    type: actions.EXPERIMENT_UNINSTALLING.type,
     payload: {
       experiment: X
     }
@@ -126,7 +126,7 @@ exports['test EXPERIMENT_UNINSTALLING'] = (assert) => {
 
 exports['test SET_BADGE'] = (assert, done) => {
   const action = {
-    type: actionTypes.SET_BADGE
+    type: actions.SET_BADGE.type
   }
   const ui = {
     setBadge: done
@@ -138,7 +138,7 @@ exports['test SET_BADGE'] = (assert, done) => {
 
 exports['test MAIN_BUTTON_CLICKED'] = (assert) => {
   const action = {
-    type: actionTypes.MAIN_BUTTON_CLICKED
+    type: actions.MAIN_BUTTON_CLICKED.type
   }
   const ui = {
     setBadge: () => {}
@@ -156,7 +156,7 @@ exports['test MAIN_BUTTON_CLICKED'] = (assert) => {
 
 exports['test SCHEDULE_NOTIFIER'] = (assert, done) => {
   const action = {
-    type: actionTypes.SCHEDULE_NOTIFIER
+    type: actions.SCHEDULE_NOTIFIER.type
   }
   const notificationManager = {
     schedule: done
@@ -168,7 +168,7 @@ exports['test SCHEDULE_NOTIFIER'] = (assert, done) => {
 
 exports['test SET_RATING'] = (assert) => {
   const action = {
-    type: actionTypes.SET_RATING
+    type: actions.SET_RATING.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -176,7 +176,7 @@ exports['test SET_RATING'] = (assert) => {
 
 exports['test SHOW_RATING_PROMPT'] = (assert, done) => {
   const action = {
-    type: actionTypes.SHOW_RATING_PROMPT
+    type: actions.SHOW_RATING_PROMPT.type
   }
   const feedbackManager = {
     prompt: () => done()
@@ -187,7 +187,7 @@ exports['test SHOW_RATING_PROMPT'] = (assert, done) => {
 
 exports['test SHOW_EXPERIMENT'] = (assert) => {
   const action = {
-    type: actionTypes.SHOW_EXPERIMENT,
+    type: actions.SHOW_EXPERIMENT.type,
     payload: {
       url: 'foobar'
     }
@@ -202,7 +202,7 @@ exports['test SHOW_EXPERIMENT'] = (assert) => {
 
 exports['test INSTALL_EXPERIMENT'] = (assert) => {
   const action = {
-    type: actionTypes.INSTALL_EXPERIMENT,
+    type: actions.INSTALL_EXPERIMENT.type,
     payload: {
       experiment: {}
     }
@@ -217,7 +217,7 @@ exports['test INSTALL_EXPERIMENT'] = (assert) => {
 
 exports['test UNINSTALL_EXPERIMENT'] = (assert) => {
   const action = {
-    type: actionTypes.UNINSTALL_EXPERIMENT,
+    type: actions.UNINSTALL_EXPERIMENT.type,
     payload: {
       experiment: {}
     }
@@ -232,7 +232,7 @@ exports['test UNINSTALL_EXPERIMENT'] = (assert) => {
 
 exports['test UNINSTALL_SELF'] = (assert, done) => {
   const action = {
-    type: actionTypes.UNINSTALL_SELF
+    type: actions.UNINSTALL_SELF.type
   }
   const installManager = {
     uninstallSelf: done
@@ -244,7 +244,7 @@ exports['test UNINSTALL_SELF'] = (assert, done) => {
 
 exports['test SELF_INSTALLED'] = (assert) => {
   const action = {
-    type: actionTypes.SELF_INSTALLED,
+    type: actions.SELF_INSTALLED.type,
     payload: {
       url: 'it'
     }
@@ -263,7 +263,7 @@ exports['test SELF_INSTALLED'] = (assert) => {
 
 exports['test SET_BASE_URL'] = (assert) => {
   const action = {
-    type: actionTypes.SET_BASE_URL,
+    type: actions.SET_BASE_URL.type,
     payload: {
       url: 'it'
     }
@@ -284,7 +284,7 @@ exports['test SET_BASE_URL'] = (assert) => {
 
 exports['test GET_INSTALLED'] = (assert, done) => {
   const action = {
-    type: actionTypes.GET_INSTALLED
+    type: actions.GET_INSTALLED.type
   }
   const installManager = {
     syncInstalled: done
@@ -297,7 +297,7 @@ exports['test GET_INSTALLED'] = (assert, done) => {
 
 exports['test SELF_UNINSTALLED'] = (assert, done) => {
   const action = {
-    type: actionTypes.SELF_UNINSTALLED
+    type: actions.SELF_UNINSTALLED.type
   }
   const installManager = {
     uninstallAll: done
@@ -311,7 +311,7 @@ exports['test SELF_UNINSTALLED'] = (assert, done) => {
 
 exports['test MAYBE_NOTIFY'] = (assert) => {
   const action = {
-    type: actionTypes.MAYBE_NOTIFY,
+    type: actions.MAYBE_NOTIFY.type,
     payload: {
       experiment: {}
     }
@@ -325,7 +325,7 @@ exports['test MAYBE_NOTIFY'] = (assert) => {
 
 exports['test INSTALL_FAILED'] = (assert) => {
   const action = {
-    type: actionTypes.INSTALL_FAILED
+    type: actions.INSTALL_FAILED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -333,7 +333,7 @@ exports['test INSTALL_FAILED'] = (assert) => {
 
 exports['test INSTALL_STARTED'] = (assert) => {
   const action = {
-    type: actionTypes.INSTALL_STARTED
+    type: actions.INSTALL_STARTED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -341,7 +341,7 @@ exports['test INSTALL_STARTED'] = (assert) => {
 
 exports['test INSTALL_CANCELLED'] = (assert) => {
   const action = {
-    type: actionTypes.INSTALL_CANCELLED
+    type: actions.INSTALL_CANCELLED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -349,7 +349,7 @@ exports['test INSTALL_CANCELLED'] = (assert) => {
 
 exports['test DOWNLOAD_STARTED'] = (assert) => {
   const action = {
-    type: actionTypes.DOWNLOAD_STARTED
+    type: actions.DOWNLOAD_STARTED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -357,7 +357,7 @@ exports['test DOWNLOAD_STARTED'] = (assert) => {
 
 exports['test DOWNLOAD_PROGRESS'] = (assert) => {
   const action = {
-    type: actionTypes.DOWNLOAD_PROGRESS
+    type: actions.DOWNLOAD_PROGRESS.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -365,7 +365,7 @@ exports['test DOWNLOAD_PROGRESS'] = (assert) => {
 
 exports['test DOWNLOAD_ENDED'] = (assert) => {
   const action = {
-    type: actionTypes.DOWNLOAD_ENDED
+    type: actions.DOWNLOAD_ENDED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -373,7 +373,7 @@ exports['test DOWNLOAD_ENDED'] = (assert) => {
 
 exports['test DOWNLOAD_CANCELLED'] = (assert) => {
   const action = {
-    type: actionTypes.DOWNLOAD_CANCELLED
+    type: actions.DOWNLOAD_CANCELLED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -381,7 +381,7 @@ exports['test DOWNLOAD_CANCELLED'] = (assert) => {
 
 exports['test DOWNLOAD_FAILED'] = (assert) => {
   const action = {
-    type: actionTypes.DOWNLOAD_FAILED
+    type: actions.DOWNLOAD_FAILED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -389,7 +389,7 @@ exports['test DOWNLOAD_FAILED'] = (assert) => {
 
 exports['test LOAD_EXPERIMENTS'] = (assert) => {
   const action = {
-    type: actionTypes.LOAD_EXPERIMENTS
+    type: actions.LOAD_EXPERIMENTS.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -397,7 +397,7 @@ exports['test LOAD_EXPERIMENTS'] = (assert) => {
 
 exports['test INSTALL_STARTED'] = (assert) => {
   const action = {
-    type: actionTypes.INSTALL_STARTED
+    type: actions.INSTALL_STARTED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -405,7 +405,7 @@ exports['test INSTALL_STARTED'] = (assert) => {
 
 exports['test LOADING_EXPERIMENTS'] = (assert) => {
   const action = {
-    type: actionTypes.LOADING_EXPERIMENTS
+    type: actions.LOADING_EXPERIMENTS.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -413,7 +413,7 @@ exports['test LOADING_EXPERIMENTS'] = (assert) => {
 
 exports['test EXPERIMENT_UNINSTALLED'] = (assert) => {
   const action = {
-    type: actionTypes.EXPERIMENT_UNINSTALLED
+    type: actions.EXPERIMENT_UNINSTALLED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
@@ -421,7 +421,7 @@ exports['test EXPERIMENT_UNINSTALLED'] = (assert) => {
 
 exports['test SELF_ENABLED'] = (assert) => {
   const action = {
-    type: actionTypes.SELF_ENABLED
+    type: actions.SELF_ENABLED.type
   }
   const telemetry = {
     ping: (id, name) => {
@@ -434,7 +434,7 @@ exports['test SELF_ENABLED'] = (assert) => {
 
 exports['test SELF_DISABLED'] = (assert) => {
   const action = {
-    type: actionTypes.SELF_DISABLED
+    type: actions.SELF_DISABLED.type
   }
   const telemetry = {
     ping: (id, name) => {
@@ -447,7 +447,7 @@ exports['test SELF_DISABLED'] = (assert) => {
 
 exports['test SYNC_INSTALLED'] = (assert) => {
   const action = {
-    type: actionTypes.SYNC_INSTALLED
+    type: actions.SYNC_INSTALLED.type
   }
   const state = reducer(null, action)
   assert.equal(state, nothing)
