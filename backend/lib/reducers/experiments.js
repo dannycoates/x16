@@ -7,7 +7,7 @@
 const actionTypes = require('../../../common/actionTypes')
 const pickBy = require('lodash/pickBy')
 
-function experiments (experiments = null, { payload, type }) {
+function reducer (experiments = null, { payload, type }) {
   let x, n
   switch (type) {
     case actionTypes.EXPERIMENTS_LOAD_ERROR:
@@ -45,7 +45,7 @@ function randomActiveExperiment (state) {
 }
 
 module.exports = {
-  experiments,
+  reducer,
   activeExperiments,
   randomActiveExperiment
 }

@@ -23,7 +23,7 @@ const mockLoader = MockUtils.loader(module, './backend/lib/reducers/sideEffects.
   'sdk/tabs': mocks.tabs
 })
 
-const reducer = mockLoader.require('../backend/lib/reducers/sideEffects')
+const { reducer, nothing } = mockLoader.require('../backend/lib/reducers/sideEffects')
 
 exports['test EXPERIMENTS_LOADED'] = (assert, done) => {
   const action = {
@@ -61,7 +61,7 @@ exports['test EXPERIMENTS_LOAD_ERROR'] = (assert) => {
     type: actionTypes.EXPERIMENTS_LOAD_ERROR
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test EXPERIMENT_ENABLED'] = (assert) => {
@@ -171,7 +171,7 @@ exports['test SET_RATING'] = (assert) => {
     type: actionTypes.SET_RATING
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test SHOW_RATING_PROMPT'] = (assert, done) => {
@@ -189,11 +189,11 @@ exports['test SHOW_EXPERIMENT'] = (assert) => {
   const action = {
     type: actionTypes.SHOW_EXPERIMENT,
     payload: {
-      href: 'foobar'
+      url: 'foobar'
     }
   }
   const ui = {
-    openTab: href => assert.equal(href, action.payload.href)
+    openTab: url => assert.equal(url, action.payload.url)
   }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
@@ -328,7 +328,7 @@ exports['test INSTALL_FAILED'] = (assert) => {
     type: actionTypes.INSTALL_FAILED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test INSTALL_STARTED'] = (assert) => {
@@ -336,7 +336,7 @@ exports['test INSTALL_STARTED'] = (assert) => {
     type: actionTypes.INSTALL_STARTED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test INSTALL_CANCELLED'] = (assert) => {
@@ -344,7 +344,7 @@ exports['test INSTALL_CANCELLED'] = (assert) => {
     type: actionTypes.INSTALL_CANCELLED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test DOWNLOAD_STARTED'] = (assert) => {
@@ -352,7 +352,7 @@ exports['test DOWNLOAD_STARTED'] = (assert) => {
     type: actionTypes.DOWNLOAD_STARTED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test DOWNLOAD_PROGRESS'] = (assert) => {
@@ -360,7 +360,7 @@ exports['test DOWNLOAD_PROGRESS'] = (assert) => {
     type: actionTypes.DOWNLOAD_PROGRESS
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test DOWNLOAD_ENDED'] = (assert) => {
@@ -368,7 +368,7 @@ exports['test DOWNLOAD_ENDED'] = (assert) => {
     type: actionTypes.DOWNLOAD_ENDED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test DOWNLOAD_CANCELLED'] = (assert) => {
@@ -376,7 +376,7 @@ exports['test DOWNLOAD_CANCELLED'] = (assert) => {
     type: actionTypes.DOWNLOAD_CANCELLED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test DOWNLOAD_FAILED'] = (assert) => {
@@ -384,7 +384,7 @@ exports['test DOWNLOAD_FAILED'] = (assert) => {
     type: actionTypes.DOWNLOAD_FAILED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test LOAD_EXPERIMENTS'] = (assert) => {
@@ -392,7 +392,7 @@ exports['test LOAD_EXPERIMENTS'] = (assert) => {
     type: actionTypes.LOAD_EXPERIMENTS
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test INSTALL_STARTED'] = (assert) => {
@@ -400,7 +400,7 @@ exports['test INSTALL_STARTED'] = (assert) => {
     type: actionTypes.INSTALL_STARTED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test LOADING_EXPERIMENTS'] = (assert) => {
@@ -408,7 +408,7 @@ exports['test LOADING_EXPERIMENTS'] = (assert) => {
     type: actionTypes.LOADING_EXPERIMENTS
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test EXPERIMENT_UNINSTALLED'] = (assert) => {
@@ -416,7 +416,7 @@ exports['test EXPERIMENT_UNINSTALLED'] = (assert) => {
     type: actionTypes.EXPERIMENT_UNINSTALLED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 exports['test SELF_ENABLED'] = (assert) => {
@@ -450,7 +450,7 @@ exports['test SYNC_INSTALLED'] = (assert) => {
     type: actionTypes.SYNC_INSTALLED
   }
   const state = reducer(null, action)
-  assert.equal(state, null)
+  assert.equal(state, nothing)
 }
 
 before(module.exports, function (name, assert, done) {

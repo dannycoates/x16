@@ -11,7 +11,10 @@ const WebExtensionChannels = require('../metrics/webextension-channels')
 
 function nothing () {}
 
-module.exports = function sideEffects (state = nothing, { payload, type }) {
+let context = {}
+let unsubscribe = nothing
+
+function reducer (state = nothing, { payload, type }) {
   switch (type) {
     case actionTypes.EXPERIMENT_ENABLED:
     case actionTypes.INSTALL_ENDED:
@@ -94,4 +97,25 @@ module.exports = function sideEffects (state = nothing, { payload, type }) {
     default:
       return nothing
   }
+}
+
+function setContext (ctx) {
+  context = ctx
+}
+
+function enable (store) {
+  unsubscribe = store.subscribe(() => store.getState().sideEffects(context))
+}
+
+function disable () {
+  unsubscribe()
+  unsubscribe = nothing
+}
+
+module.exports = {
+  reducer,
+  setContext,
+  enable,
+  disable,
+  nothing
 }

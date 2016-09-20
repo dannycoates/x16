@@ -6,7 +6,7 @@
 
 const actionTypes = require('../../../common/actionTypes')
 
-function ratings (state = {}, { payload, type }) {
+function reducer (state = {}, { payload, type }) {
   let id, rating
   switch (type) {
     case actionTypes.SHOW_RATING_PROMPT:
@@ -32,6 +32,6 @@ function experimentRating (state, id) {
 }
 
 module.exports = {
-  ratings,
+  reducer,
   experimentRating
 }

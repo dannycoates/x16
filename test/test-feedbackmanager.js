@@ -12,7 +12,7 @@ const ONE_DAY = 1000 * 60 * 60 * 24
 
 const mocks = MockUtils.callbacks({
   store: ['dispatch', 'getState'],
-  timers: ['setTimeout'],
+  timers: ['setTimeout', 'clearTimeout'],
   experiments: ['randomActiveExperiment'],
   ratings: ['experimentRating'],
   actions: ['showRating']
@@ -38,7 +38,7 @@ exports['test schedule'] = (assert) => {
   const fm = new FeedbackManager(mocks.store)
   mocks.timers.setTimeout.implement(() => 99)
   fm.schedule()
-  assert.equal(fm.checkTimer, 99, 'checkTimer is set by setTimeout')
+  assert.equal(fm.timeout, 99, 'timeout is set by setTimeout')
   const calls = mocks.timers.setTimeout.calls()
   assert.equal(calls.length, 1, 'setTimeout was called')
   assert.equal(calls[0][1], TEN_MINUTES, 'delay defaults to 10 minutes')

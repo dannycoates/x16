@@ -10,9 +10,9 @@ module.exports = combineReducers({
   baseUrl: require('./baseUrl'),
   clientUUID: require('./clientUUID'),
   env: require('./env'),
-  experiments: require('./experiments').experiments,
+  experiments: require('./experiments').reducer,
   notifications: require('./notifications'),
-  ratings: require('./ratings').ratings,
-  sideEffects: require('./sideEffects'),
+  ratings: require('./ratings').reducer,
+  sideEffects: require('./sideEffects').reducer,
   ui: require('./ui')
 })

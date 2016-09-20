@@ -15,6 +15,7 @@ const Loader = require('./lib/actionCreators/Loader')
 const MainUI = require('./lib/MainUI')
 const NotificationManager = require('./lib/actionCreators/NotificationManager')
 const self = require('sdk/self')
+const sideEffects = require('./lib/reducers/sideEffects')
 const { storage } = require('sdk/simple-storage')
 const Telemetry = require('./lib/Telemetry')
 const WebApp = require('./lib/WebApp')
@@ -31,7 +32,7 @@ const notificationManager = new NotificationManager(store)
 const telemetry = new Telemetry()
 const ui = new MainUI(store)
 
-const context = Object.assign({}, store, {
+sideEffects.setContext(Object.assign({}, store, {
   env,
   feedbackManager,
   installManager,
@@ -39,12 +40,9 @@ const context = Object.assign({}, store, {
   notificationManager,
   telemetry,
   ui
-})
+}))
 
-const unsubscribe = store.subscribe(() => {
-  const { sideEffects } = store.getState()
-  sideEffects(context)
-})
+sideEffects.enable(store)
 
 let webapp = new WebApp({
   baseUrl: startEnv.baseUrl,
@@ -63,11 +61,11 @@ exports.main = function ({loadReason}) {
 exports.onUnload = function (reason) {
   installManager.selfUnloaded(reason)
   storage.root = store.getState()
+  sideEffects.disable()
   addons.teardown()
   experimentMetrics.teardown()
   telemetry.teardown()
   webapp.teardown()
-  unsubscribe()
 }
 
 env.on('change', newEnv => {

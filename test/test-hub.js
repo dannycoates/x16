@@ -21,7 +21,6 @@ exports['test connect() events'] = (assert) => {
   assert.equal(onCalls[0][0], 'action')
   assert.equal(onCalls[1][0], 'from-web-to-addon')
   assert.equal(h.ports.size, 1)
-  assert.equal(typeof (h.ports.get(mocks.port)), 'function')
 }
 
 exports['test disconnect() events'] = (assert) => {
@@ -35,21 +34,6 @@ exports['test disconnect() events'] = (assert) => {
   assert.equal(offCalls[0][0], 'action')
   assert.equal(offCalls[1][0], 'from-web-to-addon')
   assert.equal(h.ports.size, 0)
-  assert.equal(typeof (h.ports.get(mocks.port)), 'undefined')
-}
-
-exports['test action dispatching'] = (assert, done) => {
-  const h = new Hub()
-  h.connect(mocks.port)
-  h.dispatch = (action) => {
-    assert.deepEqual(action, anAction)
-    done()
-  }
-  const anAction = {
-    type: 'testAction',
-    data: 'testData'
-  }
-  h.ports.get(mocks.port)(anAction)
 }
 
 exports['test basic middleware'] = (assert, done) => {
