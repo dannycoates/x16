@@ -8,7 +8,7 @@ const actions = require('../actions')
 const { activeExperiments, randomActiveExperiment } = require('../reducers/experiments')
 const { Class } = require('sdk/core/heritage')
 const { experimentRating } = require('../reducers/ratings')
-const { setTimeout } = require('sdk/timers')
+const { setTimeout, clearTimeout } = require('sdk/timers')
 const feedbackUI = require('../feedbackUI')
 const tabs = require('sdk/tabs')
 const querystring = require('sdk/querystring')
@@ -36,10 +36,11 @@ const FeedbackManager = Class({
     this.dispatch = dispatch
     this.getState = getState
     this.dnd = dnd
-    this.checkTimer = null
+    this.timeout = null
   },
   schedule: function ({ delay = TEN_MINUTES } = {}) {
-    this.checkTimer = setTimeout(() => { this.check() }, delay)
+    clearTimeout(this.timeout)
+    this.timeout = setTimeout(() => { this.check() }, delay)
   },
   check: function () {
     const state = this.getState()
@@ -59,18 +60,17 @@ const FeedbackManager = Class({
       .then(
         rating => {
           if (!rating) { return Promise.resolve() }
-          const urlParams = querystring.stringify({
-            id: experiment.addon_id,
-            installed: Object.keys(activeExperiments(this.getState())),
-            rating,
-            interval
-          })
-          const surveyUrl = `${experiment.survey_url}?${urlParams}`
           this.dispatch(actions.setRating(experiment, rating))
           return feedbackUI.showSurveyButton({ experiment })
             .then((clicked) => {
               if (clicked) {
-                tabs.open(surveyUrl)
+                const urlParams = querystring.stringify({
+                  id: experiment.addon_id,
+                  installed: Object.keys(activeExperiments(this.getState())),
+                  rating,
+                  interval
+                })
+                tabs.open(`${experiment.survey_url}?${urlParams}`)
               }
             })
         }

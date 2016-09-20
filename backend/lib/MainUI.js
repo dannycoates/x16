@@ -47,7 +47,9 @@ const MainUI = Class({
       }
     })
 
-    // HACK
+    // HACK - it takes a few cycles for messages to start flowing.
+    // Before then they get dropped, so before we send anything
+    // important ensure we can do a round trip.
     this.pollInterval = setInterval(pollPanel.bind(this), 10)
     this.panel.port.once('pong', x => {
       clearInterval(this.pollInterval)

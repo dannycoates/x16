@@ -10,9 +10,10 @@ const self = require('sdk/self')
 const { Services } = require('resource://gre/modules/Services.jsm')
 const { storage } = require('sdk/simple-storage')
 const { TelemetryController } = require('resource://gre/modules/TelemetryController.jsm')
+const startTime = Services.startup.getStartupInfo().process
 
 function makeTimestamp (timestamp = Date.now()) {
-  return Math.round((timestamp - Services.startup.getStartupInfo().process) / 1000)
+  return Math.round((timestamp - startTime) / 1000)
 }
 
 const PREFS = [

@@ -5,7 +5,6 @@
  */
 
 import { createStore, applyMiddleware } from 'redux'
-import thunkMiddleware from 'redux-thunk'
 import reducers from './reducers'
 
 function commMiddleware (backend) {
@@ -27,7 +26,6 @@ export function configureStore (backend, preloadedState) {
     reducers,
     preloadedState,
     applyMiddleware(
-      thunkMiddleware,
       commMiddleware(backend)
     )
   )

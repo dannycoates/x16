@@ -15,9 +15,10 @@ const { TelemetryController } = require('resource://gre/modules/TelemetryControl
 const EVENT_SEND_METRIC = 'testpilot::send-metric'
 const EVENT_RECEIVE_VARIANT_DEFS = 'testpilot::register-variants'
 const EVENT_SEND_VARIANTS = 'testpilot::receive-variants'
+const startTime = Services.startup.getStartupInfo().process
 
 function makeTimestamp (timestamp = Date.now()) {
-  return Math.round((timestamp - Services.startup.getStartupInfo().process) / 1000)
+  return Math.round((timestamp - startTime) / 1000)
 }
 
 function experimentPing (event) {

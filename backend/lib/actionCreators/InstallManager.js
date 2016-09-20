@@ -34,8 +34,9 @@ const InstallManager = Class({
   uninstallAll: function () {
     const { getState } = this.store
     const active = activeExperiments(getState())
-    const xs = Object.keys(active).map(n => active[n])
-    xs.forEach(x => this.uninstallExperiment(x))
+    for (let key of Object.keys(active)) {
+      this.uninstallExperiment(active[key])
+    }
   },
   uninstallSelf: function () {
     AddonManager.getAddonByID(self.id, a => a.uninstall())

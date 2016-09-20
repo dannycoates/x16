@@ -59,7 +59,7 @@ function fetchExperiments (baseUrl, path) {
   )
 }
 
-function mergeAddonActiveState (experiments, addons) {
+function mergeAddonState (experiments, addons) {
   Object.keys(experiments).forEach(k => { experiments[k].active = false })
   for (let addon of addons) {
     const x = experiments[addon.id]
@@ -96,10 +96,10 @@ const Loader = Class({
     return fetchExperiments(baseUrl, '/api/experiments.json')
     .then(
       xs => new Promise(
-        (resolve, reject) => {
+        (resolve) => {
           AddonManager.getAllAddons(
             addons => {
-              resolve(mergeAddonActiveState(xs, addons))
+              resolve(mergeAddonState(xs, addons))
             }
           )
         }

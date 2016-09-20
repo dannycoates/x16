@@ -9,22 +9,17 @@ const { actionToWeb, webToAction } = require('./webadapter')
 
 const Hub = Class({
   initialize: function () {
-    this.dispatch = () => {}
-    this.ports = new Map()
+    this.dispatch = () => console.error('cannot use dispatch before middleware')
+    this.ports = new Set()
     this.context = {}
   },
   connect: function (port) {
-    const fn = (action) => this.dispatch(action)
-    port.on('action', fn)
-    // HACK
-    port.on('from-web-to-addon', evt => {
-      fn(webToAction(evt))
-    })
-    this.ports.set(port, fn)
+    port.on('action', this.dispatch)
+    port.on('from-web-to-addon', evt => this.dispatch(webToAction(evt)))
+    this.ports.add(port)
   },
   disconnect: function (port) {
-    const fn = this.ports.get(port)
-    port.off('action', fn)
+    port.off('action', this.dispatch)
     port.off('from-web-to-addon')
     this.ports.delete(port)
   },
@@ -35,12 +30,11 @@ const Hub = Class({
         action.meta = action.meta || {}
         action.meta.src = action.meta.src || 'backend'
         if (action.meta.src === 'backend') {
-          for (let port of this.ports.keys()) {
+          for (let port of this.ports) {
             try {
               port.emit('action', action)
-              // HACK
-              const evt = actionToWeb(action)
 
+              const evt = actionToWeb(action)
               if (evt) {
                 port.emit('from-addon-to-web', evt)
               }

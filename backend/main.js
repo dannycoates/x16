@@ -55,8 +55,8 @@ let webapp = new WebApp({
   hub
 })
 
-exports.main = function (options) {
-  installManager.selfLoaded(options.loadReason)
+exports.main = function ({loadReason}) {
+  installManager.selfLoaded(loadReason)
   hub.connect(ui.panel.port)
   notificationManager.schedule()
   feedbackManager.schedule()

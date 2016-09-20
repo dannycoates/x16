@@ -14,7 +14,3 @@ module.exports = function baseUrl (state = null, { payload, type }) {
       return state
   }
 }
-
-// module.exports = {
-//   baseUrl
-// }
