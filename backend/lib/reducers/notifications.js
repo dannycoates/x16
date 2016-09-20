@@ -7,7 +7,7 @@
 const actionTypes = require('../../../common/actionTypes')
 
 const tomorrow = Date.now() + (24 * 60 * 60 * 1000)
-module.exports = function notifications (
+function reducer (
   state = { lastNotified: tomorrow, nextCheck: tomorrow },
   { payload, type }) {
   switch (type) {
@@ -20,3 +20,5 @@ module.exports = function notifications (
       return state
   }
 }
+
+module.exports = { reducer }

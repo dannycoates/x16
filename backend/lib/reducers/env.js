@@ -6,7 +6,7 @@
 
 const actionTypes = require('../../../common/actionTypes')
 
-module.exports = function env (state = null, { payload, type }) {
+function reducer (state = null, { payload, type }) {
   switch (type) {
     case actionTypes.EXPERIMENTS_LOADED:
       return payload.env
@@ -14,3 +14,5 @@ module.exports = function env (state = null, { payload, type }) {
       return state
   }
 }
+
+module.exports = { reducer }

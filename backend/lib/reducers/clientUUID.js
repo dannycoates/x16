@@ -5,6 +5,8 @@
  */
 
 const newUUID = require('sdk/util/uuid').uuid().toString().slice(1, -1)
-module.exports = function clientUUID (state = newUUID, action) {
+function reducer (state = newUUID, action) {
   return state
 }
+
+module.exports = { reducer }
