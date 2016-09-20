@@ -43,9 +43,7 @@ const context = Object.assign({}, store, {
 
 const unsubscribe = store.subscribe(() => {
   const { sideEffects } = store.getState()
-  if (typeof (sideEffects) === 'function') {
-    sideEffects(context)
-  }
+  sideEffects(context)
 })
 
 let webapp = new WebApp({

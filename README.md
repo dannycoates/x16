@@ -34,7 +34,7 @@ Both the backend and frontend use [Redux](http://redux.js.org) to manage app sta
 
 All [actions](http://redux.js.org/docs/basics/Actions.html) are [dispatched](http://redux.js.org/docs/basics/Store.html#dispatching-actions) and [reduced](http://redux.js.org/docs/basics/Reducers.html) by the backend in the same way regardless of the source, backend, frontend, or web. This allows reducers to handle actions from different sources without any special consideration.
 
-Side effects are handled in a similar way to the [Elm Architecture Effects Model](https://guide.elm-lang.org/architecture/effects/). Actions that trigger side effects do so by returning a function from the `sideEffects` reducer. That function gets executed by a store subscriber after the dispatch has completed, keeping the reducers pure. You'll notice that the default return value of the reducer is `null` which prevents the previous side effect from running again.
+Side effects are handled in a similar way to the [Elm Architecture Effects Model](https://guide.elm-lang.org/architecture/effects/). Actions that trigger side effects do so by returning a function from the `sideEffects` reducer. That function gets executed by a store subscriber after the dispatch has completed, keeping the reducers pure. You'll notice that the default return value of the reducer is an empty function which prevents the previous side effect from running again.
 
 Frontend is mostly a vanilla React/Redux app with the exception of the connection to the backend. Conceptually it could run just as easily on the web, which might make testing and debugging it easier.
 

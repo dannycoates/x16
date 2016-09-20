@@ -9,7 +9,9 @@ const self = require('sdk/self')
 const tabs = require('sdk/tabs')
 const WebExtensionChannels = require('../metrics/webextension-channels')
 
-module.exports = function sideEffects (state = null, { payload, type }) {
+function nothing () {}
+
+module.exports = function sideEffects (state = nothing, { payload, type }) {
   switch (type) {
     case actionTypes.EXPERIMENT_ENABLED:
     case actionTypes.INSTALL_ENDED:
@@ -90,6 +92,6 @@ module.exports = function sideEffects (state = null, { payload, type }) {
       return ({telemetry}) => telemetry.ping(self.id, 'disabled')
 
     default:
-      return null
+      return nothing
   }
 }
