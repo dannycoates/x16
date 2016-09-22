@@ -22,16 +22,13 @@ const PREFS = [
 ]
 
 const Telemetry = Class({
-  initialize: function () {
-    storage.originalPrefs = {}
-    for (let pref of PREFS) {
-      storage.originalPrefs[pref] = PrefsService.get(pref)
-      PrefsService.set(pref, true)
-    }
+  setPrefs: function () {
+    storage.originalPrefs = PREFS.map(pref => [pref, PrefsService.get(pref)])
+    PREFS.forEach(pref => PrefsService.set(pref, true))
   },
-  teardown: function () {
-    for (let pref of PREFS) {
-      PrefsService.set(pref, storage.originalPrefs[pref])
+  restorePrefs: function () {
+    if (storage.originalPrefs) {
+      storage.originalPrefs.forEach(pair => { PrefsService.set(pair[0], pair[1]) })
     }
   },
   ping: function (object, event, time) {

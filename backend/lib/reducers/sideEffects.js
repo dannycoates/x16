@@ -48,6 +48,7 @@ function reducer (state = nothing, { payload, type }) {
     case actions.SELF_UNINSTALLED.type:
       return ({installManager, telemetry}) => {
         telemetry.ping(self.id, 'disabled')
+        telemetry.restorePrefs()
         installManager.uninstallAll()
       }
 
@@ -85,14 +86,21 @@ function reducer (state = nothing, { payload, type }) {
           url: payload.url,
           inBackground: true
         })
+        telemetry.setPrefs()
         telemetry.ping(self.id, 'enabled')
       }
 
     case actions.SELF_ENABLED.type:
-      return ({telemetry}) => telemetry.ping(self.id, 'enabled')
+      return ({telemetry}) => {
+        telemetry.setPrefs()
+        telemetry.ping(self.id, 'enabled')
+      }
 
     case actions.SELF_DISABLED.type:
-      return ({telemetry}) => telemetry.ping(self.id, 'disabled')
+      return ({telemetry}) => {
+        telemetry.ping(self.id, 'disabled')
+        telemetry.restorePrefs()
+      }
 
     default:
       return nothing

@@ -64,7 +64,6 @@ exports.onUnload = function (reason) {
   sideEffects.disable()
   addons.teardown()
   experimentMetrics.teardown()
-  telemetry.teardown()
   webapp.teardown()
 }
 
