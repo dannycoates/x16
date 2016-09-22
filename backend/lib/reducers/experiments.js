@@ -7,7 +7,7 @@
 const actions = require('../../../common/actions')
 const pickBy = require('lodash/pickBy')
 
-function reducer (experiments = null, { payload, type }) {
+function reducer (experiments = {}, { payload, type }) {
   let x, n
   switch (type) {
     case actions.EXPERIMENTS_LOAD_ERROR.type:
