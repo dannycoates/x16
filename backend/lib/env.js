@@ -12,13 +12,13 @@ const { PrefsTarget } = require('sdk/preferences/event-target')
 const self = require('sdk/self')
 
 const prefs = PrefsTarget()
-const target = EventTarget()
-target.get = function () {
+const env = EventTarget()
+env.get = function () {
   return environments[aboutConfig.get('testpilot.env', 'production')]
 }
 
 if (!aboutConfig.has('testpilot.env')) {
-  aboutConfig.set('testpilot.env', target.get().name)
+  aboutConfig.set('testpilot.env', env.get().name)
 }
 
 if (aboutConfig.get('testpilot.env') !== 'production') {
@@ -27,7 +27,7 @@ if (aboutConfig.get('testpilot.env') !== 'production') {
 }
 
 prefs.on('testpilot.env', () => {
-  emit(target, 'change', target.get())
+  emit(env, 'change', env.get())
 })
 
-module.exports = target
+module.exports = env

@@ -4,8 +4,8 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+const aboutConfig = require('sdk/preferences/service')
 const { Class } = require('sdk/core/heritage')
-const PrefsService = require('sdk/preferences/service')
 const self = require('sdk/self')
 const { Services } = require('resource://gre/modules/Services.jsm')
 const { storage } = require('sdk/simple-storage')
@@ -23,12 +23,12 @@ const PREFS = [
 
 const Telemetry = Class({
   setPrefs: function () {
-    storage.originalPrefs = PREFS.map(pref => [pref, PrefsService.get(pref)])
-    PREFS.forEach(pref => PrefsService.set(pref, true))
+    storage.originalPrefs = PREFS.map(pref => [pref, aboutConfig.get(pref)])
+    PREFS.forEach(pref => aboutConfig.set(pref, true))
   },
   restorePrefs: function () {
     if (storage.originalPrefs) {
-      storage.originalPrefs.forEach(pair => { PrefsService.set(pair[0], pair[1]) })
+      storage.originalPrefs.forEach(pair => { aboutConfig.set(pair[0], pair[1]) })
     }
   },
   ping: function (object, event, time) {
