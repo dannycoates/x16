@@ -30,6 +30,7 @@ function urlify (baseUrl, experiment) {
       }
     }))
   })
+  experiment.id = experiment.addon_id
   return experiment
 }
 
