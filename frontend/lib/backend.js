@@ -6,11 +6,6 @@
 /* global addon self */
 function noop () {}
 
-const fakePort = {
-  on: noop,
-  emit: noop
-}
-
 const fakeStore = {
   dispatch: noop
 }
@@ -19,20 +14,24 @@ let comm = null
 
 if (typeof (addon) !== 'undefined') {
   comm = addon
-} else if (typeof (self) !== 'undefined') {
+} else if (typeof (self) !== 'undefined' && self.port) {
   comm = self
+} else {
+  comm = {
+    port: {
+      on: noop,
+      emit: noop
+    }
+  }
 }
 
 class Backend {
   constructor () {
-    this._store = fakeStore
-    this.port = comm ? comm.port : fakePort
+    this.store = fakeStore
+    this.port = comm.port
     this.port.on('ping', x => this.port.emit('pong', x))
     this.port.on('action', action => this.store.dispatch(action))
   }
-
-  set store (it) { this._store = it }
-  get store () { return this._store }
 
   send (action) {
     this.port.emit('action', action)

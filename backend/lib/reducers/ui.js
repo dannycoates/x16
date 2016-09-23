@@ -7,6 +7,8 @@
 const actions = require('../../../common/actions')
 
 const FOOTER_HEIGHT = 53
+const EXPERIMENT_HEIGHT = 80
+
 function reducer (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
   switch (type) {
     case actions.SET_BADGE.type:
@@ -19,8 +21,10 @@ function reducer (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
       return Object.assign({}, state, { panelHeight: FOOTER_HEIGHT })
 
     case actions.EXPERIMENTS_LOADED.type:
-      const height = (Object.keys(payload.experiments).length * 80) + FOOTER_HEIGHT
-      return Object.assign({}, state, { panelHeight: height })
+      const panelHeight = Math.min(
+        (Object.keys(payload.experiments).length * EXPERIMENT_HEIGHT) + FOOTER_HEIGHT,
+        (4 * EXPERIMENT_HEIGHT) + 56 + FOOTER_HEIGHT)
+      return Object.assign({}, state, { panelHeight })
 
     default:
       return state

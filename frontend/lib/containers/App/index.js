@@ -39,7 +39,7 @@ class App extends Component {
 function mapStateToProps (state) {
   return {
     baseUrl: state.baseUrl,
-    experiments: Object.values(state.experiments).sort((a,b) => a.order - b.order)
+    experiments: Object.values(state.experiments).sort((a, b) => a.order - b.order)
   }
 }
 
