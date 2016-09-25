@@ -65,7 +65,7 @@ function mergeAddonState (experiments, addons) {
   for (let addon of addons) {
     const x = experiments[addon.id]
     if (x) {
-      x.active = true
+      x.active = addon.isActive
       x.installDate = addon.installDate
     }
   }

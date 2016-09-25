@@ -46,3 +46,9 @@
     color: #0996f8;
     font-size: 14px;
 }
+
+.disabled-span {
+    display: block;
+    color: #F5570E;
+    font-size: 14px;
+}

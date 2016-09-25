@@ -13,6 +13,16 @@ function getExperiment (getState, addon) {
   return experiments[addon.id]
 }
 
+function toObject (addon) {
+  return {
+    id: addon.id,
+    isActive: addon.isActive,
+    pendingOperations: addon.pendingOperations,
+    userDisabled: addon.userDisabled,
+    installDate: addon.installDate
+  }
+}
+
 const AddonListener = Class({
   initialize: function ({dispatch, getState}) {
     this.getExperiment = getExperiment.bind(null, getState)
@@ -44,10 +54,13 @@ const AddonListener = Class({
     }
   },
   onOperationCancelled: function (addon) {
+    console.debug('op cancelled', toObject(addon))
     const experiment = this.getExperiment(addon)
     if (experiment) {
       if (addon.pendingOperations & AddonManager.PENDING_ENABLE) {
         this.dispatch(actions.EXPERIMENT_ENABLED({experiment}))
+      } else if (addon.userDisabled && addon.installDate) {
+        this.dispatch(actions.EXPERIMENT_DISABLED({experiment}))
       }
     }
   },

@@ -19,13 +19,22 @@ function experiments (experiments = {}, { payload, type }) {
     case actions.EXPERIMENT_ENABLED.type:
     case actions.INSTALL_ENDED.type:
       x = experiments[payload.experiment.addon_id]
-      n = { ...x, active: true, install: null }
+      n = {
+        ...x,
+        active: true,
+        install: null,
+        installDate: payload.experiment.installDate
+      }
       return { ...experiments, [n.addon_id]: n }
 
     case actions.EXPERIMENT_DISABLED.type:
+      x = experiments[payload.experiment.addon_id]
+      n = { ...x, active: false, installDate: payload.experiment.installDate }
+      return { ...experiments, [n.addon_id]: n }
+
     case actions.EXPERIMENT_UNINSTALLING.type:
       x = experiments[payload.experiment.addon_id]
-      n = { ...x, active: false }
+      n = { ...x, active: false, installDate: null }
       return { ...experiments, [n.addon_id]: n }
 
     case actions.DOWNLOAD_STARTED.type:

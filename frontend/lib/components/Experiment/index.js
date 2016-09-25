@@ -23,6 +23,7 @@ export default class Experiment extends Component {
     modified: PropTypes.string.isRequired,
     gradient_start: PropTypes.string.isRequired,
     gradient_stop: PropTypes.string.isRequired,
+    installDate: PropTypes.any,
     install: PropTypes.object
   }
 
@@ -49,6 +50,7 @@ export default class Experiment extends Component {
       thumbnail,
       gradient_start,
       gradient_stop,
+      installDate,
       install } = this.props
     const isNew = (new Date() - new Date(created)) < NEW_EXPERIMENT_PERIOD
     const gradient = `${addon_id}_gradient`
@@ -61,6 +63,9 @@ export default class Experiment extends Component {
     } else if (install) {
       status = 'Installing'
       labelClass = 'active-span'
+    } else if (installDate) {
+      status = 'Disabled'
+      labelClass = 'disabled-span'
     } else if (isNew) {
       status = 'New Experiment'
       labelClass = 'is-new-span'
@@ -88,6 +93,7 @@ export default class Experiment extends Component {
               <circle cx='49' cy='11' r='10' fill='#57bd35' stroke='white' strokeWidth='2' />
               <polyline points='44 11, 48 15, 54 8' fill='none' stroke='white' strokeWidth='3' />
             </g>}
+          {status === 'Disabled' && <circle cx='28' cy='28' r='27' fill='none' stroke='#F5570E' strokeWidth='2' />}
         </svg>
         <div className='experiment-title'>
           {title}
