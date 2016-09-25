@@ -32,7 +32,7 @@ export default class ExperimentList extends Component {
           <Experiment
             key={experiment.id}
             {...experiment}
-            onClick={() => onExperimentClick(experiment.html_url)}
+            onClick={onExperimentClick}
           />
         )}
       </div>

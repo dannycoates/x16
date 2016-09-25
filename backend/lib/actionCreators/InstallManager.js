@@ -20,12 +20,12 @@ const InstallManager = Class({
       if (a) { a.uninstall() }
     })
   },
-  installExperiment: function (x) {
+  installExperiment: function (experiment) {
     AddonManager.getInstallForURL(
-      x.xpi_url,
+      experiment.xpi_url,
       install => {
         const { dispatch } = this.store
-        install.addListener(new InstallListener({ install, dispatch }))
+        install.addListener(new InstallListener({ install, experiment, dispatch }))
         install.install()
       },
       'application/x-xpinstall'
