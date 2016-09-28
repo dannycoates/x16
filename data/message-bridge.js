@@ -8,16 +8,20 @@
 
 // Page script acts as messaging bridge between addon and web content.
 
-window.addEventListener('from-web-to-addon', function (event) {
-  if (event && event.detail && event.detail.type === 'sync-installed') {
-    self.port.emit('from-web-to-addon', { type: 'base-url', data: window.location.origin })
-  }
-  self.port.emit('from-web-to-addon', event.detail)
-}, false)
-
 self.port.on('from-addon-to-web', function (data) {
   const clonedData = cloneInto(data, document.defaultView)
   document.documentElement.dispatchEvent(new CustomEvent(
     'from-addon-to-web', { bubbles: true, detail: clonedData }
   ))
 })
+
+function onWebToAddon (event) {
+  self.port.emit('from-web-to-addon', event.detail)
+}
+
+window.addEventListener('from-web-to-addon', onWebToAddon, false)
+self.port.on('detach', function () {
+  window.removeEventListener('from-web-to-addon', onWebToAddon)
+})
+
+self.port.emit('from-web-to-addon', { type: 'base-url', data: window.location.origin })

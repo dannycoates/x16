@@ -70,6 +70,10 @@ function actionToWeb ({ payload, type }) {
           version: payload.experiment.version
         }
       }
+    case actions.SELF_UNINSTALLED.type:
+      return {
+        type: 'addon-self:uninstalled'
+      }
   }
 }
 
