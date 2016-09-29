@@ -9,6 +9,7 @@
     "lint": "eslint . --ignore-path .gitignore",
     "pack": "cd frontend; npm run pack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",
+    "frontend": "npm run pack; http-server",
     "test": "jpm test"
   },
   "author": "",
@@ -22,6 +23,7 @@
     "eslint-plugin-promise": "^2.0.1",
     "eslint-plugin-react": "^6.2.2",
     "eslint-plugin-standard": "^2.0.0",
+    "http-server": "^0.9.0",
     "jpm": "^1.1.4"
   },
   "dependencies": {
