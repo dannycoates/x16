@@ -437,11 +437,9 @@ exports['test LOAD_EXPERIMENTS'] = (assert) => {
   const initialState = DEFAULT_STATE
   const action = {
     type: actions.LOAD_EXPERIMENTS.type,
-    payload: {
-      install: {}
-    }
+    payload: {}
   }
-  // Not implemented, no change expected
+  // no change expected
   testAction(assert, action, initialState, initialState)
 }
 

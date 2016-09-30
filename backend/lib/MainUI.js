@@ -37,11 +37,6 @@ const MainUI = Class({
       icon: `./wolf.svg`,
       onChange: state => {
         if (state.checked) {
-          this.panel.show({
-            position: this.button,
-            width: this.panelWidth,
-            height: this.store.getState().ui.panelHeight
-          })
           store.dispatch(actions.MAIN_BUTTON_CLICKED({ time: Date.now() }))
         }
       }
@@ -55,6 +50,13 @@ const MainUI = Class({
       clearInterval(this.pollInterval)
       console.debug(`polled ${x} times`)
       emit(this, 'connected')
+    })
+  },
+  showPanel: function () {
+    this.panel.show({
+      position: this.button,
+      width: this.panelWidth,
+      height: this.store.getState().ui.panelHeight
     })
   },
   openTab: function (url) {

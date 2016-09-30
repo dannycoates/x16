@@ -1,2 +1,3 @@
 node_modules
 data/bundle.js
+tools/control-panel.js

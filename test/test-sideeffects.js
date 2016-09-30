@@ -141,7 +141,8 @@ exports['test MAIN_BUTTON_CLICKED'] = (assert) => {
     type: actions.MAIN_BUTTON_CLICKED.type
   }
   const ui = {
-    setBadge: () => {}
+    setBadge: () => {},
+    showPanel: () => {}
   }
   const telemetry = {
     ping: (id, name) => {
@@ -252,7 +253,8 @@ exports['test SELF_INSTALLED'] = (assert) => {
   const telemetry = {
     ping: (id, name) => {
       assert.equal(name, 'enabled')
-    }
+    },
+    setPrefs: () => {}
   }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
@@ -268,18 +270,13 @@ exports['test SET_BASE_URL'] = (assert) => {
       url: 'it'
     }
   }
-  const loader = {
-    loadExperiments: (n, url) => {
-      assert.equal(n, 'any')
-      assert.equal(url, action.payload.url)
-    }
-  }
+  const dispatch = a => assert.equal(a.payload.baseUrl, 'it')
   const env = {
     get: () => { return { name: 'any' } }
   }
   const state = reducer(null, action)
   assert.equal(typeof (state), 'function')
-  state({ loader, env })
+  state({ dispatch, env })
 }
 
 exports['test GET_INSTALLED'] = (assert, done) => {
@@ -303,7 +300,8 @@ exports['test SELF_UNINSTALLED'] = (assert, done) => {
     uninstallAll: done
   }
   const telemetry = {
-    ping: (id, name) => assert.equal(name, 'disabled')
+    ping: (id, name) => assert.equal(name, 'disabled'),
+    restorePrefs: () => {}
   }
   const state = reducer(null, action)
   state({installManager, telemetry})
@@ -387,12 +385,19 @@ exports['test DOWNLOAD_FAILED'] = (assert) => {
   assert.equal(state, nothing)
 }
 
-exports['test LOAD_EXPERIMENTS'] = (assert) => {
+exports['test LOAD_EXPERIMENTS'] = (assert, done) => {
   const action = {
-    type: actions.LOAD_EXPERIMENTS.type
+    type: actions.LOAD_EXPERIMENTS.type,
+    payload: {
+      env: 'test',
+      baseUrl: 'baseUrl'
+    }
+  }
+  const loader = {
+    loadExperiments: done
   }
   const state = reducer(null, action)
-  assert.equal(state, nothing)
+  state({loader})
 }
 
 exports['test INSTALL_STARTED'] = (assert) => {
@@ -426,20 +431,22 @@ exports['test SELF_ENABLED'] = (assert) => {
   const telemetry = {
     ping: (id, name) => {
       assert.equal(name, 'enabled')
-    }
+    },
+    setPrefs: () => {}
   }
   const state = reducer(null, action)
   state({telemetry})
 }
 
-exports['test SELF_DISABLED'] = (assert) => {
+exports['test SELF_DISABLED'] = (assert, done) => {
   const action = {
     type: actions.SELF_DISABLED.type
   }
   const telemetry = {
     ping: (id, name) => {
       assert.equal(name, 'disabled')
-    }
+    },
+    restorePrefs: done
   }
   const state = reducer(null, action)
   state({telemetry})

@@ -17,6 +17,7 @@ function createAction (type, payloadArgs) {
     return { type, meta, payload }
   }
   action.type = type
+  action.args = payloadArgs
   return action
 }
 

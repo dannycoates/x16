@@ -16,6 +16,10 @@ let unsubscribe = nothing
 
 function reducer (state = nothing, { payload, type }) {
   switch (type) {
+    case actions.LOAD_EXPERIMENTS.type:
+      return ({loader}) => {
+        loader.loadExperiments(payload.env, payload.baseUrl)
+      }
     case actions.EXPERIMENT_ENABLED.type:
     case actions.INSTALL_ENDED.type:
       return ({telemetry}) => {
@@ -53,10 +57,10 @@ function reducer (state = nothing, { payload, type }) {
       }
 
     case actions.SET_BASE_URL.type:
-      return ({loader, env}) => {
+      return ({dispatch, env}) => {
         const e = env.get()
-        const url = e.name === 'any' ? payload.url : e.baseUrl
-        loader.loadExperiments(e.name, url)
+        const baseUrl = e.name === 'any' ? payload.url : e.baseUrl
+        dispatch(actions.LOAD_EXPERIMENTS({ env: e.name, baseUrl }))
       }
 
     case actions.GET_INSTALLED.type:
@@ -71,6 +75,7 @@ function reducer (state = nothing, { payload, type }) {
     case actions.MAIN_BUTTON_CLICKED.type:
       return ({ui, telemetry}) => {
         ui.setBadge()
+        ui.showPanel()
         telemetry.ping('txp_toolbar_menu_1', 'clicked')
       }
 
