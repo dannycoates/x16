@@ -16,10 +16,16 @@ let unsubscribe = nothing
 
 function reducer (state = nothing, { payload, type }) {
   switch (type) {
-    case actions.LOAD_EXPERIMENTS.type:
-      return ({loader}) => {
-        loader.loadExperiments(payload.env, payload.baseUrl)
+    case actions.FRONTEND_CONNECTED.type:
+      return ({env, getState, dispatch}) => {
+        const current = env.get()
+        const baseUrl = current.name === 'any' ? getState().baseUrl : current.baseUrl
+        dispatch(actions.LOAD_EXPERIMENTS({ env: current.name, baseUrl }))
       }
+
+    case actions.LOAD_EXPERIMENTS.type:
+      return ({loader}) => loader.loadExperiments(payload.env, payload.baseUrl)
+
     case actions.EXPERIMENT_ENABLED.type:
     case actions.INSTALL_ENDED.type:
       return ({telemetry}) => {

@@ -77,9 +77,3 @@ env.on('change', newEnv => {
   })
   loader.loadExperiments(newEnv.name, newEnv.baseUrl)
 })
-
-// Need to wait a tick for the ui port to "connect"
-ui.once('connected', () => {
-  const baseUrl = startEnv.name === 'any' ? store.getState().baseUrl : startEnv.baseUrl
-  loader.loadExperiments(startEnv.name, baseUrl)
-})

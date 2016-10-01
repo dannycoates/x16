@@ -6,8 +6,6 @@
 
 const actions = require('../../common/actions')
 const { Class } = require('sdk/core/heritage')
-const { emit, setListeners } = require('sdk/event/core')
-const { EventTarget } = require('sdk/event/target')
 const { Panel } = require('sdk/panel')
 const tabs = require('sdk/tabs')
 const { ToggleButton } = require('sdk/ui/button/toggle')
@@ -19,9 +17,7 @@ function pollPanel (port) {
 }
 
 const MainUI = Class({
-  implements: [EventTarget],
   initialize: function (store) {
-    setListeners(this)
     this.store = store
     this.panelWidth = 300
     this.panel = Panel({
@@ -49,7 +45,7 @@ const MainUI = Class({
     this.panel.port.once('pong', x => {
       clearInterval(this.pollInterval)
       console.debug(`polled ${x} times`)
-      emit(this, 'connected')
+      store.dispatch(actions.FRONTEND_CONNECTED())
     })
   },
   showPanel: function () {

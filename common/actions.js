@@ -40,6 +40,7 @@ const actionArgs = {
   EXPERIMENT_DISABLED: ['experiment'],
   EXPERIMENT_UNINSTALLING: ['experiment'],
   EXPERIMENT_UNINSTALLED: ['experiment'],
+  FRONTEND_CONNECTED: [],
   SET_BADGE: ['text'],
   MAIN_BUTTON_CLICKED: ['time'],
   MAYBE_NOTIFY: ['experiment'],
