@@ -11,7 +11,7 @@ const mocks = MockUtils.callbacks({
   store: ['dispatch', 'getState'],
   timers: ['setTimeout', 'clearTimeout'],
   actions: ['MAYBE_NOTIFY', 'SCHEDULE_NOTIFIER'],
-  notificationUI: ['maybeNotify']
+  notificationUI: ['notify']
 })
 
 const mockLoader = MockUtils.loader(module, './backend/lib/actionCreators/NotificationManager.js', {
@@ -26,7 +26,14 @@ const nm = new NotificationManager(mocks.store)
 exports['test schedule'] = (assert) => {
   const nextCheck = Date.now()
   const state = {
-    experiments: { x: {}, y: {} },
+    experiments: {
+      x: {
+        notifications: []
+      },
+      y: {
+        notifications: []
+      }
+    },
     notifications: {
       lastNotified: nextCheck - 1,
       nextCheck
@@ -34,7 +41,6 @@ exports['test schedule'] = (assert) => {
   }
   mocks.store.getState.implement(() => state)
   mocks.timers.setTimeout.implement(fn => fn())
-  mocks.notificationUI.maybeNotify.implement(() => ({}))
 
   nm.schedule(mocks.store)
 

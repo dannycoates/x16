@@ -90,6 +90,8 @@ const types = {
   },
   env: 'any',
   baseUrl: 'http://testpilot.dev:8000',
+  url: 'http://testpilot.dev:8000',
+  title: 'Hello World!',
   experiments: [],
   text: 'yo!',
   time: Date.now(),

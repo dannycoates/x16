@@ -43,6 +43,7 @@ const actionArgs = {
   SET_BADGE: ['text'],
   MAIN_BUTTON_CLICKED: ['time'],
   MAYBE_NOTIFY: ['experiment'],
+  SHOW_NOTIFICATION: ['id', 'title', 'text', 'url'],
   SCHEDULE_NOTIFIER: ['nextCheck', 'lastNotified'],
   SELF_INSTALLED: ['url'],
   SELF_UNINSTALLED: [],

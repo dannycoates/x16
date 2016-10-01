@@ -82,6 +82,9 @@ function reducer (state = nothing, { payload, type }) {
     case actions.MAYBE_NOTIFY.type:
       return ({notificationManager}) => notificationManager.maybeNotify(payload.experiment)
 
+    case actions.SHOW_NOTIFICATION.type:
+      return ({notificationManager}) => notificationManager.showNotification(payload)
+
     case actions.SCHEDULE_NOTIFIER.type:
       return ({notificationManager}) => notificationManager.schedule()
 
