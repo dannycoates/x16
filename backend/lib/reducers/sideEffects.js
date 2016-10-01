@@ -18,13 +18,13 @@ function reducer (state = nothing, { payload, type }) {
   switch (type) {
     case actions.FRONTEND_CONNECTED.type:
       return ({env, getState, dispatch}) => {
-        const current = env.get()
-        const baseUrl = current.name === 'any' ? getState().baseUrl : current.baseUrl
-        dispatch(actions.LOAD_EXPERIMENTS({ env: current.name, baseUrl }))
+        const e = env.get()
+        const baseUrl = e.name === 'any' ? getState().baseUrl : e.baseUrl
+        dispatch(actions.LOAD_EXPERIMENTS({ envname: e.name, baseUrl }))
       }
 
     case actions.LOAD_EXPERIMENTS.type:
-      return ({loader}) => loader.loadExperiments(payload.env, payload.baseUrl)
+      return ({loader}) => loader.loadExperiments(payload.envname, payload.baseUrl)
 
     case actions.EXPERIMENT_ENABLED.type:
     case actions.INSTALL_ENDED.type:
@@ -62,11 +62,18 @@ function reducer (state = nothing, { payload, type }) {
         installManager.uninstallAll()
       }
 
+    case actions.CHANGE_ENV.type:
+      return ({env, dispatch, webapp}) => {
+        const e = env.get()
+        webapp.changeEnv(e)
+        dispatch(actions.LOAD_EXPERIMENTS({ envname: e.name, baseUrl: e.baseUrl }))
+      }
+
     case actions.SET_BASE_URL.type:
       return ({dispatch, env}) => {
         const e = env.get()
         const baseUrl = e.name === 'any' ? payload.url : e.baseUrl
-        dispatch(actions.LOAD_EXPERIMENTS({ env: e.name, baseUrl }))
+        dispatch(actions.LOAD_EXPERIMENTS({ envname: e.name, baseUrl }))
       }
 
     case actions.GET_INSTALLED.type:

@@ -7,30 +7,42 @@
 const { Class } = require('sdk/core/heritage')
 const { PageMod } = require('sdk/page-mod')
 
+function toIncludes (baseUrl, whitelist) {
+  const page = (baseUrl === '*') ? baseUrl : `${baseUrl}/*`
+  const beacon = `${page},${whitelist}`.split(',')
+  return { page, beacon }
+}
+
 const WebApp = Class({
   initialize: function ({hub, baseUrl, whitelist, addonVersion}) {
-    const pageIncludes = (baseUrl === '*') ? baseUrl : `${baseUrl}/*`
-    const beaconIncludes = `${pageIncludes},${whitelist}`.split(',')
-
+    this.hub = hub
+    this.addonVersion = addonVersion
+    this.createMods(toIncludes(baseUrl, whitelist))
+  },
+  createMods: function (includes) {
     this.page = new PageMod({
-      include: pageIncludes,
+      include: includes.page,
       contentScriptFile: './message-bridge.js',
       contentScriptWhen: 'start',
       attachTo: ['top', 'existing'],
       onAttach: worker => {
-        hub.connect(worker.port)
-        worker.on('detach', () => hub.disconnect(worker.port))
+        this.hub.connect(worker.port)
+        worker.on('detach', () => this.hub.disconnect(worker.port))
       }
     })
     this.beacon = new PageMod({
-      include: beaconIncludes,
+      include: includes.beacon,
       contentScriptFile: './set-installed-flag.js',
       contentScriptWhen: 'start',
       attachTo: ['top', 'existing'],
       contentScriptOptions: {
-        version: addonVersion
+        version: this.addonVersion
       }
     })
+  },
+  changeEnv: function ({baseUrl, whitelist}) {
+    this.teardown()
+    this.createMods(toIncludes(baseUrl, whitelist))
   },
   teardown: function () {
     this.page.destroy()

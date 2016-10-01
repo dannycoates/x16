@@ -88,7 +88,7 @@ const types = {
     progress: 100,
     maxProgress: 100
   },
-  env: 'any',
+  envname: 'any',
   baseUrl: 'http://testpilot.dev:8000',
   url: 'http://testpilot.dev:8000',
   title: 'Hello World!',

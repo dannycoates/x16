@@ -31,6 +31,12 @@ const loader = new Loader(store)
 const notificationManager = new NotificationManager(store)
 const telemetry = new Telemetry()
 const ui = new MainUI(store)
+const webapp = new WebApp({
+  baseUrl: startEnv.baseUrl,
+  whitelist: startEnv.whitelist,
+  addonVersion: self.version,
+  hub
+})
 
 sideEffects.setContext(Object.assign({}, store, {
   env,
@@ -39,19 +45,13 @@ sideEffects.setContext(Object.assign({}, store, {
   loader,
   notificationManager,
   telemetry,
-  ui
+  ui,
+  webapp
 }))
 
-sideEffects.enable(store)
-
-let webapp = new WebApp({
-  baseUrl: startEnv.baseUrl,
-  whitelist: startEnv.whitelist,
-  addonVersion: self.version,
-  hub
-})
-
 exports.main = function ({loadReason}) {
+  env.subscribe(store)
+  sideEffects.enable(store)
   installManager.selfLoaded(loadReason)
   hub.connect(ui.panel.port)
   notificationManager.schedule()
@@ -66,14 +66,3 @@ exports.onUnload = function (reason) {
   experimentMetrics.teardown()
   webapp.teardown()
 }
-
-env.on('change', newEnv => {
-  webapp.teardown()
-  webapp = new WebApp({
-    baseUrl: newEnv.baseUrl,
-    whitelist: newEnv.whitelist,
-    addonVersion: self.version,
-    hub
-  })
-  loader.loadExperiments(newEnv.name, newEnv.baseUrl)
-})

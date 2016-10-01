@@ -92,7 +92,7 @@ const Loader = Class({
       interval
     )
   },
-  loadExperiments: function (env, baseUrl) {
+  loadExperiments: function (envname, baseUrl) {
     const { dispatch, getState } = this.store
     return fetchExperiments(baseUrl, '/api/experiments.json')
     .then(
@@ -128,7 +128,7 @@ const Loader = Class({
       }
     )
     .then(
-      experiments => dispatch(actions.EXPERIMENTS_LOADED({env, baseUrl, experiments})),
+      experiments => dispatch(actions.EXPERIMENTS_LOADED({envname, baseUrl, experiments})),
       err => dispatch(actions.EXPERIMENTS_LOAD_ERROR({err}))
     )
   }

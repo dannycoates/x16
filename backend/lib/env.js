@@ -5,16 +5,22 @@
  */
 
 const aboutConfig = require('sdk/preferences/service')
+const { CHANGE_ENV } = require('../../../common/actions')
 const environments = require('../../common/environments')
-const { emit } = require('sdk/event/core')
-const { EventTarget } = require('sdk/event/target')
 const { PrefsTarget } = require('sdk/preferences/event-target')
 const self = require('sdk/self')
 
-const prefs = PrefsTarget()
-const env = EventTarget()
-env.get = function () {
-  return environments[aboutConfig.get('testpilot.env', 'production')]
+let store = {
+  dispatch: () => console.error('env.store is not set')
+}
+
+const env = {
+  get: function () {
+    return environments[aboutConfig.get('testpilot.env', 'production')]
+  },
+  subscribe: function (it) {
+    store = it
+  }
 }
 
 if (!aboutConfig.has('testpilot.env')) {
@@ -26,8 +32,9 @@ if (aboutConfig.get('testpilot.env') !== 'production') {
   // TODO: set back on change? worth it?
 }
 
+const prefs = PrefsTarget()
 prefs.on('testpilot.env', () => {
-  emit(env, 'change', env.get())
+  store.dispatch(CHANGE_ENV())
 })
 
 module.exports = env

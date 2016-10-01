@@ -389,7 +389,7 @@ exports['test LOAD_EXPERIMENTS'] = (assert, done) => {
   const action = {
     type: actions.LOAD_EXPERIMENTS.type,
     payload: {
-      env: 'test',
+      envname: 'test',
       baseUrl: 'baseUrl'
     }
   }

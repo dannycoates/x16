@@ -58,12 +58,12 @@ function experiments (experiments = {}, { payload, type }) {
   }
 }
 
-function env (env = null, { payload, type }) {
+function env (state = null, { payload, type }) {
   switch (type) {
     case actions.EXPERIMENTS_LOADED.type:
-      return payload.env
+      return payload.envname
   }
-  return env
+  return state
 }
 
 function baseUrl (state = null, { payload, type }) {

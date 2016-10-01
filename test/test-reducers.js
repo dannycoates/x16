@@ -56,7 +56,7 @@ exports['test EXPERIMENTS_LOADED'] = (assert) => {
   const action = {
     type: actions.EXPERIMENTS_LOADED.type,
     payload: {
-      env: 'test',
+      envname: 'test',
       baseUrl: 'testpilot.dev:8000',
       experiments: { X, Y }
     }

@@ -9,7 +9,7 @@ const actions = require('../../../common/actions')
 function reducer (state = null, { payload, type }) {
   switch (type) {
     case actions.EXPERIMENTS_LOADED.type:
-      return payload.env
+      return payload.envname
     default:
       return state
   }
