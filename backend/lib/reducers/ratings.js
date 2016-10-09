@@ -4,9 +4,9 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
+import actions from '../../../common/actions'
 
-function reducer (state = {}, { payload, type }) {
+export function reducer (state = {}, { payload, type }) {
   let id, rating
   switch (type) {
     case actions.SHOW_RATING_PROMPT.type:
@@ -27,11 +27,6 @@ function reducer (state = {}, { payload, type }) {
   }
 }
 
-function experimentRating (state, id) {
+export function experimentRating (state, id) {
   return state.ratings[id] || {}
-}
-
-module.exports = {
-  reducer,
-  experimentRating
 }

@@ -10,8 +10,8 @@
  *   & https://dxr.mozilla.org/mozilla-central/source/browser/components/uitour/UITour.jsm
  */
 
-const { Services } = require('resource://gre/modules/Services.jsm')
-const { setTimeout, clearTimeout } = require('sdk/timers')
+import { Services } from 'resource://gre/modules/Services.jsm'
+import { setTimeout, clearTimeout } from 'sdk/timers'
 
 function getAnonEl (win, box, attrName) {
   return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName)
@@ -90,7 +90,7 @@ function createNotificationBox (options) {
   }
 }
 
-function showRating (options) {
+export function showRating (options) {
   return new Promise((resolve) => {
     const experiment = options.experiment
     const uiTimeout = setTimeout(uiClosed, options.duration || 60000)
@@ -115,7 +115,7 @@ function showRating (options) {
   })
 }
 
-function showSurveyButton (options) {
+export function showSurveyButton (options) {
   return new Promise((resolve) => {
     let clicked = false
     const { experiment, duration } = options
@@ -138,9 +138,4 @@ function showSurveyButton (options) {
       button.setAttribute('style', 'background: #0095dd; color: #fff; height: 30px; font-size: 13px; border-radius: 2px; border: 0px; text-shadow: 0 0px; box-shadow: 0 0px;')
     }
   })
-}
-
-module.exports = {
-  showRating,
-  showSurveyButton
 }

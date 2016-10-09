@@ -4,9 +4,9 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
+import actions from '../../../common/actions'
 
-function webToAction ({type, data}) {
+export function webToAction ({type, data}) {
   const meta = { src: 'web' }
   switch (type) {
     case 'install-experiment':
@@ -26,7 +26,7 @@ function webToAction ({type, data}) {
   }
 }
 
-function actionToWeb ({ payload, type }) {
+export function actionToWeb ({ payload, type }) {
   switch (type) {
     case actions.INSTALL_ENDED.type:
       return {
@@ -75,9 +75,4 @@ function actionToWeb ({ payload, type }) {
         type: 'addon-self:uninstalled'
       }
   }
-}
-
-module.exports = {
-  actionToWeb,
-  webToAction
 }

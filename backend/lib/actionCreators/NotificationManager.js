@@ -4,10 +4,10 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
-const { Class } = require('sdk/core/heritage')
-const notificationUI = require('../notificationUI')
-const { setTimeout, clearTimeout } = require('sdk/timers')
+import actions from '../../../common/actions'
+import * as notificationUI from '../notificationUI'
+import { setTimeout, clearTimeout } from 'sdk/timers'
+
 const ONE_DAY = 24 * 60 * 60 * 1000
 const MAX_NOTIFICATION_DELAY_PERIOD = 14 * ONE_DAY
 
@@ -30,12 +30,13 @@ function nextCheckTime (notifications, nextCheck) {
     }, nextCheck)
 }
 
-const NotificationManager = Class({
-  initialize: function (store) {
+export default class NotificationManager {
+  constructor (store) {
     this.store = store
     this.timeout = null
-  },
-  schedule: function () {
+  }
+
+  schedule () {
     const { getState } = this.store
     const nextCheck = getState().notifications.nextCheck
     clearTimeout(this.timeout)
@@ -46,8 +47,9 @@ const NotificationManager = Class({
       }
     },
     nextCheck - Date.now())
-  },
-  maybeNotify: function (experiment) {
+  }
+
+  maybeNotify (experiment) {
     const { dispatch, getState } = this.store
     const { lastNotified, nextCheck } = getState().notifications
     const n = selectNotification(experiment.notifications, lastNotified)
@@ -70,10 +72,9 @@ const NotificationManager = Class({
       }
     }
     dispatch(actions.SCHEDULE_NOTIFIER(payload))
-  },
-  showNotification: function (message) {
+  }
+
+  showNotification (message) {
     notificationUI.notify(message)
   }
-})
-
-module.exports = NotificationManager
+}

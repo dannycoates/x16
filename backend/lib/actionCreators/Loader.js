@@ -4,13 +4,12 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
-const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
-const { Class } = require('sdk/core/heritage')
-const { Request } = require('sdk/request')
-const { setTimeout, clearTimeout } = require('sdk/timers')
-const difference = require('lodash/difference')
-const WebExtensionChannels = require('../metrics/webextension-channels')
+import actions from '../../../common/actions'
+import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
+import { Request } from 'sdk/request'
+import { setTimeout, clearTimeout } from 'sdk/timers'
+import difference from 'lodash/difference'
+import WebExtensionChannels from '../metrics/webextension-channels'
 
 const SIX_HOURS = 6 * 60 * 60 * 1000
 
@@ -77,12 +76,13 @@ function diffExperimentList (oldSet, newSet) {
   return addedIds.map(id => newSet[id])
 }
 
-const Loader = Class({
-  initialize: function (store) {
+export default class Loader {
+  constructor (store) {
     this.store = store
     this.timeout = null
-  },
-  schedule: function (interval = SIX_HOURS) {
+  }
+
+  schedule (interval = SIX_HOURS) {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(
       () => {
@@ -91,8 +91,9 @@ const Loader = Class({
       },
       interval
     )
-  },
-  loadExperiments: function (envname, baseUrl) {
+  }
+
+  loadExperiments (envname, baseUrl) {
     const { dispatch, getState } = this.store
     return fetchExperiments(baseUrl, '/api/experiments.json')
     .then(
@@ -132,6 +133,4 @@ const Loader = Class({
       err => dispatch(actions.EXPERIMENTS_LOAD_ERROR({err}))
     )
   }
-})
-
-module.exports = Loader
+}

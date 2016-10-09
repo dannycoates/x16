@@ -4,25 +4,27 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const { Class } = require('sdk/core/heritage')
-const { actionToWeb, webToAction } = require('./webadapter')
+import { actionToWeb, webToAction } from './webadapter'
 
-const Hub = Class({
-  initialize: function () {
+export default class Hub {
+  constructor () {
     this.dispatch = () => console.error('Hub cannot use dispatch() before middleware()')
     this.ports = new Set()
-  },
-  connect: function (port) {
+  }
+
+  connect (port) {
     port.on('action', this.dispatch)
     port.on('from-web-to-addon', evt => this.dispatch(webToAction(evt)))
     this.ports.add(port)
-  },
-  disconnect: function (port) {
+  }
+
+  disconnect (port) {
     port.off('action', this.dispatch)
     port.off('from-web-to-addon')
     this.ports.delete(port)
-  },
-  middleware: function () {
+  }
+
+  middleware () {
     return ({dispatch}) => {
       this.dispatch = dispatch
       return (next) => (action) => {
@@ -46,6 +48,4 @@ const Hub = Class({
       }
     }
   }
-})
-
-module.exports = Hub
+}

@@ -4,8 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
-const { Class } = require('sdk/core/heritage')
+import actions from '../../../common/actions'
 
 function toObject (install, experiment) {
   // install properties aren't enumerable
@@ -19,52 +18,59 @@ function toObject (install, experiment) {
   }
 }
 
-const InstallListener = Class({
-  initialize: function ({install, experiment, dispatch}) {
+export default class InstallListener {
+  constructor ({install, experiment, dispatch}) {
     this.dispatch = dispatch
     this.experiment = experiment
     install.addListener(this)
-  },
-  onInstallEnded: function (install, addon) {
+  }
+
+  onInstallEnded (install, addon) {
     this.dispatch(actions.INSTALL_ENDED({
       experiment: {
         addon_id: addon.id,
         installDate: addon.installDate
       }
     }))
-  },
-  onInstallFailed: function (install) {
+  }
+
+  onInstallFailed (install) {
     install = toObject(install, this.experiment)
     this.dispatch(actions.INSTALL_FAILED({install}))
-  },
-  onInstallStarted: function (install) {
+  }
+
+  onInstallStarted (install) {
     install = toObject(install, this.experiment)
     this.dispatch(actions.INSTALL_STARTED({install}))
-  },
-  onInstallCancelled: function (install) {
+  }
+
+  onInstallCancelled (install) {
     install = toObject(install, this.experiment)
     this.dispatch(actions.INSTALL_CANCELLED({install}))
-  },
-  onDownloadStarted: function (install) {
+  }
+
+  onDownloadStarted (install) {
     install = toObject(install, this.experiment)
     this.dispatch(actions.DOWNLOAD_STARTED({install}))
-  },
-  onDownloadProgress: function (install) {
+  }
+
+  onDownloadProgress (install) {
     install = toObject(install, this.experiment)
     this.dispatch(actions.DOWNLOAD_PROGRESS({install}))
-  },
-  onDownloadEnded: function (install) {
+  }
+
+  onDownloadEnded (install) {
     install = toObject(install, this.experiment)
     this.dispatch(actions.DOWNLOAD_ENDED({install}))
-  },
-  onDownloadCancelled: function (install) {
+  }
+
+  onDownloadCancelled (install) {
     install = toObject(install, this.experiment)
     this.dispatch(actions.DOWNLOAD_CANCELLED({install}))
-  },
-  onDownloadFailed: function (install) {
+  }
+
+  onDownloadFailed (install) {
     install = toObject(install, this.experiment)
     this.dispatch(actions.DOWNLOAD_FAILED({install}))
   }
-})
-
-module.exports = InstallListener
+}

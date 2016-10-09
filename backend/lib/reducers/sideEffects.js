@@ -4,17 +4,17 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
-const self = require('sdk/self')
-const tabs = require('sdk/tabs')
-const WebExtensionChannels = require('../metrics/webextension-channels')
-
-function nothing () {}
+import actions from '../../../common/actions'
+import self from 'sdk/self'
+import tabs from 'sdk/tabs'
+import WebExtensionChannels from '../metrics/webextension-channels'
 
 let context = {}
 let unsubscribe = nothing
 
-function reducer (state = nothing, { payload, type }) {
+export function nothing () {}
+
+export function reducer (state = nothing, { payload, type }) {
   switch (type) {
     case actions.FRONTEND_CONNECTED.type:
       return ({env, getState, dispatch}) => {
@@ -128,23 +128,15 @@ function reducer (state = nothing, { payload, type }) {
   }
 }
 
-function setContext (ctx) {
+export function setContext (ctx) {
   context = ctx
 }
 
-function enable (store) {
+export function enable (store) {
   unsubscribe = store.subscribe(() => store.getState().sideEffects(context))
 }
 
-function disable () {
+export function disable () {
   unsubscribe()
   unsubscribe = nothing
-}
-
-module.exports = {
-  reducer,
-  setContext,
-  enable,
-  disable,
-  nothing
 }

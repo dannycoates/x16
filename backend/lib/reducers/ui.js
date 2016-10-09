@@ -4,12 +4,12 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
+import actions from '../../../common/actions'
 
 const FOOTER_HEIGHT = 53
 const EXPERIMENT_HEIGHT = 80
 
-function reducer (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
+export function reducer (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
   switch (type) {
     case actions.SET_BADGE.type:
       return Object.assign({}, state, { badge: payload.text })
@@ -30,5 +30,3 @@ function reducer (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
       return state
   }
 }
-
-module.exports = { reducer }

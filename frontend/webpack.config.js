@@ -18,9 +18,12 @@ const config = {
     loaders: [
       {
         test: /\.js$/,
-        loaders: [ 'babel' ],
+        loader: 'babel',
         exclude: /node_modules/,
-        include: __dirname
+        include: [__dirname, path.join(__dirname, '..', 'common')],
+        query: {
+          presets: [['es2015', { modules: false }], 'react', 'stage-2']
+        }
       },
       {
         test: /.(css|scss)$/,
@@ -38,12 +41,17 @@ const config = {
 if (process.env.NODE_ENV === 'production') {
   config.plugins.push(
     new webpack.DefinePlugin({
-    'process.env': {
-      NODE_ENV: JSON.stringify('production')
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }))
+  config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false
     }
   }))
 } else {
-  config.devtool = 'source-map'
+  config.devtool = 'eval-source-map'
   config.devServer = {
     contentBase: path.join(__dirname, '..'),
     publicPath: '/data/'

@@ -4,15 +4,23 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const { combineReducers } = require('redux/dist/redux.min')
+import { reducer as baseUrl } from './baseUrl'
+import { reducer as clientUUID } from './clientUUID'
+import { reducer as env } from './env'
+import { reducer as experiments } from './experiments'
+import { reducer as notifications } from './notifications'
+import { reducer as ratings } from './ratings'
+import { reducer as sideEffects } from './sideEffects'
+import { reducer as ui } from './ui'
+import { combineReducers } from 'redux'
 
-module.exports = combineReducers({
-  baseUrl: require('./baseUrl').reducer,
-  clientUUID: require('./clientUUID').reducer,
-  env: require('./env').reducer,
-  experiments: require('./experiments').reducer,
-  notifications: require('./notifications').reducer,
-  ratings: require('./ratings').reducer,
-  sideEffects: require('./sideEffects').reducer,
-  ui: require('./ui').reducer
+export default combineReducers({
+  baseUrl,
+  clientUUID,
+  env,
+  experiments,
+  notifications,
+  ratings,
+  sideEffects,
+  ui
 })

@@ -4,10 +4,10 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const Experiment = require('./experiment')
-const Variants = require('./variants')
+import Experiment from './experiment'
+import Variants from './variants'
 
-module.exports = function (clientUUID) {
+export default function (clientUUID) {
   const variants = new Variants(clientUUID)
   return new Experiment(variants)
 }

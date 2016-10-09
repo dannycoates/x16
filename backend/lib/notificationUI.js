@@ -4,11 +4,11 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const Notifications = require('sdk/notifications')
-const querystring = require('sdk/querystring')
-const tabs = require('sdk/tabs')
+import Notifications from 'sdk/notifications'
+import querystring from 'sdk/querystring'
+import tabs from 'sdk/tabs'
 
-function notify (message) {
+export function notify (message) {
   Notifications.notify({
     title: message.title,
     text: `via testpilot.firefox.com\n${message.text}`,
@@ -23,8 +23,4 @@ function notify (message) {
       tabs.open(url)
     }
   })
-}
-
-module.exports = {
-  notify
 }

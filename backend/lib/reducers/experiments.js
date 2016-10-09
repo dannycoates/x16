@@ -4,10 +4,10 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
-const pickBy = require('lodash/pickBy')
+import actions from '../../../common/actions'
+import pickBy from 'lodash/pickBy'
 
-function reducer (experiments = {}, { payload, type }) {
+export function reducer (experiments = {}, { payload, type }) {
   let x, n
   switch (type) {
     case actions.EXPERIMENTS_LOAD_ERROR.type:
@@ -33,19 +33,13 @@ function reducer (experiments = {}, { payload, type }) {
   }
 }
 
-function activeExperiments (state) {
+export function activeExperiments (state) {
   return pickBy(state.experiments, x => x.active)
 }
 
-function randomActiveExperiment (state) {
+export function randomActiveExperiment (state) {
   const installed = activeExperiments(state)
   const installedKeys = Object.keys(installed)
   const id = installedKeys[Math.floor(Math.random() * installedKeys.length)]
   return installed[id]
-}
-
-module.exports = {
-  reducer,
-  activeExperiments,
-  randomActiveExperiment
 }

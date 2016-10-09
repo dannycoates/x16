@@ -4,13 +4,12 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
-const { Class } = require('sdk/core/heritage')
-const Events = require('sdk/system/events')
-const self = require('sdk/self')
-const { Services } = require('resource://gre/modules/Services.jsm')
-const { storage } = require('sdk/simple-storage')
-const { TelemetryController } = require('resource://gre/modules/TelemetryController.jsm')
+import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
+import Events from 'sdk/system/events'
+import self from 'sdk/self'
+import { Services } from 'resource://gre/modules/Services.jsm'
+import { storage } from 'sdk/simple-storage'
+import { TelemetryController } from 'resource://gre/modules/TelemetryController.jsm'
 
 const EVENT_SEND_METRIC = 'testpilot::send-metric'
 const EVENT_RECEIVE_VARIANT_DEFS = 'testpilot::register-variants'
@@ -58,18 +57,20 @@ function receiveVariantDefs (event) {
   })
 }
 
-const Experiment = Class({
-  initialize: function (variants) {
+export default class Experiment {
+  constructor (variants) {
     this.variants = variants
     this.receiveVariantDefs = receiveVariantDefs.bind(this)
     Events.on(EVENT_SEND_METRIC, experimentPing)
     Events.on(EVENT_RECEIVE_VARIANT_DEFS, this.receiveVariantDefs)
-  },
-  teardown: function () {
+  }
+
+  static ping (event) {
+    experimentPing(event)
+  }
+
+  teardown () {
     Events.off(EVENT_SEND_METRIC, experimentPing)
     Events.off(EVENT_RECEIVE_VARIANT_DEFS, this.receiveVariantDefs)
   }
-})
-Experiment.ping = experimentPing
-
-module.exports = Experiment
+}

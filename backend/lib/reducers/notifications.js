@@ -4,10 +4,11 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
+import actions from '../../../common/actions'
 
 const tomorrow = Date.now() + (24 * 60 * 60 * 1000)
-function reducer (
+
+export function reducer (
   state = { lastNotified: tomorrow, nextCheck: tomorrow },
   { payload, type }) {
   switch (type) {
@@ -20,5 +21,3 @@ function reducer (
       return state
   }
 }
-
-module.exports = { reducer }

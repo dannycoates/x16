@@ -3,10 +3,9 @@
  * version 2.0 (the 'License'). You can obtain a copy of the License at
  * http://mozilla.org/MPL/2.0/.
  */
+import { uuid } from 'sdk/util/uuid'
 
-const newUUID = require('sdk/util/uuid').uuid().toString().slice(1, -1)
-function reducer (state = newUUID, action) {
+const newUUID = uuid().toString().slice(1, -1)
+export function reducer (state = newUUID, action) {
   return state
 }
-
-module.exports = { reducer }
