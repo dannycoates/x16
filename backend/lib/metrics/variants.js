@@ -4,14 +4,14 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const { Class } = require('sdk/core/heritage')
-const seedrandom = require('seedrandom')
+import seedrandom from 'seedrandom'
 
-const Variants = Class({
-  initialize: function (clientUUID) {
+export default class Variants {
+  constructor (clientUUID) {
     this.clientUUID = clientUUID
-  },
-  makeTest: function (test) {
+  }
+
+  makeTest (test) {
     let summedWeight = 0
     const variants = []
     test.variants.forEach(variant => {
@@ -22,14 +22,13 @@ const Variants = Class({
     })
     const seed = `${test.name}_${this.clientUUID}`
     return variants[Math.floor(seedrandom(seed)() * summedWeight)]
-  },
-  parseTests: function (tests) {
+  }
+
+  parseTests (tests) {
     const results = {}
     Object.keys(tests).forEach(key => {
       results[key] = this.makeTest(tests[key])
     })
     return results
   }
-})
-
-module.exports = Variants
+}

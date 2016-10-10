@@ -4,21 +4,21 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const AddonListener = require('./lib/actionCreators/AddonListener')
-const configureStore = require('./lib/configureStore')
-const createExperimentMetrics = require('./lib/metrics')
-const env = require('./lib/env')
-const FeedbackManager = require('./lib/actionCreators/FeedbackManager')
-const Hub = require('./lib/middleware/Hub')
-const InstallManager = require('./lib/actionCreators/InstallManager')
-const Loader = require('./lib/actionCreators/Loader')
-const MainUI = require('./lib/MainUI')
-const NotificationManager = require('./lib/actionCreators/NotificationManager')
-const self = require('sdk/self')
-const sideEffects = require('./lib/reducers/sideEffects')
-const { storage } = require('sdk/simple-storage')
-const Telemetry = require('./lib/Telemetry')
-const WebApp = require('./lib/WebApp')
+import AddonListener from './lib/actionCreators/AddonListener'
+import configureStore from './lib/configureStore'
+import createExperimentMetrics from './lib/metrics'
+import env from './lib/env'
+import FeedbackManager from './lib/actionCreators/FeedbackManager'
+import Hub from './lib/middleware/Hub'
+import InstallManager from './lib/actionCreators/InstallManager'
+import Loader from './lib/actionCreators/Loader'
+import MainUI from './lib/MainUI'
+import NotificationManager from './lib/actionCreators/NotificationManager'
+import self from 'sdk/self'
+import * as sideEffects from './lib/reducers/sideEffects'
+import { storage } from 'sdk/simple-storage'
+import Telemetry from './lib/Telemetry'
+import WebApp from './lib/WebApp'
 
 const startEnv = env.get()
 const hub = new Hub()
@@ -49,7 +49,7 @@ sideEffects.setContext(Object.assign({}, store, {
   webapp
 }))
 
-exports.main = function ({loadReason}) {
+export function main ({loadReason}) {
   env.subscribe(store)
   sideEffects.enable(store)
   installManager.selfLoaded(loadReason)
@@ -58,7 +58,7 @@ exports.main = function ({loadReason}) {
   feedbackManager.schedule()
 }
 
-exports.onUnload = function (reason) {
+export function onUnload (reason) {
   installManager.selfUnloaded(reason)
   storage.root = store.getState()
   sideEffects.disable()

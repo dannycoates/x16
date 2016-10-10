@@ -4,23 +4,24 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
-const { activeExperiments } = require('../reducers/experiments')
-const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
-const { Class } = require('sdk/core/heritage')
-const InstallListener = require('./InstallListener')
-const self = require('sdk/self')
+import actions from '../../../common/actions'
+import { activeExperiments } from '../reducers/experiments'
+import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
+import InstallListener from './InstallListener'
+import self from 'sdk/self'
 
-const InstallManager = Class({
-  initialize: function (store) {
+export default class InstallManager {
+  constructor (store) {
     this.store = store
-  },
-  uninstallExperiment: function (x) {
+  }
+
+  uninstallExperiment (x) {
     AddonManager.getAddonByID(x.addon_id, a => {
       if (a) { a.uninstall() }
     })
-  },
-  installExperiment: function (experiment) {
+  }
+
+  installExperiment (experiment) {
     AddonManager.getInstallForURL(
       experiment.xpi_url,
       install => {
@@ -30,18 +31,21 @@ const InstallManager = Class({
       },
       'application/x-xpinstall'
     )
-  },
-  uninstallAll: function () {
+  }
+
+  uninstallAll () {
     const { getState } = this.store
     const active = activeExperiments(getState())
     for (let x of Object.values(active)) {
       this.uninstallExperiment(x)
     }
-  },
-  uninstallSelf: function () {
+  }
+
+  uninstallSelf () {
     AddonManager.getAddonByID(self.id, a => a.uninstall())
-  },
-  selfLoaded: function (reason) {
+  }
+
+  selfLoaded (reason) {
     const { dispatch, getState } = this.store
     if (reason === 'install') {
       const { baseUrl } = getState()
@@ -49,22 +53,22 @@ const InstallManager = Class({
     } else if (reason === 'enable') {
       dispatch(actions.SELF_ENABLED())
     }
-  },
-  selfUnloaded: function (reason) {
+  }
+
+  selfUnloaded (reason) {
     const { dispatch } = this.store
     if (reason === 'disable') {
       dispatch(actions.SELF_DISABLED())
     } else if (reason === 'uninstall') {
       dispatch(actions.SELF_UNINSTALLED())
     }
-  },
-  syncInstalled: function () {
+  }
+
+  syncInstalled () {
     const { dispatch, getState } = this.store
     dispatch(actions.SYNC_INSTALLED({
       clientUUID: getState().clientUUID,
       installed: activeExperiments(getState())
     }))
   }
-})
-
-module.exports = InstallManager
+}

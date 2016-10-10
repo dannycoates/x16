@@ -2,31 +2,48 @@
   "name": "x16",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/main.js",
+  "main": "backend/backend.js",
   "scripts": {
-    "postinstall": "cd frontend; npm i; cd ../backend; npm i",
-    "start": "npm run addon",
+    "start": "NODE_ENV=production npm run addon",
     "lint": "eslint . --ignore-path .gitignore",
-    "pack": "cd frontend; npm run pack; cd ..;",
+    "pack": "cd frontend; webpack; cd ../backend; webpack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",
-    "tools": "npm run pack; cd tools; npm run pack; cd ..; http-server",
+    "tools": "npm run pack; cd tools/control-panel; webpack; webpack-dev-server --hot --inline --config ../../frontend/webpack.config.js",
     "test": "jpm test"
   },
   "author": "",
   "license": "MPL-2.0",
   "devDependencies": {
-    "babel-eslint": "^6.1.2",
+    "babel-core": "^6.17.0",
+    "babel-eslint": "^7.0.0",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.16.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-2": "^6.17.0",
+    "css-loader": "^0.25.0",
     "eslint": "^3.5.0",
     "eslint-config-standard": "^6.0.1",
     "eslint-config-standard-jsx": "^3.0.1",
     "eslint-config-standard-react": "^4.0.2",
-    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-promise": "^3.0.0",
     "eslint-plugin-react": "^6.2.2",
     "eslint-plugin-standard": "^2.0.0",
-    "http-server": "^0.9.0",
-    "jpm": "^1.1.4"
+    "file-loader": "^0.9.0",
+    "jpm": "1.1.4",
+    "node-sass": "^3.10.1",
+    "sass-loader": "^4.0.2",
+    "style-loader": "^0.13.1",
+    "url-loader": "^0.5.7",
+    "webpack": "^2.1.0-beta.25",
+    "webpack-dev-server": "^1.16.2"
   },
   "dependencies": {
-    "redux": "^3.6.0"
+    "lodash": "^4.15.0",
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1",
+    "react-redux": "^4.4.5",
+    "redux": "^3.6.0",
+    "redux-logger": "^2.6.1",
+    "seedrandom": "^2.4.2"
   }
 }

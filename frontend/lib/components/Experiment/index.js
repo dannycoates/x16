@@ -88,11 +88,11 @@ export default class Experiment extends Component {
           <image xlinkHref={thumbnail} x='16' y='16' height='24' width='24' />
           {install && <path d={this.progressPath()} fill='none' stroke='#57bd35' strokeWidth='2' />}
           {active &&
-            <g>
-              <circle cx='28' cy='28' r='27' fill='none' stroke='#57bd35' strokeWidth='2' />
-              <circle cx='49' cy='11' r='10' fill='#57bd35' stroke='white' strokeWidth='2' />
-              <polyline points='44 11, 48 15, 54 8' fill='none' stroke='white' strokeWidth='3' />
-            </g>}
+          <g>
+            <circle cx='28' cy='28' r='27' fill='none' stroke='#57bd35' strokeWidth='2' />
+            <circle cx='49' cy='11' r='10' fill='#57bd35' stroke='white' strokeWidth='2' />
+            <polyline points='44 11, 48 15, 54 8' fill='none' stroke='white' strokeWidth='3' />
+          </g>}
           {status === 'Disabled' && <circle cx='28' cy='28' r='27' fill='none' stroke='#F5570E' strokeWidth='2' />}
         </svg>
         <div className='experiment-title'>

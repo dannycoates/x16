@@ -4,20 +4,19 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../common/actions')
-const { Class } = require('sdk/core/heritage')
-const { Panel } = require('sdk/panel')
-const tabs = require('sdk/tabs')
-const { ToggleButton } = require('sdk/ui/button/toggle')
-const { setInterval, clearInterval } = require('sdk/timers')
+import actions from '../../common/actions'
+import { Panel } from 'sdk/panel'
+import tabs from 'sdk/tabs'
+import { ToggleButton } from 'sdk/ui/button/toggle'
+import { setInterval, clearInterval } from 'sdk/timers'
 
 let pollCount = 0
 function pollPanel (port) {
   this.panel.port.emit('ping', ++pollCount)
 }
 
-const MainUI = Class({
-  initialize: function (store) {
+export default class MainUI {
+  constructor (store) {
     this.store = store
     this.panelWidth = 300
     this.panel = Panel({
@@ -47,21 +46,22 @@ const MainUI = Class({
       console.debug(`polled ${x} times`)
       store.dispatch(actions.FRONTEND_CONNECTED())
     })
-  },
-  showPanel: function () {
+  }
+
+  showPanel () {
     this.panel.show({
       position: this.button,
       width: this.panelWidth,
       height: this.store.getState().ui.panelHeight
     })
-  },
-  openTab: function (url) {
+  }
+
+  openTab (url) {
     tabs.open(url)
     this.panel.hide()
-  },
-  setBadge: function () {
+  }
+
+  setBadge () {
     this.button.badge = this.store.getState().ui.badge
   }
-})
-
-module.exports = MainUI
+}

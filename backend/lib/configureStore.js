@@ -4,13 +4,14 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const redux = require('redux/dist/redux.min')
-const createLogger = require('redux-logger/dist/index.min')
-const reducers = require('./reducers')
-const { storage } = require('sdk/simple-storage')
+import reducers from './reducers'
+import { storage } from 'sdk/simple-storage'
+import { createStore, applyMiddleware } from 'redux'
+import createLogger from 'redux-logger'
+
 const initialState = Object.assign({}, storage.root)
 
-module.exports = function configureStore ({hub, startEnv}) {
+export default function configureStore ({hub, startEnv}) {
   if (!initialState.baseUrl) {
     initialState.baseUrl = startEnv.baseUrl
   }
@@ -18,9 +19,9 @@ module.exports = function configureStore ({hub, startEnv}) {
   if (startEnv.name !== 'production') {
     middleware.push(createLogger({colors: false}))
   }
-  return redux.createStore(
+  return createStore(
     reducers,
     initialState,
-    redux.applyMiddleware(...middleware)
+    applyMiddleware(...middleware)
   )
 }

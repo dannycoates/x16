@@ -4,14 +4,13 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
-const { activeExperiments, randomActiveExperiment } = require('../reducers/experiments')
-const { Class } = require('sdk/core/heritage')
-const { experimentRating } = require('../reducers/ratings')
-const { setTimeout, clearTimeout } = require('sdk/timers')
-const feedbackUI = require('../feedbackUI')
-const tabs = require('sdk/tabs')
-const querystring = require('sdk/querystring')
+import actions from '../../../common/actions'
+import { activeExperiments, randomActiveExperiment } from '../reducers/experiments'
+import { experimentRating } from '../reducers/ratings'
+import { setTimeout, clearTimeout } from 'sdk/timers'
+import * as feedbackUI from '../feedbackUI'
+import tabs from 'sdk/tabs'
+import querystring from 'sdk/querystring'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_DAY = 1000 * 60 * 60 * 24
@@ -31,18 +30,20 @@ function getInterval (installDate) {
   }
 }
 
-const FeedbackManager = Class({
-  initialize: function ({ dispatch, getState, dnd = ONE_DAY }) {
+export default class FeedbackManager {
+  constructor ({ dispatch, getState, dnd = ONE_DAY }) {
     this.dispatch = dispatch
     this.getState = getState
     this.dnd = dnd
     this.timeout = null
-  },
-  schedule: function ({ delay = TEN_MINUTES } = {}) {
+  }
+
+  schedule ({ delay = TEN_MINUTES } = {}) {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => { this.check() }, delay)
-  },
-  check: function () {
+  }
+
+  check () {
     const state = this.getState()
     if (Date.now() - state.ratings.lastRated < this.dnd) {
       return
@@ -54,8 +55,9 @@ const FeedbackManager = Class({
     if (interval > 0 && !rating[interval]) {
       this.dispatch(actions.SHOW_RATING_PROMPT({interval, experiment}))
     }
-  },
-  prompt: function ({interval, experiment}) {
+  }
+
+  prompt ({interval, experiment}) {
     feedbackUI.showRating({ experiment })
       .then(
         rating => {
@@ -77,6 +79,4 @@ const FeedbackManager = Class({
       )
       .catch(() => {})
   }
-})
-
-module.exports = FeedbackManager
+}

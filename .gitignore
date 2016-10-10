@@ -1,3 +1,4 @@
 node_modules
-data/bundle.js
+backend/backend.js
+data/bundle.*
 tools/control-panel.js

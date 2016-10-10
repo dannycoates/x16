@@ -4,12 +4,11 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const { Ci } = require('chrome')
-const { Class } = require('sdk/core/heritage')
-const { Services } = require('resource://gre/modules/Services.jsm')
-const { Disposable } = require('sdk/core/disposable')
-const { getExtensionUUID } = require('resource://gre/modules/Extension.jsm')
-const Experiment = require('./experiment')
+import { Ci } from 'chrome'
+import { Services } from 'resource://gre/modules/Services.jsm'
+import { Disposable } from 'sdk/core/disposable'
+import { getExtensionUUID } from 'resource://gre/modules/Extension.jsm'
+import Experiment from './experiment'
 
 const TESTPILOT_TELEMETRY_CHANNEL = 'testpilot-telemetry'
 
@@ -56,10 +55,37 @@ function createChannelForAddonId (name, addonId) {
   }
 }
 
-const WebExtensionChannel = Class({
-  implements: [Disposable],
+export default class WebExtensionChannel extends Disposable {
 
-  initialize (targetAddonId) {
+  static channels = {}
+
+  static destroy () {
+    WebExtensionChannel.channels = {}
+  }
+
+  static add (id) {
+    if (!WebExtensionChannel.channels[id]) {
+      const channel = new WebExtensionChannel(id)
+      WebExtensionChannel.channels[id] = channel
+      channel.registerPingListener(data =>
+        WebExtensionChannel.handleWebExtensionPing(id, data))
+    }
+  }
+
+  static remove (id) {
+    delete WebExtensionChannel.channels[id]
+  }
+
+  // Pass a ping message along to Telemetry via Metrics
+  static handleWebExtensionPing (id, data) {
+    Experiment.ping({
+      subject: id,
+      data: JSON.stringify(data)
+    })
+  }
+
+  constructor (targetAddonId) {
+    super()
     this.pingListeners = new Set()
 
     this.targetAddonId = targetAddonId
@@ -75,7 +101,7 @@ const WebExtensionChannel = Class({
     this.addonBroadcastChannel = addonBroadcastChannel
 
     this.handleEventBound = ev => this.handleEvent(ev)
-  },
+  }
 
   dispose () {
     this.addonBroadcastChannel.removeEventListener('message', this.handleEventBound)
@@ -85,7 +111,7 @@ const WebExtensionChannel = Class({
 
     this.addonBroadcastChannel = null
     this.addonChromeWebNav = null
-  },
+  }
 
   registerPingListener (callback) {
     this.pingListeners.add(callback)
@@ -93,7 +119,7 @@ const WebExtensionChannel = Class({
     if (this.pingListeners.size >= 0) {
       this.addonBroadcastChannel.addEventListener('message', this.handleEventBound)
     }
-  },
+  }
 
   unregisterPingListener (callback) {
     this.pingListeners.delete(callback)
@@ -101,13 +127,13 @@ const WebExtensionChannel = Class({
     if (this.pingListeners.size === 0) {
       this.addonBroadcastChannel.removeEventListener('message', this.handleEventBound)
     }
-  },
+  }
 
   handleEvent (event) {
     if (event.data) {
       this.notifyPing(event.data, {addonId: this.targetAddonId})
     }
-  },
+  }
 
   notifyPing (data, sender) {
     for (let pingListener of this.pingListeners) {
@@ -120,37 +146,5 @@ const WebExtensionChannel = Class({
         console.error('Error executing pingListener', err)
       }
     }
-  }
-})
-
-let channels = {}
-
-module.exports = {
-  WebExtensionChannel,
-
-  // Drop refs to channels for garbage collection
-  destroy () {
-    channels = {}
-  },
-
-  add (id) {
-    if (!channels[id]) {
-      const channel = new WebExtensionChannel(id)
-      channels[id] = channel
-      channel.registerPingListener(data =>
-        this.handleWebExtensionPing(id, data))
-    }
-  },
-
-  remove (id) {
-    delete channels[id]
-  },
-
-  // Pass a ping message along to Telemetry via Metrics
-  handleWebExtensionPing (id, data) {
-    Experiment.ping({
-      subject: id,
-      data: JSON.stringify(data)
-    })
   }
 }

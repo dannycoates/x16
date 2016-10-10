@@ -5,20 +5,25 @@
  */
 
 const path = require('path')
+const webpack = require('webpack')
 
-module.exports = {
-  entry: './main.js',
+const config = {
+  entry: [path.join(__dirname, 'main.js')],
   output: {
     path: path.join(__dirname, '..', 'data'),
+    publicPath: '/data/',
     filename: 'bundle.js'
   },
   module: {
     loaders: [
       {
         test: /\.js$/,
-        loaders: [ 'babel' ],
+        loader: 'babel',
         exclude: /node_modules/,
-        include: __dirname
+        include: [__dirname, path.join(__dirname, '..', 'common')],
+        query: {
+          presets: [['es2015', { modules: false }], 'react', 'stage-2']
+        }
       },
       {
         test: /.(css|scss)$/,
@@ -30,11 +35,27 @@ module.exports = {
       }
     ]
   },
-  plugins: [
-    // new webpack.DefinePlugin({
-    //   'process.env': {
-    //     NODE_ENV: JSON.stringify('production')
-    //   }
-    // })
-  ]
+  plugins: []
 }
+
+if (process.env.NODE_ENV === 'production') {
+  config.plugins.push(
+    new webpack.DefinePlugin({
+      'process.env': {
+        NODE_ENV: JSON.stringify('production')
+      }
+    }))
+  config.plugins.push(new webpack.optimize.UglifyJsPlugin({
+    compress: {
+      warnings: false
+    }
+  }))
+} else {
+  config.devtool = 'eval-source-map'
+  config.devServer = {
+    contentBase: path.join(__dirname, '..'),
+    publicPath: '/data/'
+  }
+}
+
+module.exports = config

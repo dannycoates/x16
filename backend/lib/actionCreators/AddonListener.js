@@ -4,9 +4,8 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
-const { AddonManager } = require('resource://gre/modules/AddonManager.jsm')
-const { Class } = require('sdk/core/heritage')
+import actions from '../../../common/actions'
+import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
 
 function getExperiment (getState, addon) {
   const { experiments } = getState()
@@ -23,37 +22,42 @@ function toObject (addon) {
   }
 }
 
-const AddonListener = Class({
-  initialize: function ({dispatch, getState}) {
+export default class AddonListener {
+  constructor ({dispatch, getState}) {
     this.getExperiment = getExperiment.bind(null, getState)
     this.dispatch = dispatch
     AddonManager.addAddonListener(this)
-  },
-  onEnabled: function (addon) {
+  }
+
+  onEnabled (addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       this.dispatch(actions.EXPERIMENT_ENABLED({experiment}))
     }
-  },
-  onDisabled: function (addon) {
+  }
+
+  onDisabled (addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       this.dispatch(actions.EXPERIMENT_DISABLED({experiment}))
     }
-  },
-  onUninstalling: function (addon) {
+  }
+
+  onUninstalling (addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       this.dispatch(actions.EXPERIMENT_UNINSTALLING({experiment}))
     }
-  },
-  onUninstalled: function (addon) {
+  }
+
+  onUninstalled (addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       this.dispatch(actions.EXPERIMENT_UNINSTALLED({experiment}))
     }
-  },
-  onOperationCancelled: function (addon) {
+  }
+
+  onOperationCancelled (addon) {
     console.debug('op cancelled', toObject(addon))
     const experiment = this.getExperiment(addon)
     if (experiment) {
@@ -63,10 +67,9 @@ const AddonListener = Class({
         this.dispatch(actions.EXPERIMENT_DISABLED({experiment}))
       }
     }
-  },
-  teardown: function () {
+  }
+
+  teardown () {
     AddonManager.removeAddonListener(this)
   }
-})
-
-module.exports = AddonListener
+}

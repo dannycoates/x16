@@ -4,11 +4,11 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const aboutConfig = require('sdk/preferences/service')
-const { CHANGE_ENV } = require('../../../common/actions')
-const environments = require('../../common/environments')
-const { PrefsTarget } = require('sdk/preferences/event-target')
-const self = require('sdk/self')
+import aboutConfig from 'sdk/preferences/service'
+import { CHANGE_ENV } from '../../common/actions'
+import environments from '../../common/environments'
+import { PrefsTarget } from 'sdk/preferences/event-target'
+import self from 'sdk/self'
 
 let store = {
   dispatch: () => console.error('env.store is not set')

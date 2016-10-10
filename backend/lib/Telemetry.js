@@ -4,12 +4,12 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const aboutConfig = require('sdk/preferences/service')
-const { Class } = require('sdk/core/heritage')
-const self = require('sdk/self')
-const { Services } = require('resource://gre/modules/Services.jsm')
-const { storage } = require('sdk/simple-storage')
-const { TelemetryController } = require('resource://gre/modules/TelemetryController.jsm')
+import aboutConfig from 'sdk/preferences/service'
+import self from 'sdk/self'
+import { Services } from 'resource://gre/modules/Services.jsm'
+import { storage } from 'sdk/simple-storage'
+import { TelemetryController } from 'resource://gre/modules/TelemetryController.jsm'
+
 const startTime = Services.startup.getStartupInfo().process
 
 function makeTimestamp (timestamp = Date.now()) {
@@ -21,17 +21,20 @@ const PREFS = [
   'datareporting.healthreport.uploadEnabled'
 ]
 
-const Telemetry = Class({
-  setPrefs: function () {
+export default class Telemetry {
+
+  setPrefs () {
     storage.originalPrefs = PREFS.map(pref => [pref, aboutConfig.get(pref)])
     PREFS.forEach(pref => aboutConfig.set(pref, true))
-  },
-  restorePrefs: function () {
+  }
+
+  restorePrefs () {
     if (storage.originalPrefs) {
       storage.originalPrefs.forEach(pair => { aboutConfig.set(pair[0], pair[1]) })
     }
-  },
-  ping: function (object, event, time) {
+  }
+
+  ping (object, event, time) {
     console.debug(`tel: ${object} event: ${event}`)
     const payload = {
       timestamp: makeTimestamp(),
@@ -54,6 +57,4 @@ const Telemetry = Class({
       }
     )
   }
-})
-
-module.exports = Telemetry
+}

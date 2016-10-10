@@ -4,9 +4,9 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-const actions = require('../../../common/actions')
+import actions from '../../../common/actions'
 
-function reducer (state = null, { payload, type }) {
+export function reducer (state = null, { payload, type }) {
   switch (type) {
     case actions.EXPERIMENTS_LOADED.type:
       return payload.baseUrl
@@ -14,5 +14,3 @@ function reducer (state = null, { payload, type }) {
       return state
   }
 }
-
-module.exports = { reducer }

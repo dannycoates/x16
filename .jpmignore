@@ -1,12 +1,6 @@
 .*
 *
-!/backend/lib/**
-!/backend/main.js
-!/backend/node_modules/lodash/**
-!/node_modules/redux/dist/redux.min.js
-!/backend/node_modules/redux-logger/dist/index.min.js
-!/backend/node_modules/seedrandom/**
-!/common/**
+!/backend/backend.js
 !/data/**
 !/install.rdf
 !/package.json
