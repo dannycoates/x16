@@ -4,11 +4,20 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import Notifications from 'sdk/notifications'
 import querystring from 'sdk/querystring'
 import tabs from 'sdk/tabs'
 
-export function notify (message) {
+export type NotificationMessage = {
+  id: string,
+  title: string,
+  text: string,
+  url: string
+}
+
+export function notify (message: NotificationMessage) {
   Notifications.notify({
     title: message.title,
     text: `via testpilot.firefox.com\n${message.text}`,

@@ -4,32 +4,42 @@
  * http://mozilla.org/MPL/2.0/.
  */
 /* eslint-disable camelcase */
+/* global Event */
 
-import React, { Component, PropTypes } from 'react'
+// @flow
+
+import React, { Component } from 'react'
 
 import './Experiment.css'
 
 const NEW_EXPERIMENT_PERIOD = 14 * 24 * 60 * 60 * 1000 // 2 weeks
 
-export default class Experiment extends Component {
-  static propTypes = {
-    addon_id: PropTypes.string.isRequired,
-    onClick: PropTypes.func.isRequired,
-    title: PropTypes.string.isRequired,
-    thumbnail: PropTypes.string.isRequired,
-    html_url: PropTypes.string.isRequired,
-    active: PropTypes.bool.isRequired,
-    created: PropTypes.string.isRequired,
-    modified: PropTypes.string.isRequired,
-    gradient_start: PropTypes.string.isRequired,
-    gradient_stop: PropTypes.string.isRequired,
-    installDate: PropTypes.any,
-    install: PropTypes.object
-  }
+type Install = {
+  progress: number,
+  maxProgress: number
+}
 
-  progressPath () {
+export type ExperimentProps = {
+  addon_id: string,
+  title: string,
+  thumbnail: string,
+  html_url: string,
+  active: boolean,
+  created: string,
+  modified: string,
+  gradient_start: string,
+  gradient_stop: string,
+  installDate?: string,
+  install?: Install,
+  onClick: (url: string) => void
+}
+
+export default class Experiment extends Component {
+  props: ExperimentProps
+
+  progressPath (install: Install) {
     const r = 27
-    const { progress, maxProgress } = this.props.install
+    const { progress, maxProgress } = install
     const percent = progress / maxProgress
     const a = (360 * percent) / 180 * Math.PI
     const x = r * Math.sin(a) + r + 1
@@ -72,7 +82,7 @@ export default class Experiment extends Component {
     }
 
     return (
-      <a className={['experiment-item ', (active ? 'active' : '')].join(' ')} href={html_url} onClick={e => {
+      <a className={['experiment-item ', (active ? 'active' : '')].join(' ')} href={html_url} onClick={(e: Event) => {
         e.preventDefault()
         e.stopPropagation()
         onClick(html_url)
@@ -86,7 +96,7 @@ export default class Experiment extends Component {
           </defs>
           <circle cx='28' cy='28' r='25' fill={`url(#${gradient})`} stroke='white' strokeWidth='2' />
           <image xlinkHref={thumbnail} x='16' y='16' height='24' width='24' />
-          {install && <path d={this.progressPath()} fill='none' stroke='#57bd35' strokeWidth='2' />}
+          {install && <path d={this.progressPath(install)} fill='none' stroke='#57bd35' strokeWidth='2' />}
           {active &&
           <g>
             <circle cx='28' cy='28' r='27' fill='none' stroke='#57bd35' strokeWidth='2' />

@@ -4,12 +4,16 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
 import Events from 'sdk/system/events'
 import self from 'sdk/self'
 import { Services } from 'resource://gre/modules/Services.jsm'
 import { storage } from 'sdk/simple-storage'
 import { TelemetryController } from 'resource://gre/modules/TelemetryController.jsm'
+
+import type Variants from './variants'
 
 const EVENT_SEND_METRIC = 'testpilot::send-metric'
 const EVENT_RECEIVE_VARIANT_DEFS = 'testpilot::register-variants'
@@ -58,7 +62,10 @@ function receiveVariantDefs (event) {
 }
 
 export default class Experiment {
-  constructor (variants) {
+  variants: Variants
+  receiveVariantDefs: Function
+
+  constructor (variants: Variants) {
     this.variants = variants
     this.receiveVariantDefs = receiveVariantDefs.bind(this)
     Events.on(EVENT_SEND_METRIC, experimentPing)

@@ -4,13 +4,15 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import aboutConfig from 'sdk/preferences/service'
 import self from 'sdk/self'
 import { Services } from 'resource://gre/modules/Services.jsm'
 import { storage } from 'sdk/simple-storage'
 import { TelemetryController } from 'resource://gre/modules/TelemetryController.jsm'
 
-const startTime = Services.startup.getStartupInfo().process
+const startTime = (Services.startup.getStartupInfo().process: number)
 
 function makeTimestamp (timestamp = Date.now()) {
   return Math.round((timestamp - startTime) / 1000)
@@ -34,7 +36,7 @@ export default class Telemetry {
     }
   }
 
-  ping (object, event, time) {
+  ping (object: any, event: string, time?: number) {
     console.debug(`tel: ${object} event: ${event}`)
     const payload = {
       timestamp: makeTimestamp(),

@@ -4,9 +4,12 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
 
-export function reducer (state = null, { payload, type }) {
+import * as actions from '../../../common/actions'
+import type { Action } from 'testpilot/types'
+
+export function reducer (state: ?string = null, { payload, type }: Action) {
   switch (type) {
     case actions.EXPERIMENTS_LOADED.type:
       return payload.baseUrl

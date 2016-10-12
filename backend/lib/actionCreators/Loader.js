@@ -4,36 +4,23 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
+
+import * as actions from '../../../common/actions'
 import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
+import { Experiment } from '../../../common/Experiment'
 import { Request } from 'sdk/request'
 import { setTimeout, clearTimeout } from 'sdk/timers'
 import difference from 'lodash/difference'
 import WebExtensionChannels from '../metrics/webextension-channels'
 
+// eslint-disable-next-line
+import type { Experiments } from '../../../common/Experiment'
+import type { ReduxStore } from 'testpilot/types'
+
 const SIX_HOURS = 6 * 60 * 60 * 1000
 
-function urlify (baseUrl, experiment) {
-  const urlFields = {
-    '': ['thumbnail', 'url', 'html_url', 'installations_url', 'survey_url'],
-    details: ['image'],
-    tour_steps: ['image'],
-    contributors: ['avatar']
-  }
-  Object.keys(urlFields).forEach(key => {
-    const items = (key === '') ? [experiment] : experiment[key]
-    items.forEach(item => urlFields[key].forEach(field => {
-      // If the URL is not absolute, prepend the environment's base URL.
-      if (item[field].substr(0, 1) === '/') {
-        item[field] = baseUrl + item[field]
-      }
-    }))
-  })
-  experiment.id = experiment.addon_id
-  return experiment
-}
-
-function fetchExperiments (baseUrl, path) {
+function fetchExperiments (baseUrl, path): Promise<Experiments> {
   return new Promise(
     (resolve, reject) => {
       const r = new Request({
@@ -42,13 +29,14 @@ function fetchExperiments (baseUrl, path) {
       })
       r.on(
         'complete',
-        res => {
+        (res: { status: number, json: { results: Array<Object>}}) => {
+          const xs = {}
           if (res.status === 200) {
-            const experiments = {}
-            for (let xp of res.json.results) {
-              experiments[xp.addon_id] = urlify(baseUrl, xp)
+            for (let o of res.json.results) {
+              const x = new Experiment(o, baseUrl)
+              xs[x.addon_id] = x
             }
-            resolve(experiments)
+            resolve(xs)
           } else {
             reject(res)
           }
@@ -59,8 +47,12 @@ function fetchExperiments (baseUrl, path) {
   )
 }
 
-function mergeAddonState (experiments, addons) {
-  Object.values(experiments).forEach(x => { x.active = false })
+function mergeAddonState (experiments: Experiments, addons) {
+  for (let x of Object.values(experiments)) {
+    // $FlowFixMe Object.values returns Array<mixed> but we know its an Experiment
+    x.active = false
+  }
+
   for (let addon of addons) {
     const x = experiments[addon.id]
     if (x) {
@@ -71,18 +63,21 @@ function mergeAddonState (experiments, addons) {
   return experiments
 }
 
-function diffExperimentList (oldSet, newSet) {
-  const addedIds = difference(Object.keys(newSet), Object.keys(oldSet))
+function diffExperimentList (oldSet: Experiments, newSet: Experiments) {
+  const addedIds = (difference(Object.keys(newSet), Object.keys(oldSet)): string[])
   return addedIds.map(id => newSet[id])
 }
 
 export default class Loader {
-  constructor (store) {
+  store: ReduxStore
+  timeout: ?number
+
+  constructor (store: ReduxStore) {
     this.store = store
     this.timeout = null
   }
 
-  schedule (interval = SIX_HOURS) {
+  schedule (interval?: number = SIX_HOURS) {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(
       () => {
@@ -93,7 +88,7 @@ export default class Loader {
     )
   }
 
-  loadExperiments (envname, baseUrl) {
+  loadExperiments (envname: string, baseUrl: string) {
     const { dispatch, getState } = this.store
     return fetchExperiments(baseUrl, '/api/experiments.json')
     .then(
@@ -120,17 +115,17 @@ export default class Loader {
             dispatch(actions.SET_BADGE({ text: 'New' }))
           }
         }
-
         for (let experiment of Object.values(xs)) {
+          // $FlowFixMe Object.values returns Array<mixed> but we know its an Experiment
           if (experiment.active) { WebExtensionChannels.add(experiment.addon_id) }
           dispatch(actions.MAYBE_NOTIFY({experiment}))
         }
-        return xs
+        return (xs: Experiments)
       }
     )
     .then(
       experiments => dispatch(actions.EXPERIMENTS_LOADED({envname, baseUrl, experiments})),
-      err => dispatch(actions.EXPERIMENTS_LOAD_ERROR({err}))
+      (err: Object) => dispatch(actions.EXPERIMENTS_LOAD_ERROR({err}))
     )
   }
 }

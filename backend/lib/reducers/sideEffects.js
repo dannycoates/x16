@@ -4,17 +4,44 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
+
+import * as actions from '../../../common/actions'
 import self from 'sdk/self'
 import tabs from 'sdk/tabs'
 import WebExtensionChannels from '../metrics/webextension-channels'
+
+import type { Action, Dispatch, GetState, ReduxStore } from 'testpilot/types'
+import type { Env } from '../env'
+import type FeedbackManager from '../ActionCreators/FeedbackManager'
+import type InstallManager from '../ActionCreators/InstallManager'
+import type Loader from '../ActionCreators/Loader'
+import type NotificationManager from '../ActionCreators/NotificationManager'
+import type Telemetry from '../Telemetry'
+import type MainUI from '../MainUI'
+import type WebApp from '../WebApp'
+
+export type Context = {
+  dispatch: Dispatch,
+  getState: GetState,
+  env: Env,
+  feedbackManager: FeedbackManager,
+  installManager: InstallManager,
+  loader: Loader,
+  notificationManager: NotificationManager,
+  telemetry: Telemetry,
+  ui: MainUI,
+  webapp: WebApp
+}
+
+export type SideEffect = (context: Context) => void
 
 let context = {}
 let unsubscribe = nothing
 
 export function nothing () {}
 
-export function reducer (state = nothing, { payload, type }) {
+export function reducer (state: Function = nothing, { payload, type }: Action): SideEffect {
   switch (type) {
     case actions.FRONTEND_CONNECTED.type:
       return ({env, getState, dispatch}) => {
@@ -24,7 +51,7 @@ export function reducer (state = nothing, { payload, type }) {
       }
 
     case actions.LOAD_EXPERIMENTS.type:
-      return ({loader}) => loader.loadExperiments(payload.envname, payload.baseUrl)
+      return ({loader}) => { loader.loadExperiments(payload.envname, payload.baseUrl) }
 
     case actions.EXPERIMENT_ENABLED.type:
     case actions.INSTALL_ENDED.type:
@@ -128,11 +155,11 @@ export function reducer (state = nothing, { payload, type }) {
   }
 }
 
-export function setContext (ctx) {
+export function setContext (ctx: Context) {
   context = ctx
 }
 
-export function enable (store) {
+export function enable (store: ReduxStore) {
   unsubscribe = store.subscribe(() => store.getState().sideEffects(context))
 }
 

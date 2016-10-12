@@ -4,9 +4,10 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import { Ci } from 'chrome'
 import { Services } from 'resource://gre/modules/Services.jsm'
-import { Disposable } from 'sdk/core/disposable'
 import { getExtensionUUID } from 'resource://gre/modules/Extension.jsm'
 import Experiment from './experiment'
 
@@ -55,7 +56,12 @@ function createChannelForAddonId (name, addonId) {
   }
 }
 
-export default class WebExtensionChannel extends Disposable {
+export default class WebExtensionChannel {
+  pingListeners: Set<Function>
+  targetAddonId: string
+  addonChromeWebNav: any
+  addonBroadcastChannel: any
+  handleEventBound: Function
 
   static channels = {}
 
@@ -84,8 +90,8 @@ export default class WebExtensionChannel extends Disposable {
     })
   }
 
-  constructor (targetAddonId) {
-    super()
+  constructor (targetAddonId: string) {
+    // super()
     this.pingListeners = new Set()
 
     this.targetAddonId = targetAddonId
@@ -113,7 +119,7 @@ export default class WebExtensionChannel extends Disposable {
     this.addonChromeWebNav = null
   }
 
-  registerPingListener (callback) {
+  registerPingListener (callback: Function) {
     this.pingListeners.add(callback)
 
     if (this.pingListeners.size >= 0) {
@@ -121,7 +127,7 @@ export default class WebExtensionChannel extends Disposable {
     }
   }
 
-  unregisterPingListener (callback) {
+  unregisterPingListener (callback: Function) {
     this.pingListeners.delete(callback)
 
     if (this.pingListeners.size === 0) {
@@ -129,13 +135,13 @@ export default class WebExtensionChannel extends Disposable {
     }
   }
 
-  handleEvent (event) {
+  handleEvent (event: Object) {
     if (event.data) {
       this.notifyPing(event.data, {addonId: this.targetAddonId})
     }
   }
 
-  notifyPing (data, sender) {
+  notifyPing (data: any, sender: {addonId: string}) {
     for (let pingListener of this.pingListeners) {
       try {
         pingListener({

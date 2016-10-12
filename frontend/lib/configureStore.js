@@ -4,10 +4,16 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import { createStore, applyMiddleware } from 'redux'
 import reducers from './reducers'
 
-function commMiddleware (backend) {
+// eslint-disable-next-line
+import type { Middleware } from 'redux'
+import type Backend from './Backend'
+
+function commMiddleware (backend: Backend): Middleware {
   return (store) => {
     backend.store = store
     return (next) => (action) => {
@@ -21,7 +27,7 @@ function commMiddleware (backend) {
   }
 }
 
-export function configureStore (backend, preloadedState) {
+export function configureStore (backend: Backend, preloadedState?: Object) {
   return createStore(
     reducers,
     preloadedState,

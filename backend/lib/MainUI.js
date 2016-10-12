@@ -4,29 +4,38 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../common/actions'
+// @flow
+
+import * as actions from '../../common/actions'
 import { Panel } from 'sdk/panel'
 import tabs from 'sdk/tabs'
 import { ToggleButton } from 'sdk/ui/button/toggle'
 import { setInterval, clearInterval } from 'sdk/timers'
+import type { ReduxStore } from 'testpilot/types'
 
 let pollCount = 0
-function pollPanel (port) {
+function pollPanel () {
   this.panel.port.emit('ping', ++pollCount)
 }
 
 export default class MainUI {
-  constructor (store) {
+  panel: Panel
+  button: ToggleButton
+  store: ReduxStore
+  panelWidth: number
+  pollInterval: number
+
+  constructor (store: ReduxStore) {
     this.store = store
     this.panelWidth = 300
-    this.panel = Panel({
+    this.panel = new Panel({
       contentURL: './index.html',
       onHide: () => {
         this.button.state('window', { checked: false })
       }
     })
 
-    this.button = ToggleButton({
+    this.button = new ToggleButton({
       id: 'x16',
       label: 'X-16',
       icon: `./wolf.svg`,
@@ -41,7 +50,7 @@ export default class MainUI {
     // Before then they get dropped, so before we send anything
     // important ensure we can do a round trip.
     this.pollInterval = setInterval(pollPanel.bind(this), 10)
-    this.panel.port.once('pong', x => {
+    this.panel.port.once('pong', (x: number) => {
       clearInterval(this.pollInterval)
       console.debug(`polled ${x} times`)
       store.dispatch(actions.FRONTEND_CONNECTED())
@@ -56,7 +65,7 @@ export default class MainUI {
     })
   }
 
-  openTab (url) {
+  openTab (url: string) {
     tabs.open(url)
     this.panel.hide()
   }

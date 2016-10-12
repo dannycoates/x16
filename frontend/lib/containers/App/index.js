@@ -3,44 +3,57 @@
  * version 2.0 (the 'License'). You can obtain a copy of the License at
  * http://mozilla.org/MPL/2.0/.
  */
+/* global Event */
 
-import React, { Component, PropTypes } from 'react'
+// @flow
+
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { SHOW_EXPERIMENT } from '../../../../common/actions'
 import ExperimentList from '../../components/ExperimentList'
 
+import type { FrontendState } from 'testpilot/types'
+import type { Dispatch } from 'redux'
+
 import './App.css'
 
+import type { ExperimentProps } from '../../components/Experiment'
+
+// https://flowtype.org/docs/react.html#defining-components-as-reactcomponent-subclasses
+type AppProps = {
+  baseUrl: string,
+  experiments: Array<ExperimentProps>,
+  showExperiment: (url: string) => void
+}
+
 class App extends Component {
-  static propTypes = {
-    baseUrl: PropTypes.string,
-    experiments: ExperimentList.propTypes.experiments,
-    dispatch: PropTypes.func.isRequired
-  }
+  props: AppProps
 
   render () {
-    const { baseUrl, experiments, dispatch } = this.props
+    const { baseUrl, experiments, showExperiment } = this.props
     return (
       <div>
         <ExperimentList
           experiments={experiments}
-          onExperimentClick={url => dispatch(SHOW_EXPERIMENT({url}))}
+          onExperimentClick={(url: string) => showExperiment(url)}
         />
-        <a className='view-all' href={baseUrl} onClick={e => {
+        <a className='view-all' href={baseUrl} onClick={(e: Event) => {
           e.preventDefault()
           e.stopPropagation()
-          dispatch(SHOW_EXPERIMENT({url: baseUrl}))
+          showExperiment(baseUrl)
         }}>View all experiments</a>
       </div>
     )
   }
 }
 
-function mapStateToProps (state) {
-  return {
+export default connect(
+  (state: FrontendState) => ({
     baseUrl: state.baseUrl,
+    // $FlowFixMe Object.values erases type
     experiments: Object.values(state.experiments).sort((a, b) => a.order - b.order)
-  }
-}
-
-export default connect(mapStateToProps)(App)
+  }),
+  (dispatch: Dispatch) => ({
+    showExperiment: (url: string) => dispatch(SHOW_EXPERIMENT({url}))
+  })
+)(App)

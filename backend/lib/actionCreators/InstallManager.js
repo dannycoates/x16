@@ -4,24 +4,31 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
+
+import * as actions from '../../../common/actions'
 import { activeExperiments } from '../reducers/experiments'
 import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
 import InstallListener from './InstallListener'
 import self from 'sdk/self'
 
+import type { Experiment } from '../../../common/Experiment'
+import type { ReduxStore } from 'testpilot/types'
+
 export default class InstallManager {
-  constructor (store) {
+  store: ReduxStore
+
+  constructor (store: ReduxStore) {
     this.store = store
   }
 
-  uninstallExperiment (x) {
+  uninstallExperiment (x: Experiment) {
     AddonManager.getAddonByID(x.addon_id, a => {
       if (a) { a.uninstall() }
     })
   }
 
-  installExperiment (experiment) {
+  installExperiment (experiment: Experiment) {
     AddonManager.getInstallForURL(
       experiment.xpi_url,
       install => {
@@ -37,6 +44,7 @@ export default class InstallManager {
     const { getState } = this.store
     const active = activeExperiments(getState())
     for (let x of Object.values(active)) {
+      // $FlowFixMe Object.values returns Array<mixed> but we know its an Experiment
       this.uninstallExperiment(x)
     }
   }
@@ -45,7 +53,7 @@ export default class InstallManager {
     AddonManager.getAddonByID(self.id, a => a.uninstall())
   }
 
-  selfLoaded (reason) {
+  selfLoaded (reason: string) {
     const { dispatch, getState } = this.store
     if (reason === 'install') {
       const { baseUrl } = getState()
@@ -55,7 +63,7 @@ export default class InstallManager {
     }
   }
 
-  selfUnloaded (reason) {
+  selfUnloaded (reason: string) {
     const { dispatch } = this.store
     if (reason === 'disable') {
       dispatch(actions.SELF_DISABLED())

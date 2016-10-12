@@ -4,9 +4,14 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
 
-export function webToAction ({type, data}) {
+import * as actions from '../../../common/actions'
+
+import type { Action } from 'testpilot/types'
+
+export function webToAction (webevent: ?Object) {
+  const { type, data } = (webevent || {})
   const meta = { src: 'web' }
   switch (type) {
     case 'install-experiment':
@@ -24,9 +29,10 @@ export function webToAction ({type, data}) {
     case 'base-url':
       return actions.SET_BASE_URL({url: data}, meta)
   }
+  return { type: 'IGNORE_ME', payload: {} }
 }
 
-export function actionToWeb ({ payload, type }) {
+export function actionToWeb ({ payload, type }: Action) {
   switch (type) {
     case actions.INSTALL_ENDED.type:
       return {
@@ -75,4 +81,5 @@ export function actionToWeb ({ payload, type }) {
         type: 'addon-self:uninstalled'
       }
   }
+  return { type: 'IGNORE_ME', payload: {} }
 }

@@ -10,8 +10,12 @@
  *   & https://dxr.mozilla.org/mozilla-central/source/browser/components/uitour/UITour.jsm
  */
 
+// @flow
+
 import { Services } from 'resource://gre/modules/Services.jsm'
 import { setTimeout, clearTimeout } from 'sdk/timers'
+
+import type { Experiment } from '../../common/Experiment'
 
 function getAnonEl (win, box, attrName) {
   return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName)
@@ -90,7 +94,13 @@ function createNotificationBox (options) {
   }
 }
 
-export function showRating (options) {
+type Option = {
+  experiment: Experiment,
+  duration?: number,
+  persistence?: number
+}
+
+export function showRating (options: Option) {
   return new Promise((resolve) => {
     const experiment = options.experiment
     const uiTimeout = setTimeout(uiClosed, options.duration || 60000)
@@ -115,7 +125,7 @@ export function showRating (options) {
   })
 }
 
-export function showSurveyButton (options) {
+export function showSurveyButton (options: Option) {
   return new Promise((resolve) => {
     let clicked = false
     const { experiment, duration } = options

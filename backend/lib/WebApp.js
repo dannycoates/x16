@@ -4,22 +4,43 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import { PageMod } from 'sdk/page-mod'
+// @flow
 
-function toIncludes (baseUrl, whitelist) {
+import { PageMod } from 'sdk/page-mod'
+import type Hub from './middleware/Hub'
+import type { Environment } from './env'
+
+type WebAppOptions = {
+  hub: Hub,
+  baseUrl: string,
+  whitelist: string,
+  addonVersion: string
+}
+
+type PageIncludes = {
+  page: string,
+  beacon: string[]
+}
+
+function toIncludes (baseUrl: string, whitelist: string): PageIncludes {
   const page = (baseUrl === '*') ? baseUrl : `${baseUrl}/*`
   const beacon = `${page},${whitelist}`.split(',')
   return { page, beacon }
 }
 
 export default class WebApp {
-  constructor ({hub, baseUrl, whitelist, addonVersion}) {
+  hub: Hub
+  addonVersion: string
+  page: PageMod
+  beacon: PageMod
+
+  constructor ({hub, baseUrl, whitelist, addonVersion}: WebAppOptions) {
     this.hub = hub
     this.addonVersion = addonVersion
     this.createMods(toIncludes(baseUrl, whitelist))
   }
 
-  createMods (includes) {
+  createMods (includes: PageIncludes) {
     this.page = new PageMod({
       include: includes.page,
       contentScriptFile: './message-bridge.js',
@@ -41,7 +62,7 @@ export default class WebApp {
     })
   }
 
-  changeEnv ({baseUrl, whitelist}) {
+  changeEnv ({baseUrl, whitelist}: Environment) {
     this.teardown()
     this.createMods(toIncludes(baseUrl, whitelist))
   }

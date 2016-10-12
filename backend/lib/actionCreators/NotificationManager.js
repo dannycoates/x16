@@ -4,9 +4,14 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
+
+import * as actions from '../../../common/actions'
 import * as notificationUI from '../notificationUI'
 import { setTimeout, clearTimeout } from 'sdk/timers'
+
+import type { ReduxStore } from 'testpilot/types'
+import type { Experiment } from '../../../common/Experiment'
 
 const ONE_DAY = 24 * 60 * 60 * 1000
 const MAX_NOTIFICATION_DELAY_PERIOD = 14 * ONE_DAY
@@ -31,7 +36,10 @@ function nextCheckTime (notifications, nextCheck) {
 }
 
 export default class NotificationManager {
-  constructor (store) {
+  store: ReduxStore
+  timeout: ?number
+
+  constructor (store: ReduxStore) {
     this.store = store
     this.timeout = null
   }
@@ -43,13 +51,14 @@ export default class NotificationManager {
     this.timeout = setTimeout(() => {
       const { experiments } = getState()
       for (let x of Object.values(experiments)) {
+        // $FlowFixMe Object.values returns Array<mixed> but we know its an Experiment
         this.maybeNotify(x)
       }
     },
     nextCheck - Date.now())
   }
 
-  maybeNotify (experiment) {
+  maybeNotify (experiment: Experiment) {
     const { dispatch, getState } = this.store
     const { lastNotified, nextCheck } = getState().notifications
     const n = selectNotification(experiment.notifications, lastNotified)
@@ -74,7 +83,7 @@ export default class NotificationManager {
     dispatch(actions.SCHEDULE_NOTIFIER(payload))
   }
 
-  showNotification (message) {
+  showNotification (message: notificationUI.NotificationMessage) {
     notificationUI.notify(message)
   }
 }

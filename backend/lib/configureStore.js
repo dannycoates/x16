@@ -4,14 +4,19 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import reducers from './reducers'
 import { storage } from 'sdk/simple-storage'
 import { createStore, applyMiddleware } from 'redux'
 import createLogger from 'redux-logger'
+import type Hub from './middleware/Hub'
+import type { Environment } from './env'
+import type { ReduxStore, BackendState } from 'testpilot/types'
 
-const initialState = Object.assign({}, storage.root)
+const initialState = (Object.assign({}, storage.root): BackendState)
 
-export default function configureStore ({hub, startEnv}) {
+export default function configureStore ({hub, startEnv}: {hub: Hub, startEnv: Environment}) {
   if (!initialState.baseUrl) {
     initialState.baseUrl = startEnv.baseUrl
   }
@@ -19,9 +24,9 @@ export default function configureStore ({hub, startEnv}) {
   if (startEnv.name !== 'production') {
     middleware.push(createLogger({colors: false}))
   }
-  return createStore(
+  return (createStore(
     reducers,
     initialState,
     applyMiddleware(...middleware)
-  )
+  ): ReduxStore)
 }

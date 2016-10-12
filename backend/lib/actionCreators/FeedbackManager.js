@@ -4,7 +4,9 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
+
+import * as actions from '../../../common/actions'
 import { activeExperiments, randomActiveExperiment } from '../reducers/experiments'
 import { experimentRating } from '../reducers/ratings'
 import { setTimeout, clearTimeout } from 'sdk/timers'
@@ -12,10 +14,14 @@ import * as feedbackUI from '../feedbackUI'
 import tabs from 'sdk/tabs'
 import querystring from 'sdk/querystring'
 
+import type { Experiment } from '../../../common/Experiment'
+import type { Dispatch, GetState, ReduxStore } from 'testpilot/types'
+
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_DAY = 1000 * 60 * 60 * 24
 
-function getInterval (installDate) {
+function getInterval (installDate: ?Date) {
+  installDate = installDate || new Date()
   const interval = Math.floor((Date.now() - installDate.getTime()) / ONE_DAY)
   if (interval < 2) {
     return 0
@@ -31,21 +37,26 @@ function getInterval (installDate) {
 }
 
 export default class FeedbackManager {
-  constructor ({ dispatch, getState, dnd = ONE_DAY }) {
+  dispatch: Dispatch
+  getState: GetState
+  dnd: number
+  timeout: ?number
+
+  constructor ({ dispatch, getState }: ReduxStore) {
     this.dispatch = dispatch
     this.getState = getState
-    this.dnd = dnd
+    this.dnd = ONE_DAY
     this.timeout = null
   }
 
-  schedule ({ delay = TEN_MINUTES } = {}) {
+  schedule ({ delay = TEN_MINUTES }: { delay: number } = {}) {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => { this.check() }, delay)
   }
 
   check () {
     const state = this.getState()
-    if (Date.now() - state.ratings.lastRated < this.dnd) {
+    if (Date.now() - (state.ratings.lastRated || 0) < this.dnd) {
       return
     }
     const experiment = randomActiveExperiment(state)
@@ -57,7 +68,7 @@ export default class FeedbackManager {
     }
   }
 
-  prompt ({interval, experiment}) {
+  prompt ({interval, experiment}: {interval: number | string, experiment: Experiment}) {
     feedbackUI.showRating({ experiment })
       .then(
         rating => {
@@ -68,7 +79,7 @@ export default class FeedbackManager {
               if (clicked) {
                 const urlParams = querystring.stringify({
                   id: experiment.addon_id,
-                  installed: Object.keys(activeExperiments(this.getState())),
+                  installed: activeExperiments(this.getState()), // TODO
                   rating,
                   interval
                 })

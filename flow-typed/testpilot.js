@@ -1,0 +1,65 @@
+/*
+ * This Source Code is subject to the terms of the Mozilla Public License
+ * version 2.0 (the 'License'). You can obtain a copy of the License at
+ * http://mozilla.org/MPL/2.0/.
+ */
+
+declare module 'testpilot/types' {
+  declare type Experiments = {
+    [id: string]: Object
+  }
+
+  // declare type State = Object;
+  declare type BackendState = {
+    baseUrl: string,
+    clientUUID: string,
+    env: string,
+    experiments: Experiments,
+    notifications: {
+      lastNotified: number,
+      nextCheck: number
+    },
+    ratings: {
+      lastRated?: number,
+      [id: string]: {
+        rating: number,
+        [interval: number]: boolean
+      }
+    },
+    sideEffects: (context: Object) => void,
+    ui: {
+      badge: ?string,
+      clicked: number,
+      panelHeight: number
+    }
+  }
+
+  declare type FrontendState = {
+    experiments: Experiments,
+    env: string,
+    baseUrl: string
+  }
+
+  declare type State = BackendState | FrontendState;
+
+  declare type ActionMeta = {
+    src?: string
+  }
+
+  declare type Action = {
+    type: string,
+    meta?: ActionMeta,
+    payload: Object
+  };
+
+  declare type GetState = () => BackendState;
+  declare type Dispatch = (action: Action) => void;
+  declare type MiddlewareAPI = { dispatch: Dispatch, getState: GetState };
+  declare type Middleware = (api: MiddlewareAPI) => (next: Dispatch) => Dispatch;
+
+  declare type ReduxStore = {
+    dispatch: Dispatch,
+    getState: GetState,
+    subscribe: (listener: () => void) => () => void
+  }
+}

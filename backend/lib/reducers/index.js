@@ -4,6 +4,8 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import { reducer as baseUrl } from './baseUrl'
 import { reducer as clientUUID } from './clientUUID'
 import { reducer as env } from './env'

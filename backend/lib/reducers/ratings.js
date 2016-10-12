@@ -4,9 +4,13 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
 
-export function reducer (state = {}, { payload, type }) {
+import * as actions from '../../../common/actions'
+
+import type { Action, BackendState } from 'testpilot/types'
+
+export function reducer (state: Object = {}, { payload, type }: Action) {
   let id, rating
   switch (type) {
     case actions.SHOW_RATING_PROMPT.type:
@@ -27,6 +31,6 @@ export function reducer (state = {}, { payload, type }) {
   }
 }
 
-export function experimentRating (state, id) {
+export function experimentRating (state: BackendState, id: string) {
   return state.ratings[id] || {}
 }

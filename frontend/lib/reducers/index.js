@@ -4,10 +4,14 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import { combineReducers } from 'redux'
-import actions from '../../../common/actions'
+// @flow
 
-function experiments (experiments = {}, { payload, type }) {
+import { combineReducers } from 'redux'
+import * as actions from '../../../common/actions'
+
+import type { Action, Experiments } from 'testpilot/types'
+
+function experiments (experiments: Experiments = {}, { payload, type }: Action) {
   let x, n
   switch (type) {
     case actions.EXPERIMENTS_LOAD_ERROR.type:
@@ -58,7 +62,7 @@ function experiments (experiments = {}, { payload, type }) {
   }
 }
 
-function env (state = null, { payload, type }) {
+function env (state: ?string = null, { payload, type }: Action) {
   switch (type) {
     case actions.EXPERIMENTS_LOADED.type:
       return payload.envname
@@ -66,7 +70,7 @@ function env (state = null, { payload, type }) {
   return state
 }
 
-function baseUrl (state = null, { payload, type }) {
+function baseUrl (state: ?string = null, { payload, type }: Action) {
   switch (type) {
     case actions.EXPERIMENTS_LOADED.type:
       return payload.baseUrl

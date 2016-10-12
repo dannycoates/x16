@@ -4,12 +4,16 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
+
+import * as actions from '../../../common/actions'
+
+import type { Action } from 'testpilot/types'
 
 const FOOTER_HEIGHT = 53
 const EXPERIMENT_HEIGHT = 80
 
-export function reducer (state = { panelHeight: FOOTER_HEIGHT }, { payload, type }) {
+export function reducer (state: Object = { panelHeight: FOOTER_HEIGHT }, { payload, type }: Action) {
   switch (type) {
     case actions.SET_BADGE.type:
       return Object.assign({}, state, { badge: payload.text })

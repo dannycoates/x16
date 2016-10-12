@@ -4,25 +4,23 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import React, { Component, PropTypes } from 'react'
+// @flow
+
+import React, { Component } from 'react'
 import Experiment from '../Experiment'
 
 import './ExperimentList.css'
 
+// eslint-disable-next-line
+import type { ExperimentProps } from '../Experiment'
+
+export type ExperimentListProps = {
+  experiments: Array<ExperimentProps>,
+  onExperimentClick: (url: string) => void
+}
+
 export default class ExperimentList extends Component {
-  static propTypes = {
-    experiments: PropTypes.arrayOf(PropTypes.shape({
-      title: PropTypes.string.isRequired,
-      thumbnail: PropTypes.string.isRequired,
-      html_url: PropTypes.string.isRequired,
-      active: PropTypes.bool.isRequired,
-      created: PropTypes.string.isRequired,
-      modified: PropTypes.string.isRequired,
-      gradient_start: PropTypes.string.isRequired,
-      gradient_stop: PropTypes.string.isRequired
-    })).isRequired,
-    onExperimentClick: PropTypes.func.isRequired
-  }
+  props: ExperimentListProps
 
   render () {
     const { experiments, onExperimentClick } = this.props
@@ -30,7 +28,7 @@ export default class ExperimentList extends Component {
       <div className='experiment-list'>
         {experiments.map(experiment =>
           <Experiment
-            key={experiment.id}
+            key={experiment.addon_id}
             {...experiment}
             onClick={onExperimentClick}
           />

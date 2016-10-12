@@ -4,6 +4,8 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import AddonListener from './lib/actionCreators/AddonListener'
 import configureStore from './lib/configureStore'
 import createExperimentMetrics from './lib/metrics'
@@ -49,7 +51,7 @@ sideEffects.setContext(Object.assign({}, store, {
   webapp
 }))
 
-export function main ({loadReason}) {
+export function main ({loadReason}: {loadReason: string}) {
   env.subscribe(store)
   sideEffects.enable(store)
   installManager.selfLoaded(loadReason)
@@ -58,7 +60,7 @@ export function main ({loadReason}) {
   feedbackManager.schedule()
 }
 
-export function onUnload (reason) {
+export function onUnload (reason: string) {
   installManager.selfUnloaded(reason)
   storage.root = store.getState()
   sideEffects.disable()

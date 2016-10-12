@@ -4,10 +4,17 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
-import pickBy from 'lodash/pickBy'
+// @flow
 
-export function reducer (experiments = {}, { payload, type }) {
+import * as actions from '../../../common/actions'
+import pickBy from 'lodash/pickBy'
+import { Experiment } from '../../../common/Experiment'
+
+// eslint-disable-next-line
+import type { Experiments } from '../../../common/Experiment'
+import type { Action, BackendState } from 'testpilot/types'
+
+export function reducer (experiments: Experiments = {}, { payload, type }: Action): Experiments {
   let x, n
   switch (type) {
     case actions.EXPERIMENTS_LOAD_ERROR.type:
@@ -19,25 +26,23 @@ export function reducer (experiments = {}, { payload, type }) {
     case actions.EXPERIMENT_ENABLED.type:
     case actions.INSTALL_ENDED.type:
       x = experiments[payload.experiment.addon_id]
-      n = Object.assign({}, x, { active: true, installDate: payload.experiment.installDate })
+      n = new Experiment(Object.assign({}, x, { active: true, installDate: payload.experiment.installDate }))
       return Object.assign({}, experiments, { [n.addon_id]: n })
 
     case actions.EXPERIMENT_DISABLED.type:
     case actions.EXPERIMENT_UNINSTALLING.type:
       x = experiments[payload.experiment.addon_id]
-      n = Object.assign({}, x, { active: false })
+      n = new Experiment(Object.assign({}, x, { active: false }))
       return Object.assign({}, experiments, { [n.addon_id]: n })
-
-    default:
-      return experiments
   }
+  return experiments
 }
 
-export function activeExperiments (state) {
+export function activeExperiments (state: BackendState): Experiments {
   return pickBy(state.experiments, x => x.active)
 }
 
-export function randomActiveExperiment (state) {
+export function randomActiveExperiment (state: BackendState): Experiment {
   const installed = activeExperiments(state)
   const installedKeys = Object.keys(installed)
   const id = installedKeys[Math.floor(Math.random() * installedKeys.length)]

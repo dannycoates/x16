@@ -4,14 +4,23 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import seedrandom from 'seedrandom'
 
+export type Variant = {
+  weight: number,
+  value: any
+}
+
 export default class Variants {
-  constructor (clientUUID) {
+  clientUUID: string
+
+  constructor (clientUUID: string) {
     this.clientUUID = clientUUID
   }
 
-  makeTest (test) {
+  makeTest (test: {name: string, variants: Array<Variant>}) {
     let summedWeight = 0
     const variants = []
     test.variants.forEach(variant => {
@@ -24,7 +33,7 @@ export default class Variants {
     return variants[Math.floor(seedrandom(seed)() * summedWeight)]
   }
 
-  parseTests (tests) {
+  parseTests (tests: Object) {
     const results = {}
     Object.keys(tests).forEach(key => {
       results[key] = this.makeTest(tests[key])

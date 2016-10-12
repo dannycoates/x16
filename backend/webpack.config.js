@@ -21,7 +21,8 @@ const config = {
         test: /\.js$/,
         loader: 'babel',
         query: {
-          presets: [['es2015', { modules: false }], 'stage-2']
+          presets: [['es2015', { modules: false }], 'stage-2'],
+          plugins: ['transform-flow-strip-types']
         },
         exclude: /node_modules/,
         include: [__dirname, path.join(__dirname, '..', 'common')]

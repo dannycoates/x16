@@ -4,61 +4,60 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
+
+import * as actions from '../../../common/actions'
 import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
 
-function getExperiment (getState, addon) {
+// eslint-disable-next-line
+import type { Addon } from 'resource://gre/modules/AddonManager.jsm'
+import type { Experiment } from '../../../common/Experiment'
+import type { Dispatch, ReduxStore } from 'testpilot/types'
+
+function getExperiment (getState, addon): ?Experiment {
   const { experiments } = getState()
   return experiments[addon.id]
 }
 
-function toObject (addon) {
-  return {
-    id: addon.id,
-    isActive: addon.isActive,
-    pendingOperations: addon.pendingOperations,
-    userDisabled: addon.userDisabled,
-    installDate: addon.installDate
-  }
-}
-
 export default class AddonListener {
-  constructor ({dispatch, getState}) {
+  getExperiment: (addon: Addon) => ?Experiment
+  dispatch: Dispatch;
+
+  constructor ({dispatch, getState}: ReduxStore) {
     this.getExperiment = getExperiment.bind(null, getState)
     this.dispatch = dispatch
     AddonManager.addAddonListener(this)
   }
 
-  onEnabled (addon) {
+  onEnabled (addon: Addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       this.dispatch(actions.EXPERIMENT_ENABLED({experiment}))
     }
   }
 
-  onDisabled (addon) {
+  onDisabled (addon: Addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       this.dispatch(actions.EXPERIMENT_DISABLED({experiment}))
     }
   }
 
-  onUninstalling (addon) {
+  onUninstalling (addon: Addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       this.dispatch(actions.EXPERIMENT_UNINSTALLING({experiment}))
     }
   }
 
-  onUninstalled (addon) {
+  onUninstalled (addon: Addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       this.dispatch(actions.EXPERIMENT_UNINSTALLED({experiment}))
     }
   }
 
-  onOperationCancelled (addon) {
-    console.debug('op cancelled', toObject(addon))
+  onOperationCancelled (addon: Addon) {
     const experiment = this.getExperiment(addon)
     if (experiment) {
       if (addon.pendingOperations & AddonManager.PENDING_ENABLE) {

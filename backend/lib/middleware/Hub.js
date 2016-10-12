@@ -4,27 +4,34 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import { actionToWeb, webToAction } from './webadapter'
+import type { Dispatch, Middleware } from 'testpilot/types'
+import type { EventEmitter } from 'sdk/event/emitter'
 
 export default class Hub {
+  dispatch: Dispatch
+  ports: Set<EventEmitter>
+
   constructor () {
     this.dispatch = () => console.error('Hub cannot use dispatch() before middleware()')
     this.ports = new Set()
   }
 
-  connect (port) {
+  connect (port: EventEmitter): void {
     port.on('action', this.dispatch)
-    port.on('from-web-to-addon', evt => this.dispatch(webToAction(evt)))
+    port.on('from-web-to-addon', (evt: Object) => this.dispatch(webToAction(evt)))
     this.ports.add(port)
   }
 
-  disconnect (port) {
+  disconnect (port: EventEmitter): void {
     port.off('action', this.dispatch)
     port.off('from-web-to-addon')
     this.ports.delete(port)
   }
 
-  middleware () {
+  middleware (): Middleware {
     return ({dispatch}) => {
       this.dispatch = dispatch
       return (next) => (action) => {

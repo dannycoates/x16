@@ -4,9 +4,15 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
 
-function toObject (install, experiment) {
+import * as actions from '../../../common/actions'
+
+import type { Experiment } from '../../../common/Experiment'
+import type { Dispatch } from 'testpilot/types'
+import type { Addon, AddonInstall } from 'resource://gre/modules/AddonManager.jsm'
+
+function toObject (install: AddonInstall, experiment: Experiment) {
   // install properties aren't enumerable
   return {
     addon_id: experiment.addon_id,
@@ -19,13 +25,16 @@ function toObject (install, experiment) {
 }
 
 export default class InstallListener {
-  constructor ({install, experiment, dispatch}) {
+  dispatch: Dispatch
+  experiment: Experiment
+
+  constructor ({install, experiment, dispatch}: {install: AddonInstall, experiment: Experiment, dispatch: Dispatch}) {
     this.dispatch = dispatch
     this.experiment = experiment
     install.addListener(this)
   }
 
-  onInstallEnded (install, addon) {
+  onInstallEnded (addonInstall: AddonInstall, addon: Addon) {
     this.dispatch(actions.INSTALL_ENDED({
       experiment: {
         addon_id: addon.id,
@@ -34,43 +43,43 @@ export default class InstallListener {
     }))
   }
 
-  onInstallFailed (install) {
-    install = toObject(install, this.experiment)
+  onInstallFailed (addonInstall: AddonInstall) {
+    const install = toObject(addonInstall, this.experiment)
     this.dispatch(actions.INSTALL_FAILED({install}))
   }
 
-  onInstallStarted (install) {
-    install = toObject(install, this.experiment)
+  onInstallStarted (addonInstall: AddonInstall) {
+    const install = toObject(addonInstall, this.experiment)
     this.dispatch(actions.INSTALL_STARTED({install}))
   }
 
-  onInstallCancelled (install) {
-    install = toObject(install, this.experiment)
+  onInstallCancelled (addonInstall: AddonInstall) {
+    const install = toObject(addonInstall, this.experiment)
     this.dispatch(actions.INSTALL_CANCELLED({install}))
   }
 
-  onDownloadStarted (install) {
-    install = toObject(install, this.experiment)
+  onDownloadStarted (addonInstall: AddonInstall) {
+    const install = toObject(addonInstall, this.experiment)
     this.dispatch(actions.DOWNLOAD_STARTED({install}))
   }
 
-  onDownloadProgress (install) {
-    install = toObject(install, this.experiment)
+  onDownloadProgress (addonInstall: AddonInstall) {
+    const install = toObject(addonInstall, this.experiment)
     this.dispatch(actions.DOWNLOAD_PROGRESS({install}))
   }
 
-  onDownloadEnded (install) {
-    install = toObject(install, this.experiment)
+  onDownloadEnded (addonInstall: AddonInstall) {
+    const install = toObject(addonInstall, this.experiment)
     this.dispatch(actions.DOWNLOAD_ENDED({install}))
   }
 
-  onDownloadCancelled (install) {
-    install = toObject(install, this.experiment)
+  onDownloadCancelled (addonInstall: AddonInstall) {
+    const install = toObject(addonInstall, this.experiment)
     this.dispatch(actions.DOWNLOAD_CANCELLED({install}))
   }
 
-  onDownloadFailed (install) {
-    install = toObject(install, this.experiment)
+  onDownloadFailed (addonInstall: AddonInstall) {
+    const install = toObject(addonInstall, this.experiment)
     this.dispatch(actions.DOWNLOAD_FAILED({install}))
   }
 }

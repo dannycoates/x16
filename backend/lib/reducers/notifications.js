@@ -4,13 +4,17 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import actions from '../../../common/actions'
+// @flow
+
+import * as actions from '../../../common/actions'
+
+import type { Action } from 'testpilot/types'
 
 const tomorrow = Date.now() + (24 * 60 * 60 * 1000)
 
 export function reducer (
-  state = { lastNotified: tomorrow, nextCheck: tomorrow },
-  { payload, type }) {
+  state: Object = { lastNotified: tomorrow, nextCheck: tomorrow },
+  { payload, type }: Action) {
   switch (type) {
     case actions.SCHEDULE_NOTIFIER.type:
       return Object.assign({}, state, {

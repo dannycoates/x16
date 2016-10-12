@@ -4,14 +4,16 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-import backend from './lib/backend'
+// @flow
+
+import Backend from './lib/Backend'
 import React from 'react'
 import { Provider } from 'react-redux'
 import { render } from 'react-dom'
 import { configureStore } from './lib/configureStore'
 import App from './lib/containers/App'
 
-const store = configureStore(backend)
+const store = configureStore(new Backend())
 
 render(
   <Provider store={store}>

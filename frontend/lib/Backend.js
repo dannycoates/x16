@@ -4,40 +4,48 @@
  * http://mozilla.org/MPL/2.0/.
  */
 /* global addon self */
+
+// @flow
+
+import type { Action } from 'testpilot/types'
+
 function noop () {}
 
 const fakeStore = {
   dispatch: noop
 }
 
-let comm = null
+let comm = {
+  port: {
+    on: noop,
+    emit: noop
+  }
+}
 
+// $FlowFixMe addon is a global
 if (typeof (addon) !== 'undefined') {
   comm = addon
 } else if (typeof (self) !== 'undefined' && self.port) {
   comm = self
-} else {
-  comm = {
-    port: {
-      on: noop,
-      emit: noop
-    }
-  }
 }
 
-class Backend {
+export default class Backend {
+  store: {
+    dispatch: (action: Action) => void
+  }
+  port: {
+    on: (type: string, handler: Function) => any,
+    emit: (type: string, ...args: any) => void
+  }
+
   constructor () {
     this.store = fakeStore
     this.port = comm.port
-    this.port.on('ping', x => this.port.emit('pong', x))
-    this.port.on('action', action => this.store.dispatch(action))
+    this.port.on('ping', (x: number) => this.port.emit('pong', x))
+    this.port.on('action', (action: Action) => this.store.dispatch(action))
   }
 
-  send (action) {
+  send (action: Action) {
     this.port.emit('action', action)
   }
 }
-
-const backend = new Backend()
-
-export default backend

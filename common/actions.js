@@ -4,15 +4,22 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-function argsOk (actual = {}, expected = []) {
+// @flow
+
+import type { Action, ActionMeta } from 'testpilot/types'
+
+export type ActionCreator = {(payload: ?Object, meta?: ActionMeta): Action, type: string, args: string[]}
+
+function argsOk (actual: Object, expected: string[]) {
   return Object.keys(actual).every(key => expected.includes(key)) &&
   expected.every(key => actual.hasOwnProperty(key))
 }
 
-function createAction (type, payloadArgs) {
-  function action (payload = {}, meta = {}) {
+function createAction (type: string, payloadArgs: string[]): ActionCreator {
+  function action (payload: ?Object, meta?: ActionMeta = {}) {
+    payload = payload || {}
     if (!argsOk(payload, payloadArgs)) {
-      throw new Error(`Action ${type} expected ${payloadArgs} but got ${payload}`)
+      throw new Error(`Action ${type} expected [${payloadArgs.join(',')}] but got [${Object.keys(payload).join(',')}]`)
     }
     return { type, meta, payload }
   }
@@ -21,53 +28,43 @@ function createAction (type, payloadArgs) {
   return action
 }
 
-const actionArgs = {
-  // backend created
-  INSTALL_ENDED: ['experiment'],
-  INSTALL_FAILED: ['install'],
-  INSTALL_STARTED: ['install'],
-  INSTALL_CANCELLED: ['install'],
-  DOWNLOAD_STARTED: ['install'],
-  DOWNLOAD_PROGRESS: ['install'],
-  DOWNLOAD_ENDED: ['install'],
-  DOWNLOAD_CANCELLED: ['install'],
-  DOWNLOAD_FAILED: ['install'],
-  LOAD_EXPERIMENTS: ['envname', 'baseUrl'],
-  LOADING_EXPERIMENTS: ['envname'],
-  EXPERIMENTS_LOADED: ['envname', 'baseUrl', 'experiments'],
-  EXPERIMENTS_LOAD_ERROR: ['err'],
-  EXPERIMENT_ENABLED: ['experiment'],
-  EXPERIMENT_DISABLED: ['experiment'],
-  EXPERIMENT_UNINSTALLING: ['experiment'],
-  EXPERIMENT_UNINSTALLED: ['experiment'],
-  FRONTEND_CONNECTED: [],
-  CHANGE_ENV: [],
-  SET_BADGE: ['text'],
-  MAIN_BUTTON_CLICKED: ['time'],
-  MAYBE_NOTIFY: ['experiment'],
-  SHOW_NOTIFICATION: ['id', 'title', 'text', 'url'],
-  SCHEDULE_NOTIFIER: ['nextCheck', 'lastNotified'],
-  SELF_INSTALLED: ['url'],
-  SELF_UNINSTALLED: [],
-  SELF_ENABLED: [],
-  SELF_DISABLED: [],
-  SET_RATING: ['experiment', 'rating', 'time'],
-  SHOW_RATING_PROMPT: ['interval', 'experiment'],
-  SYNC_INSTALLED: ['clientUUID', 'installed'],
-  // frontend created
-  SHOW_EXPERIMENT: ['url'],
-  // webapp created
-  INSTALL_EXPERIMENT: ['experiment'],
-  UNINSTALL_EXPERIMENT: ['experiment'],
-  UNINSTALL_SELF: [],
-  GET_INSTALLED: [],
-  SET_BASE_URL: ['url']
-}
-
-const actions = {}
-
-for (let [type, args] of Object.entries(actionArgs)) {
-  actions[type] = createAction(type, args)
-}
-
-module.exports = actions
+// backend created
+export const INSTALL_ENDED = createAction('INSTALL_ENDED', ['experiment'])
+export const INSTALL_FAILED = createAction('INSTALL_FAILED', ['install'])
+export const INSTALL_STARTED = createAction('INSTALL_STARTED', ['install'])
+export const INSTALL_CANCELLED = createAction('INSTALL_CANCELLED', ['install'])
+export const DOWNLOAD_STARTED = createAction('DOWNLOAD_STARTED', ['install'])
+export const DOWNLOAD_PROGRESS = createAction('DOWNLOAD_PROGRESS', ['install'])
+export const DOWNLOAD_ENDED = createAction('DOWNLOAD_ENDED', ['install'])
+export const DOWNLOAD_CANCELLED = createAction('DOWNLOAD_CANCELLED', ['install'])
+export const DOWNLOAD_FAILED = createAction('DOWNLOAD_FAILED', ['install'])
+export const LOAD_EXPERIMENTS = createAction('LOAD_EXPERIMENTS', ['envname', 'baseUrl'])
+export const LOADING_EXPERIMENTS = createAction('LOADING_EXPERIMENTS', ['envname'])
+export const EXPERIMENTS_LOADED = createAction('EXPERIMENTS_LOADED', ['envname', 'baseUrl', 'experiments'])
+export const EXPERIMENTS_LOAD_ERROR = createAction('EXPERIMENTS_LOAD_ERROR', ['err'])
+export const EXPERIMENT_ENABLED = createAction('EXPERIMENT_ENABLED', ['experiment'])
+export const EXPERIMENT_DISABLED = createAction('EXPERIMENT_DISABLED', ['experiment'])
+export const EXPERIMENT_UNINSTALLING = createAction('EXPERIMENT_UNINSTALLING', ['experiment'])
+export const EXPERIMENT_UNINSTALLED = createAction('EXPERIMENT_UNINSTALLED', ['experiment'])
+export const FRONTEND_CONNECTED = createAction('FRONTEND_CONNECTED', [])
+export const CHANGE_ENV = createAction('CHANGE_ENV', [])
+export const SET_BADGE = createAction('SET_BADGE', ['text'])
+export const MAIN_BUTTON_CLICKED = createAction('MAIN_BUTTON_CLICKED', ['time'])
+export const MAYBE_NOTIFY = createAction('MAYBE_NOTIFY', ['experiment'])
+export const SHOW_NOTIFICATION = createAction('SHOW_NOTIFICATION', ['id', 'title', 'text', 'url'])
+export const SCHEDULE_NOTIFIER = createAction('SCHEDULE_NOTIFIER', ['nextCheck', 'lastNotified'])
+export const SELF_INSTALLED = createAction('SELF_INSTALLED', ['url'])
+export const SELF_UNINSTALLED = createAction('SELF_UNINSTALLED', [])
+export const SELF_ENABLED = createAction('SELF_ENABLED', [])
+export const SELF_DISABLED = createAction('SELF_DISABLED', [])
+export const SET_RATING = createAction('SET_RATING', ['experiment', 'rating', 'time'])
+export const SHOW_RATING_PROMPT = createAction('SHOW_RATING_PROMPT', ['interval', 'experiment'])
+export const SYNC_INSTALLED = createAction('SYNC_INSTALLED', ['clientUUID', 'installed'])
+// frontend created
+export const SHOW_EXPERIMENT = createAction('SHOW_EXPERIMENT', ['url'])
+// webapp created
+export const INSTALL_EXPERIMENT = createAction('INSTALL_EXPERIMENT', ['experiment'])
+export const UNINSTALL_EXPERIMENT = createAction('UNINSTALL_EXPERIMENT', ['experiment'])
+export const UNINSTALL_SELF = createAction('UNINSTALL_SELF', [])
+export const GET_INSTALLED = createAction('GET_INSTALLED', [])
+export const SET_BASE_URL = createAction('SET_BASE_URL', ['url'])

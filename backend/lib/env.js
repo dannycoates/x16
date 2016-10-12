@@ -4,22 +4,35 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
+// @flow
+
 import aboutConfig from 'sdk/preferences/service'
 import { CHANGE_ENV } from '../../common/actions'
 import environments from '../../common/environments'
 import { PrefsTarget } from 'sdk/preferences/event-target'
 import self from 'sdk/self'
 
-let store = {
-  dispatch: () => console.error('env.store is not set')
+import type { Dispatch, ReduxStore } from 'testpilot/types'
+export type Environment = {
+  baseUrl: string,
+  name: string,
+  whitelist: string
+}
+export type Env = {
+  get(): Environment,
+  subscribe(store: ReduxStore): void
 }
 
+let dispatch: Dispatch = () => console.error('env.dispatch is not set')
+
 const env = {
-  get: function () {
-    return environments[aboutConfig.get('testpilot.env', 'production')]
+  get () {
+    const name = aboutConfig.get('testpilot.env', 'production')
+    const ev = typeof name === 'string' ? environments[name] : environments['production']
+    return ev || environments['production']
   },
-  subscribe: function (it) {
-    store = it
+  subscribe (store: ReduxStore) {
+    dispatch = store.dispatch
   }
 }
 
@@ -32,9 +45,9 @@ if (aboutConfig.get('testpilot.env') !== 'production') {
   // TODO: set back on change? worth it?
 }
 
-const prefs = PrefsTarget()
+const prefs = new PrefsTarget()
 prefs.on('testpilot.env', () => {
-  store.dispatch(CHANGE_ENV())
+  dispatch(CHANGE_ENV())
 })
 
 module.exports = env
