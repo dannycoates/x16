@@ -19,6 +19,7 @@ import NotificationManager from './lib/actionCreators/NotificationManager'
 import self from 'sdk/self'
 import * as sideEffects from './lib/reducers/sideEffects'
 import { storage } from 'sdk/simple-storage'
+import tabs from 'sdk/tabs'
 import Telemetry from './lib/Telemetry'
 import WebApp from './lib/WebApp'
 
@@ -46,6 +47,8 @@ sideEffects.setContext(Object.assign({}, store, {
   installManager,
   loader,
   notificationManager,
+  self,
+  tabs,
   telemetry,
   ui,
   webapp

@@ -2,3 +2,5 @@ node_modules
 backend/backend.js
 data/bundle.*
 tools/control-panel.js
+coverage
+.nyc_output

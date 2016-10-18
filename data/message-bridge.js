@@ -7,6 +7,7 @@
 /* global cloneInto self CustomEvent */
 
 // Page script acts as messaging bridge between addon and web content.
+unsafeWindow.navigator.testpilotAddon = true
 
 // New channel
 self.port.on('action', function (data) {

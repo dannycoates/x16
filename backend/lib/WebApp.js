@@ -24,7 +24,7 @@ type PageIncludes = {
 
 function toIncludes (baseUrl: string, whitelist: string): PageIncludes {
   const page = (baseUrl === '*') ? baseUrl : `${baseUrl}/*`
-  const beacon = `${page},${whitelist}`.split(',')
+  const beacon = whitelist.split(',')
   return { page, beacon }
 }
 

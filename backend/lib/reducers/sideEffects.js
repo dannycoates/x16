@@ -7,10 +7,10 @@
 // @flow
 
 import * as actions from '../../../common/actions'
-import self from 'sdk/self'
-import tabs from 'sdk/tabs'
 import WebExtensionChannels from '../metrics/webextension-channels'
 
+import typeof self from 'sdk/self'
+import typeof tabs from 'sdk/tabs'
 import type { Action, Dispatch, GetState, ReduxStore } from 'testpilot/types'
 import type { Env } from '../env'
 import type FeedbackManager from '../ActionCreators/FeedbackManager'
@@ -29,6 +29,8 @@ export type Context = {
   installManager: InstallManager,
   loader: Loader,
   notificationManager: NotificationManager,
+  self: self,
+  tabs: tabs,
   telemetry: Telemetry,
   ui: MainUI,
   webapp: WebApp
@@ -83,7 +85,7 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
       return ({installManager}) => installManager.uninstallSelf()
 
     case actions.SELF_UNINSTALLED.type:
-      return ({installManager, telemetry}) => {
+      return ({installManager, self, telemetry}) => {
         telemetry.ping(self.id, 'disabled')
         telemetry.restorePrefs()
         installManager.uninstallAll()
@@ -129,7 +131,7 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
       return ({notificationManager}) => notificationManager.schedule()
 
     case actions.SELF_INSTALLED.type:
-      return ({telemetry}) => {
+      return ({self, tabs, telemetry}) => {
         tabs.open({
           url: payload.url,
           inBackground: true
@@ -139,13 +141,13 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
       }
 
     case actions.SELF_ENABLED.type:
-      return ({telemetry}) => {
+      return ({self, telemetry}) => {
         telemetry.setPrefs()
         telemetry.ping(self.id, 'enabled')
       }
 
     case actions.SELF_DISABLED.type:
-      return ({telemetry}) => {
+      return ({self, telemetry}) => {
         telemetry.ping(self.id, 'disabled')
         telemetry.restorePrefs()
       }
