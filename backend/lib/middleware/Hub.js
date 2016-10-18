@@ -43,7 +43,7 @@ export default class Hub {
               port.emit('action', action)
 
               const evt = actionToWeb(action)
-              if (evt) {
+              if (evt && evt.type !== 'IGNORE_ME') {
                 port.emit('from-addon-to-web', evt)
               }
             } catch (e) {
