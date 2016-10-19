@@ -50,8 +50,9 @@ class App extends Component {
 export default connect(
   (state: FrontendState) => ({
     baseUrl: state.baseUrl,
-    // $FlowFixMe Object.values erases type
-    experiments: Object.values(state.experiments).sort((a, b) => a.order - b.order)
+    experiments: Object.keys(state.experiments)
+      .map(id => state.experiments[id])
+      .sort((a, b) => a.order - b.order)
   }),
   (dispatch: Dispatch) => ({
     showExperiment: (url: string) => dispatch(SHOW_EXPERIMENT({url}))

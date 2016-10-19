@@ -1,20 +1,20 @@
-// @flow
-
+/* global describe it */
 import assert from 'assert'
 import proxyquire from 'proxyquire'
 
 const reducers = proxyquire('../lib/reducers',
-{
-  'sdk/util/uuid': {
-    uuid: () => 'uuid',
-    '@noCallThru': true,
-    '@global': true
-  },
-  '../metrics/webextension-channels': {
-    '@noCallThru': true,
-    '@global': true
+  {
+    'sdk/util/uuid': {
+      uuid: () => 'uuid',
+      '@noCallThru': true,
+      '@global': true
+    },
+    '../metrics/webextension-channels': {
+      '@noCallThru': true,
+      '@global': true
+    }
   }
-}).default
+).default
 
 import * as actions from '../../common/actions'
 import { Experiment } from '../../common/Experiment'
@@ -44,7 +44,7 @@ const Y = new Experiment({
 })
 
 describe('reducers', function () {
-  function testAction(action, initialState, expectedState) {
+  function testAction (action, initialState, expectedState) {
     const store = createStore(reducers, initialState)
     store.dispatch(action)
     const state = store.getState()

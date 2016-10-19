@@ -1,5 +1,4 @@
-// @flow
-
+/* global describe beforeEach it */
 import assert from 'assert'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
@@ -9,23 +8,22 @@ const spies = {
   remove: sinon.spy(),
   '@noCallThru': true
 }
-const sideEffects = proxyquire('../lib/reducers/sideEffects',
-{
-  '../metrics/webextension-channels': spies
-})
+const sideEffects = proxyquire(
+  '../lib/reducers/sideEffects',
+  {
+    '../metrics/webextension-channels': spies
+  }
+)
 const { reducer, nothing } = sideEffects
 
 import * as actions from '../../common/actions'
 import { Experiment } from '../../common/Experiment'
-import { createStore } from 'redux'
 
 const X = new Experiment({
   addon_id: 'X'
 })
 
-
 describe('side effects', function () {
-
   describe('reducer', function () {
     beforeEach(
       function () {
@@ -474,16 +472,16 @@ describe('side effects', function () {
       const action = {
         type: actions.FRONTEND_CONNECTED.type
       }
-      const e = { name: 'production', baseUrl: 'foo'}
+      const e = { name: 'production', baseUrl: 'foo' }
       const env = {
-        get: () => e,
+        get: () => e
       }
       const getState = sinon.spy()
       const dispatch = sinon.spy()
       const state = reducer(null, action)
       state({env, getState, dispatch})
       assert.ok(dispatch.calledOnce, 'dispatch called')
-      const a = dispatch.args[0][0]
+      const a = dispatch.firstCall.args[0]
       assert.equal(a.type, actions.LOAD_EXPERIMENTS.type)
       assert.equal(a.payload.baseUrl, e.baseUrl)
     })
@@ -492,9 +490,9 @@ describe('side effects', function () {
       const action = {
         type: actions.CHANGE_ENV.type
       }
-      const e = { name: 'production', baseUrl: 'foo'}
+      const e = { name: 'production', baseUrl: 'foo' }
       const env = {
-        get: () => e,
+        get: () => e
       }
       const dispatch = sinon.spy()
       const webapp = {
@@ -505,7 +503,7 @@ describe('side effects', function () {
       assert.ok(webapp.changeEnv.calledOnce)
       assert.ok(webapp.changeEnv.calledWith(e))
       assert.ok(dispatch.calledOnce)
-      const a = dispatch.args[0][0]
+      const a = dispatch.firstCall.args[0]
       assert.equal(a.type, actions.LOAD_EXPERIMENTS.type)
       assert.equal(a.payload.baseUrl, e.baseUrl)
     })
@@ -527,7 +525,7 @@ describe('side effects', function () {
 
   describe('running side effects', function () {
     it('uses the set context', function () {
-      let sub = () => 1
+      let sub = null
       const effects = sinon.spy()
       const unsub = sinon.spy()
       const context = {}
@@ -546,6 +544,12 @@ describe('side effects', function () {
       assert.ok(!unsub.called)
       sideEffects.disable()
       assert.ok(unsub.calledOnce)
+    })
+  })
+
+  it('does nothing, literally', function () {
+    assert.doesNotThrow(function () {
+      sideEffects.nothing()
     })
   })
 })

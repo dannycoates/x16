@@ -1,15 +1,13 @@
-
+/* global describe beforeEach it */
 import assert from 'assert'
-import proxyquire from 'proxyquire'
 import sinon from 'sinon'
 import Hub from '../lib/middleware/Hub'
-import { SYNC_INSTALLED } from '../../common/actions'
+import { GET_INSTALLED, SYNC_INSTALLED } from '../../common/actions'
 
 const store = {
   dispatch: sinon.spy(),
   getState: sinon.spy()
 }
-
 
 describe('Hub', function () {
   beforeEach(function () {
@@ -20,6 +18,14 @@ describe('Hub', function () {
   it('initializes', function () {
     const h = new Hub()
     assert.equal(h.ports.size, 0)
+  })
+
+  it('logs on misuse of dispatch', function () {
+    sinon.spy(console, 'error')
+    const h = new Hub()
+    h.dispatch('foo')
+    assert.ok(console.error.calledOnce)
+    console.error.restore()
   })
 
   it('connects the proper events', function () {
@@ -115,6 +121,22 @@ describe('Hub', function () {
       done()
     }
     middleware(store)(next)(a)
+  })
+
+  it('translates web events to actions', function () {
+    const h = new Hub()
+    h.dispatch = sinon.spy()
+    const event = {
+      type: 'sync-installed',
+      data: 'test'
+    }
+    const on = sinon.stub()
+    on.withArgs('from-web-to-addon').callsArgWith(1, event)
+
+    const p = { on }
+    h.connect(p)
+    assert.ok(h.dispatch.calledOnce)
+    assert.equal(h.dispatch.firstCall.args[0].type, GET_INSTALLED.type)
   })
 
   it('removes the port on emit failure', function (done) {

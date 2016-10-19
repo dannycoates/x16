@@ -69,7 +69,7 @@ export default class FeedbackManager {
   }
 
   prompt ({interval, experiment}: {interval: number | string, experiment: Experiment}) {
-    feedbackUI.showRating({ experiment })
+    return feedbackUI.showRating({ experiment })
       .then(
         rating => {
           if (!rating) { return Promise.resolve() }
@@ -79,7 +79,7 @@ export default class FeedbackManager {
               if (clicked) {
                 const urlParams = querystring.stringify({
                   id: experiment.addon_id,
-                  installed: activeExperiments(this.getState()), // TODO
+                  installed: activeExperiments(this.getState()), // TODO match official output
                   rating,
                   interval
                 })

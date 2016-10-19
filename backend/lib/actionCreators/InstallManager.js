@@ -43,9 +43,8 @@ export default class InstallManager {
   uninstallAll () {
     const { getState } = this.store
     const active = activeExperiments(getState())
-    for (let x of Object.values(active)) {
-      // $FlowFixMe Object.values returns Array<mixed> but we know its an Experiment
-      this.uninstallExperiment(x)
+    for (let id of Object.keys(active)) {
+      this.uninstallExperiment(active[id])
     }
   }
 

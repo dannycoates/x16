@@ -4,7 +4,7 @@
  * http://mozilla.org/MPL/2.0/.
  */
 
-/* global cloneInto self CustomEvent */
+/* global cloneInto self CustomEvent unsafeWindow */
 
 // Page script acts as messaging bridge between addon and web content.
 unsafeWindow.navigator.testpilotAddon = true

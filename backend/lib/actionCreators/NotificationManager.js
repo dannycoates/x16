@@ -50,9 +50,8 @@ export default class NotificationManager {
     clearTimeout(this.timeout)
     this.timeout = setTimeout(() => {
       const { experiments } = getState()
-      for (let x of Object.values(experiments)) {
-        // $FlowFixMe Object.values returns Array<mixed> but we know its an Experiment
-        this.maybeNotify(x)
+      for (let id of Object.keys(experiments)) {
+        this.maybeNotify(experiments[id])
       }
     },
     nextCheck - Date.now())

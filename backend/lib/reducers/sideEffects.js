@@ -109,7 +109,7 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
       return ({installManager}) => installManager.syncInstalled()
 
     case actions.SHOW_RATING_PROMPT.type:
-      return ({feedbackManager}) => feedbackManager.prompt(payload)
+      return ({feedbackManager}) => { feedbackManager.prompt(payload) }
 
     case actions.SET_BADGE.type:
       return ({ui}) => ui.setBadge()

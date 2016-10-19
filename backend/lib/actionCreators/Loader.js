@@ -48,9 +48,8 @@ function fetchExperiments (baseUrl, path): Promise<Experiments> {
 }
 
 function mergeAddonState (experiments: Experiments, addons) {
-  for (let x of Object.values(experiments)) {
-    // $FlowFixMe Object.values returns Array<mixed> but we know its an Experiment
-    x.active = false
+  for (let id of Object.keys(experiments)) {
+    experiments[id].active = false
   }
 
   for (let addon of addons) {
@@ -115,8 +114,8 @@ export default class Loader {
             dispatch(actions.SET_BADGE({ text: 'New' }))
           }
         }
-        for (let experiment of Object.values(xs)) {
-          // $FlowFixMe Object.values returns Array<mixed> but we know its an Experiment
+        for (let id of Object.keys(xs)) {
+          const experiment = xs[id]
           if (experiment.active) { WebExtensionChannels.add(experiment.addon_id) }
           dispatch(actions.MAYBE_NOTIFY({experiment}))
         }
