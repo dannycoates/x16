@@ -28,10 +28,9 @@ export default class InstallListener {
   dispatch: Dispatch
   experiment: Experiment
 
-  constructor ({install, experiment, dispatch}: {install: AddonInstall, experiment: Experiment, dispatch: Dispatch}) {
+  constructor ({experiment, dispatch}: {experiment: Experiment, dispatch: Dispatch}) {
     this.dispatch = dispatch
     this.experiment = experiment
-    install.addListener(this)
   }
 
   onInstallEnded (addonInstall: AddonInstall, addon: Addon) {
