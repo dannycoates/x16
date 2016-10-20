@@ -2,6 +2,9 @@
 
 An experiment in addon design using React/Redux.
 
+[![Build Status](https://travis-ci.org/dannycoates/x16.svg?branch=master)](https://travis-ci.org/dannycoates/x16)
+[![codecov](https://codecov.io/gh/dannycoates/x16/branch/master/graph/badge.svg)](https://codecov.io/gh/dannycoates/x16)
+
 ## Setup
 
 **DO NOT run this addon alongside the TestPilot Addon**
