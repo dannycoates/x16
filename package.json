@@ -4,7 +4,6 @@
   "description": "",
   "main": "backend/backend.js",
   "scripts": {
-    "postinstall": "flow-typed install",
     "start": "NODE_ENV=production npm run addon",
     "lint": "eslint . --ignore-path .gitignore",
     "pack": "cd frontend; webpack; cd ../backend; webpack; cd ..;",
