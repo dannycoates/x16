@@ -24,9 +24,5 @@ export default function configureStore ({hub, startEnv}: {hub: Hub, startEnv: En
   if (startEnv.name !== 'production') {
     middleware.push(createLogger({colors: false}))
   }
-  return (createStore(
-    reducers,
-    initialState,
-    applyMiddleware(...middleware)
-  ): ReduxStore)
+  return (createStore(reducers, initialState, applyMiddleware(...middleware)): ReduxStore)
 }

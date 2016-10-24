@@ -50,4 +50,4 @@ prefs.on('testpilot.env', () => {
   dispatch(CHANGE_ENV())
 })
 
-module.exports = env
+export default env

@@ -15,17 +15,22 @@ import { TelemetryController } from 'resource://gre/modules/TelemetryController.
 
 import type Variants from './variants'
 
+export type ExperimentPingData = {
+  subject: string,
+  data: string // JSON { senderAddonId: string, testpilotPingData: any }
+}
+
 const EVENT_SEND_METRIC = 'testpilot::send-metric'
 const EVENT_RECEIVE_VARIANT_DEFS = 'testpilot::register-variants'
 const EVENT_SEND_VARIANTS = 'testpilot::receive-variants'
-const startTime = Services.startup.getStartupInfo().process
+const startTime = (Services.startup.getStartupInfo().process: Date)
 
-function makeTimestamp (timestamp = Date.now()) {
+function makeTimestamp (timestamp: Date) {
   return Math.round((timestamp - startTime) / 1000)
 }
 
-function experimentPing (event) {
-  const timestamp = Date.now()
+function experimentPing (event: ExperimentPingData) {
+  const timestamp = new Date()
   const { subject, data } = event
 
   AddonManager.getAddonByID(subject, addon => {
@@ -46,7 +51,7 @@ function experimentPing (event) {
   })
 }
 
-function receiveVariantDefs (event) {
+function receiveVariantDefs (event: ExperimentPingData) {
   if (!storage.experimentVariants) {
     storage.experimentVariants = {}
   }
@@ -72,7 +77,7 @@ export default class Experiment {
     Events.on(EVENT_RECEIVE_VARIANT_DEFS, this.receiveVariantDefs)
   }
 
-  static ping (event) {
+  static ping (event: ExperimentPingData) {
     experimentPing(event)
   }
 

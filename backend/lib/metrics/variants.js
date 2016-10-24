@@ -13,6 +13,15 @@ export type Variant = {
   value: any
 }
 
+export type VariantTest = {
+  name: string,
+  variants: Array<Variant>
+}
+
+export type VariantTests = {
+  [subject: string]: VariantTest
+}
+
 export default class Variants {
   clientUUID: string
 
@@ -20,7 +29,7 @@ export default class Variants {
     this.clientUUID = clientUUID
   }
 
-  makeTest (test: {name: string, variants: Array<Variant>}) {
+  makeTest (test: VariantTest) {
     let summedWeight = 0
     const variants = []
     test.variants.forEach(variant => {
@@ -33,7 +42,7 @@ export default class Variants {
     return variants[Math.floor(seedrandom(seed)() * summedWeight)]
   }
 
-  parseTests (tests: Object) {
+  parseTests (tests: VariantTests) {
     const results = {}
     Object.keys(tests).forEach(key => {
       results[key] = this.makeTest(tests[key])

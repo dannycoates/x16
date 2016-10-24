@@ -10,7 +10,7 @@ import * as actions from '../../../common/actions'
 
 import type { Action } from 'testpilot/types'
 
-export function webToAction (webevent: ?Object) {
+export function webToAction (webevent: ?Object): Action {
   const { type, data } = (webevent || {})
   const meta = { src: 'web' }
   switch (type) {

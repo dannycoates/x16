@@ -10,6 +10,8 @@
  *   & https://dxr.mozilla.org/mozilla-central/source/browser/components/uitour/UITour.jsm
  */
 
+/* global Document Event */
+
 // @flow
 
 import { Services } from 'resource://gre/modules/Services.jsm'
@@ -21,27 +23,31 @@ function getAnonEl (win, box, attrName) {
   return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName)
 }
 
-function createRatingUI (win, cb) {
+function createRatingUI (document: Document, cb) {
   // Create the fragment holding the rating UI.
-  const frag = win.document.createDocumentFragment()
+  const frag = document.createDocumentFragment()
 
   // Build the star rating.
-  const ratingContainer = win.document.createElement('hbox')
+  const ratingContainer = document.createElement('hbox')
   ratingContainer.id = 'star-rating-container'
   ratingContainer.setAttribute('style', 'margin-bottom: 2px')
 
-  function ratingListener (evt) {
-    cb(Number(evt.target.getAttribute('data-score'), 10))
+  function ratingListener (evt: Event) {
+    if (typeof evt.target.getAttribute === 'function') {
+      cb(Number(evt.target.getAttribute('data-score'), 10))
+    } else {
+      cb(0)
+    }
   }
 
   for (let starIndex = 5; starIndex > 0; starIndex--) {
     // Create a star rating element.
-    const ratingElement = win.document.createElement('toolbarbutton')
+    const ratingElement = document.createElement('toolbarbutton')
 
     // Style it.
     ratingElement.className = 'plain star-x'
     ratingElement.id = 'star' + starIndex
-    ratingElement.setAttribute('data-score', starIndex)
+    ratingElement.setAttribute('data-score', String(starIndex))
 
     // Add the click handler.
     ratingElement.addEventListener('click', ratingListener)
@@ -109,7 +115,7 @@ export function showRating (options: Option) {
     const { notifyBox, box } = createNotificationBox({
       label: `Please rate ${experiment.title}`,
       image: experiment.thumbnail,
-      child: win => createRatingUI(win, uiClosed),
+      child: win => createRatingUI(win.document, uiClosed),
       persistence: options.persistence,
       pulse: true,
       callback: () => {

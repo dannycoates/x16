@@ -1,19 +1,19 @@
 // eslint-disable-next-line
-declare class EventTarget {
+declare class AddonEventTarget {
   initialize(): void;
-  on(type: string, listener: Function): EventTarget;
-  once(type: string, listener: Function): EventTarget;
-  removeListener(type?: string, listener?: Function): EventTarget;
-  off(type?: string, listener?: Function): EventTarget;
+  on(type: string, listener: Function): AddonEventTarget;
+  once(type: string, listener: Function): AddonEventTarget;
+  removeListener(type?: string, listener?: Function): AddonEventTarget;
+  off(type?: string, listener?: Function): AddonEventTarget;
 }
 
 // eslint-disable-next-line
-declare class EventEmitter extends EventTarget {
+declare class EventEmitter extends AddonEventTarget {
   emit(type: string, ...args: any): void;
 }
 
 // eslint-disable-next-line
-declare class Worker extends EventTarget {
+declare class Worker extends AddonEventTarget {
   postMessage(data: number | string | Object): void;
   destroy(): void;
   port: EventEmitter,
@@ -63,7 +63,7 @@ declare module 'sdk/panel' {
     onHide?: Function
   };
 
-  declare class Panel mixins EventTarget {
+  declare class Panel mixins AddonEventTarget {
     constructor(options?: PanelOptions): void;
     destroy(): void;
     postMessage(message: any): void;
@@ -93,7 +93,7 @@ declare module 'sdk/panel' {
 }
 
 declare module 'sdk/tabs' {
-  declare class Tab mixins EventTarget {
+  declare class Tab mixins AddonEventTarget {
     pin(): void;
     unpin(): void;
     close(callback: Function): void;
@@ -116,7 +116,7 @@ declare module 'sdk/tabs' {
     window: Object; // TODO
     readyState: 'uninitialized' | 'loading' | 'interactive' | 'complete';
   }
-  declare class Tabs mixins EventTarget {
+  declare class Tabs mixins AddonEventTarget {
     open: (options: string | {
       url: string,
       isPrivate?: boolean,
@@ -154,7 +154,7 @@ declare module 'sdk/ui/button/toggle' {
     badge: ?string | number,
     badgeColor: string
   };
-  declare class ToggleButton mixins EventTarget {
+  declare class ToggleButton mixins AddonEventTarget {
     constructor(options: {
       id: string,
       label: string,
@@ -182,8 +182,8 @@ declare module 'sdk/ui/button/toggle' {
 }
 
 declare module 'sdk/simple-storage' {
-  declare class SimpleStorage mixins EventTarget {
-    storage: any;
+  declare class SimpleStorage mixins AddonEventTarget {
+    storage: Object;
     quotaUsage: number;
   }
   declare module.exports: SimpleStorage
@@ -206,7 +206,7 @@ declare module 'sdk/request' {
     headers: Object;
     anonymous: boolean;
   }
-  declare class Request mixins EventTarget {
+  declare class Request mixins AddonEventTarget {
     constructor(options?: {
       url?: string,
       onComplete?: Function,
@@ -310,7 +310,7 @@ declare module 'sdk/preferences/service' {
 }
 
 declare module 'sdk/preferences/event-target' {
-  declare class PrefsTarget mixins EventTarget {
+  declare class PrefsTarget mixins AddonEventTarget {
     constructor(options?: { branchName?: string }): void;
   }
 }
@@ -328,7 +328,7 @@ declare module 'sdk/notifications' {
 }
 
 declare module 'sdk/page-mod' {
-  declare class PageMod mixins EventTarget {
+  declare class PageMod mixins AddonEventTarget {
     constructor(options: {
       include: string | RegExp | string[] | Array<RegExp>,
       contentScriptFile?: string | string[],
@@ -362,7 +362,9 @@ declare module 'sdk/core/disposable' {
 }
 
 declare module 'resource://gre/modules/Extension.jsm' {
-  declare module.exports: any
+  declare module.exports: {
+    getExtensionUUID(id: string): string
+  }
 }
 
 declare module 'resource://gre/modules/Services.jsm' {

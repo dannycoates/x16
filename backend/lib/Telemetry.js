@@ -12,7 +12,7 @@ import { Services } from 'resource://gre/modules/Services.jsm'
 import { storage } from 'sdk/simple-storage'
 import { TelemetryController } from 'resource://gre/modules/TelemetryController.jsm'
 
-const startTime = (Services.startup.getStartupInfo().process: number)
+const startTime = (Services.startup.getStartupInfo().process: Date)
 
 function makeTimestamp (timestamp = Date.now()) {
   return Math.round((timestamp - startTime) / 1000)

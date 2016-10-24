@@ -11,6 +11,8 @@ import { Services } from 'resource://gre/modules/Services.jsm'
 import { getExtensionUUID } from 'resource://gre/modules/Extension.jsm'
 import Experiment from './experiment'
 
+type PingListener = (msg: { senderAddonId: string, testpilotPingData: any }) => void
+
 const TESTPILOT_TELEMETRY_CHANNEL = 'testpilot-telemetry'
 
 function createChannelForAddonId (name, addonId) {
@@ -29,13 +31,16 @@ function createChannelForAddonId (name, addonId) {
   const targetExtensionUUID = getExtensionUUID(addonId)
 
   // Create the special about:blank URL for the extension.
-  const baseURI = Services.io
-        .newURI(`moz-extension://${targetExtensionUUID}/_blank.html`, null, null)
+  const baseURI = Services.io.newURI(
+    `moz-extension://${targetExtensionUUID}/_blank.html`,
+    null,
+    null)
 
   // Create a principal (security context) for the generalized origin given
   // by the extension's special URL and its `addonId`.
-  const principal = Services.scriptSecurityManager
-        .createCodebasePrincipal(baseURI, { addonId })
+  const principal = Services.scriptSecurityManager.createCodebasePrincipal(
+    baseURI,
+    { addonId })
 
   // Create a hidden window and open the special about:blank page for the
   // extension.
@@ -57,33 +62,33 @@ function createChannelForAddonId (name, addonId) {
 }
 
 export default class WebExtensionChannel {
-  pingListeners: Set<Function>
+  pingListeners: Set<PingListener>
   targetAddonId: string
   addonChromeWebNav: any
   addonBroadcastChannel: any
   handleEventBound: Function
 
-  static channels = {}
+  static channels: Map<string, WebExtensionChannel> = new Map()
 
   static destroy () {
-    WebExtensionChannel.channels = {}
+    WebExtensionChannel.channels.clear()
   }
 
-  static add (id) {
-    if (!WebExtensionChannel.channels[id]) {
+  static add (id: string) {
+    if (!WebExtensionChannel.channels.get(id)) {
       const channel = new WebExtensionChannel(id)
-      WebExtensionChannel.channels[id] = channel
+      WebExtensionChannel.channels.set(id, channel)
       channel.registerPingListener(data =>
         WebExtensionChannel.handleWebExtensionPing(id, data))
     }
   }
 
-  static remove (id) {
-    delete WebExtensionChannel.channels[id]
+  static remove (id: string) {
+    WebExtensionChannel.channels.delete(id)
   }
 
   // Pass a ping message along to Telemetry via Metrics
-  static handleWebExtensionPing (id, data) {
+  static handleWebExtensionPing (id: string, data: Object) {
     Experiment.ping({
       subject: id,
       data: JSON.stringify(data)
@@ -106,7 +111,7 @@ export default class WebExtensionChannel {
     this.addonChromeWebNav = addonChromeWebNav
     this.addonBroadcastChannel = addonBroadcastChannel
 
-    this.handleEventBound = ev => this.handleEvent(ev)
+    this.handleEventBound = (ev: Object) => this.handleEvent(ev)
   }
 
   dispose () {
