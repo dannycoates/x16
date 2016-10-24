@@ -66,12 +66,14 @@ export default class WebExtensionChannel {
   targetAddonId: string
   addonChromeWebNav: any
   addonBroadcastChannel: any
-  handleEventBound: Function
+  handleEvent: Function
 
   static channels: Map<string, WebExtensionChannel> = new Map()
 
   static destroy () {
-    WebExtensionChannel.channels.clear()
+    for (const id of WebExtensionChannel.channels.keys()) {
+      WebExtensionChannel.remove(id)
+    }
   }
 
   static add (id: string) {
@@ -79,27 +81,26 @@ export default class WebExtensionChannel {
       const channel = new WebExtensionChannel(id)
       WebExtensionChannel.channels.set(id, channel)
       channel.registerPingListener(data =>
-        WebExtensionChannel.handleWebExtensionPing(id, data))
+        Experiment.ping({ subject: id, data: JSON.stringify(data) }))
     }
   }
 
   static remove (id: string) {
-    WebExtensionChannel.channels.delete(id)
-  }
-
-  // Pass a ping message along to Telemetry via Metrics
-  static handleWebExtensionPing (id: string, data: Object) {
-    Experiment.ping({
-      subject: id,
-      data: JSON.stringify(data)
-    })
+    const c = WebExtensionChannel.channels.get(id)
+    if (c) {
+      c.dispose()
+      WebExtensionChannel.channels.delete(id)
+    }
   }
 
   constructor (targetAddonId: string) {
-    // super()
     this.pingListeners = new Set()
-
     this.targetAddonId = targetAddonId
+    this.handleEvent = (event: Object) => {
+      if (event.data) {
+        this.notifyPing(event.data, {addonId: this.targetAddonId})
+      }
+    }
 
     const {
       addonChromeWebNav,
@@ -110,12 +111,11 @@ export default class WebExtensionChannel {
     // (or the BroadcastChannel will stop working).
     this.addonChromeWebNav = addonChromeWebNav
     this.addonBroadcastChannel = addonBroadcastChannel
-
-    this.handleEventBound = (ev: Object) => this.handleEvent(ev)
+    this.addonBroadcastChannel.addEventListener('message', this.handleEvent)
   }
 
   dispose () {
-    this.addonBroadcastChannel.removeEventListener('message', this.handleEventBound)
+    this.addonBroadcastChannel.removeEventListener('message', this.handleEvent)
     this.addonBroadcastChannel.close()
     this.addonChromeWebNav.close()
     this.pingListeners.clear()
@@ -126,24 +126,10 @@ export default class WebExtensionChannel {
 
   registerPingListener (callback: Function) {
     this.pingListeners.add(callback)
-
-    if (this.pingListeners.size >= 0) {
-      this.addonBroadcastChannel.addEventListener('message', this.handleEventBound)
-    }
   }
 
   unregisterPingListener (callback: Function) {
     this.pingListeners.delete(callback)
-
-    if (this.pingListeners.size === 0) {
-      this.addonBroadcastChannel.removeEventListener('message', this.handleEventBound)
-    }
-  }
-
-  handleEvent (event: Object) {
-    if (event.data) {
-      this.notifyPing(event.data, {addonId: this.targetAddonId})
-    }
   }
 
   notifyPing (data: any, sender: {addonId: string}) {
