@@ -1,7 +1,8 @@
+/* global describe it */
 import assert from 'assert'
-import React from 'react';
-import sinon from 'sinon';
-import { shallow } from 'enzyme';
+import React from 'react'
+import sinon from 'sinon'
+import { shallow } from 'enzyme'
 
 import Experiment from '../lib/components/Experiment'
 
@@ -18,7 +19,7 @@ const defaultProps = {
   onClick: sinon.spy()
 }
 
-function makeClick() {
+function makeClick () {
   return {
     preventDefault: sinon.spy(),
     stopPropagation: sinon.spy()
@@ -33,7 +34,7 @@ describe('Experiment', function () {
   })
 
   it('is labelled as Disabled when installed but not active', function () {
-    const props = { ...defaultProps, active: false, installDate: '2016-10-23'}
+    const props = { ...defaultProps, active: false, installDate: '2016-10-23' }
     const x = shallow(<Experiment {...props} />)
     assert.equal(x.find('.disabled-span').length, 1)
     assert.equal(x.find('.disabled-span').text(), 'Disabled')

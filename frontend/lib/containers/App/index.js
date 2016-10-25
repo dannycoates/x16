@@ -26,7 +26,7 @@ type AppProps = {
   showExperiment: (url: string) => void
 }
 
-class App extends Component {
+export class App extends Component {
   props: AppProps
 
   render () {
