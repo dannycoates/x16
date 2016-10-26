@@ -21,7 +21,7 @@ describe('Hub', function () {
   })
 
   it('logs on misuse of dispatch', function () {
-    sinon.spy(console, 'error')
+    sinon.stub(console, 'error')
     const h = new Hub()
     h.dispatch('foo')
     assert.ok(console.error.calledOnce)
