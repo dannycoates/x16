@@ -37,17 +37,16 @@ const env = {
 }
 
 if (!aboutConfig.has('testpilot.env')) {
-  aboutConfig.set('testpilot.env', env.get().name)
+  // default to production
+  aboutConfig.set('testpilot.env', 'production')
 }
 
 if (aboutConfig.get('testpilot.env') !== 'production') {
+  // enable debug level logging
   aboutConfig.set(`extensions.${self.id}.sdk.console.logLevel`, 'debug')
-  // TODO: set back on change? worth it?
 }
 
 const prefs = new PrefsTarget()
-prefs.on('testpilot.env', () => {
-  dispatch(CHANGE_ENV())
-})
+prefs.on('testpilot.env', () => { dispatch(CHANGE_ENV()) })
 
 export default env
