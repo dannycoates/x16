@@ -9,7 +9,7 @@
     "pack": "cd frontend; webpack; cd ../backend; webpack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",
     "tools": "npm run pack; cd tools/control-panel; webpack; webpack-dev-server --hot --inline --config ../../frontend/webpack.config.js",
-    "test": "set -ex; flow; NODE_ENV=test nyc mocha --reporter min backend/test frontend/test"
+    "test": "flow && cross-env NODE_ENV=test nyc mocha --reporter min backend/test frontend/test"
   },
   "author": "",
   "license": "MPL-2.0",
@@ -23,6 +23,7 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-2": "^6.17.0",
     "babel-register": "^6.16.3",
+    "cross-env": "^3.1.3",
     "css-loader": "^0.25.0",
     "enzyme": "^2.5.1",
     "eslint": "^3.5.0",
