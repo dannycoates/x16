@@ -100,7 +100,7 @@ export class Experiment {
   installDate: ?Date
 
   constructor (object: Object, baseUrl?: string) {
-    this.baseUrl = object.baseUrl || baseUrl
+    this.baseUrl = object.baseUrl || baseUrl || ''
     this.id = object.addon_id
     this.addon_id = object.addon_id
     this.title = object.title
