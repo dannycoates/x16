@@ -1,12 +1,17 @@
 environment:
   nodejs_version: "6"
 
+platform: x64
+
 install:
-  - ps: Install-Product node $env:nodejs_version
-  - npm install -g yarn
-  - yarn
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  - yarn --prefer-offline --ignore-optional
 
 test_script:
   - npm test
 
 build: off
+
+cache:
+  - node_modules
+  - "%LOCALAPPDATA%/Yarn"

@@ -9,7 +9,7 @@
     "pack": "cd frontend; webpack; cd ../backend; webpack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",
     "tools": "npm run pack; cd tools/control-panel; webpack; webpack-dev-server --hot --inline --config ../../frontend/webpack.config.js",
-    "test": "flow && cross-env NODE_ENV=test nyc mocha --reporter min backend/test frontend/test"
+    "test": "flow --quiet && cross-env NODE_ENV=test nyc mocha --reporter min backend/test frontend/test"
   },
   "author": "",
   "license": "MPL-2.0",
