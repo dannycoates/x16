@@ -183,6 +183,13 @@ array-unique@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/array-unique/-/array-unique-0.2.1.tgz#a1d97ccafcbc2625cc70fadceb36a50c58b01a53"
 
+array.prototype.find@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/array.prototype.find/-/array.prototype.find-2.0.0.tgz#56a9ab1edde2a7701ed6d9166acec338919d8430"
+  dependencies:
+    define-properties "^1.1.2"
+    es-abstract "^1.5.0"
+
 arrify@^1.0.0, arrify@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/arrify/-/arrify-1.0.1.tgz#898508da2226f380df904728456849c1501a4b0d"
@@ -874,6 +881,13 @@ babel-runtime@^6.0.0, babel-runtime@^6.11.6, babel-runtime@^6.9.0, babel-runtime
     core-js "^2.4.0"
     regenerator-runtime "^0.9.5"
 
+babel-runtime@6.11.6:
+  version "6.11.6"
+  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.11.6.tgz#6db707fef2d49c49bfa3cb64efdb436b518b8222"
+  dependencies:
+    core-js "^2.4.0"
+    regenerator-runtime "^0.9.5"
+
 babel-template@^6.14.0, babel-template@^6.15.0, babel-template@^6.16.0, babel-template@^6.8.0:
   version "6.16.0"
   resolved "https://registry.yarnpkg.com/babel-template/-/babel-template-6.16.0.tgz#e149dd1a9f03a35f817ddbc4d0481988e7ebc8ca"
@@ -1306,7 +1320,7 @@ colormin@^1.0.5:
     css-color-names "0.0.4"
     has "^1.0.1"
 
-colors@^1.1.2, colors@~1.1.2:
+colors@^1.0.3, colors@^1.1.2, colors@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.1.2.tgz#168a4701756b6a7f51a12ce0c97bfa28c084ed63"
 
@@ -1748,6 +1762,10 @@ domutils@^1.5.1, domutils@1.5.1:
     dom-serializer "0"
     domelementtype "1"
 
+eastasianwidth@^0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.1.1.tgz#44d656de9da415694467335365fb3147b8572b7c"
+
 ecc-jsbn@~0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/ecc-jsbn/-/ecc-jsbn-0.1.1.tgz#0fc73a9ed5f0d53c38193398523ef7e543777505"
@@ -1829,7 +1847,7 @@ error-ex@^1.2.0:
   dependencies:
     is-arrayish "^0.2.1"
 
-es-abstract@^1.3.2:
+es-abstract@^1.3.2, es-abstract@^1.5.0:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/es-abstract/-/es-abstract-1.6.1.tgz#bb8a2064120abcf928a086ea3d9043114285ec99"
   dependencies:
@@ -2249,6 +2267,21 @@ flatten@^1.0.2:
 flow-bin@^0.34.0:
   version "0.34.0"
   resolved "https://registry.yarnpkg.com/flow-bin/-/flow-bin-0.34.0.tgz#093ed36981e8fafc39d16f0b0878d0968aa80fad"
+
+flow-coverage-report:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/flow-coverage-report/-/flow-coverage-report-0.2.0.tgz#8529729ecc440c676c5960b32d1393d2eeddad57"
+  dependencies:
+    array.prototype.find "2.0.0"
+    babel-runtime "6.11.6"
+    glob "7.0.5"
+    minimatch "3.0.3"
+    mkdirp "0.5.1"
+    react "15.3.1"
+    react-dom "15.3.1"
+    temp "0.8.3"
+    terminal-table "0.0.12"
+    yargs "5.0.0"
 
 flow-typed@^2.0.0-beta.11:
   version "2.0.0"
@@ -3284,7 +3317,7 @@ lodash._root@^3.0.0:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/lodash._root/-/lodash._root-3.0.1.tgz#fba1c4524c19ee9a5f8136b4609f017cf4ded692"
 
-lodash.assign@^4.0.3, lodash.assign@^4.0.6, lodash.assign@^4.2.0:
+lodash.assign@^4.0.3, lodash.assign@^4.0.6, lodash.assign@^4.1.0, lodash.assign@^4.2.0:
   version "4.2.0"
   resolved "https://registry.yarnpkg.com/lodash.assign/-/lodash.assign-4.2.0.tgz#0d99f3ccd7a6d261d19bdaeb9245005d285808e7"
 
@@ -3551,7 +3584,7 @@ minimalistic-assert@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/minimalistic-assert/-/minimalistic-assert-1.0.0.tgz#702be2dda6b37f4836bcb3f5db56641b64a1d3d3"
 
-minimatch@^3.0.0, minimatch@^3.0.2, minimatch@~3.0.2:
+minimatch@^3.0.0, minimatch@^3.0.2, minimatch@~3.0.2, minimatch@3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/minimatch/-/minimatch-3.0.3.tgz#2a4e4090b96b2db06a9d7df01055a62a77c9b774"
   dependencies:
@@ -4461,6 +4494,10 @@ react-dom@^15.3.1:
   version "15.3.2"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.3.2.tgz#c46b0aa5380d7b838e7a59c4a7beff2ed315531f"
 
+react-dom@15.3.1:
+  version "15.3.1"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-15.3.1.tgz#6d42cd2b64c8c5e0b693f3ffaec301e6e627e24e"
+
 react-redux@^4.4.5:
   version "4.4.5"
   resolved "https://registry.yarnpkg.com/react-redux/-/react-redux-4.4.5.tgz#f509a2981be2252d10c629ef7c559347a4aec457"
@@ -4473,6 +4510,14 @@ react-redux@^4.4.5:
 react@^15.3.1:
   version "15.3.2"
   resolved "https://registry.yarnpkg.com/react/-/react-15.3.2.tgz#a7bccd2fee8af126b0317e222c28d1d54528d09e"
+  dependencies:
+    fbjs "^0.8.4"
+    loose-envify "^1.1.0"
+    object-assign "^4.1.0"
+
+react@15.3.1:
+  version "15.3.1"
+  resolved "https://registry.yarnpkg.com/react/-/react-15.3.1.tgz#f78501ed8c2ec6e6e31c3223652e97f1369d2bd6"
   dependencies:
     fbjs "^0.8.4"
     loose-envify "^1.1.0"
@@ -4749,6 +4794,10 @@ rimraf@^2.2.8, rimraf@^2.3.3, rimraf@^2.4.3, rimraf@^2.4.4, rimraf@^2.5.4, rimra
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.5.4.tgz#96800093cbf1a0c86bd95b4625467535c29dfa04"
   dependencies:
     glob "^7.0.5"
+
+rimraf@~2.2.6:
+  version "2.2.8"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.2.8.tgz#e439be2aaee327321952730f99a8929e4fc50582"
 
 ripemd160@^1.0.0:
   version "1.0.1"
@@ -5209,6 +5258,20 @@ tar@^2.0.0, tar@~2.2.1:
     fstream "^1.0.2"
     inherits "2"
 
+temp@0.8.3:
+  version "0.8.3"
+  resolved "https://registry.yarnpkg.com/temp/-/temp-0.8.3.tgz#e0c6bc4d26b903124410e4fed81103014dfc1f59"
+  dependencies:
+    os-tmpdir "^1.0.0"
+    rimraf "~2.2.6"
+
+terminal-table@0.0.12:
+  version "0.0.12"
+  resolved "https://registry.yarnpkg.com/terminal-table/-/terminal-table-0.0.12.tgz#7b56d009aa6828dfdd10f11b654e79c062965fa2"
+  dependencies:
+    colors "^1.0.3"
+    eastasianwidth "^0.1.0"
+
 test-exclude@^2.1.1, test-exclude@^2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/test-exclude/-/test-exclude-2.1.3.tgz#a8d8968e1da83266f9864f2852c55e220f06434a"
@@ -5642,6 +5705,13 @@ yargs-parser@^2.4.1:
     camelcase "^3.0.0"
     lodash.assign "^4.0.6"
 
+yargs-parser@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-3.2.0.tgz#5081355d19d9d0c8c5d81ada908cb4e6d186664f"
+  dependencies:
+    camelcase "^3.0.0"
+    lodash.assign "^4.1.0"
+
 yargs-parser@^4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/yargs-parser/-/yargs-parser-4.0.2.tgz#7f7173a8c7cca1d81dc7c18692fc07c2c2e2b1e0"
@@ -5694,6 +5764,25 @@ yargs@~3.10.0:
     cliui "^2.1.0"
     decamelize "^1.0.0"
     window-size "0.1.0"
+
+yargs@5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/yargs/-/yargs-5.0.0.tgz#3355144977d05757dbb86d6e38ec056123b3a66e"
+  dependencies:
+    cliui "^3.2.0"
+    decamelize "^1.1.1"
+    get-caller-file "^1.0.1"
+    lodash.assign "^4.2.0"
+    os-locale "^1.4.0"
+    read-pkg-up "^1.0.1"
+    require-directory "^2.1.1"
+    require-main-filename "^1.0.1"
+    set-blocking "^2.0.0"
+    string-width "^1.0.2"
+    which-module "^1.0.0"
+    window-size "^0.2.0"
+    y18n "^3.2.1"
+    yargs-parser "^3.2.0"
 
 zip-dir@1.0.2:
   version "1.0.2"

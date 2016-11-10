@@ -1,5 +1,6 @@
 [ignore]
 <PROJECT_ROOT>/node_modules/jetpack-validation/.*
+<PROJECT_ROOT>/node_modules/flow-coverage-report/.*
 
 [libs]
 flow-typed

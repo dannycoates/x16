@@ -9,7 +9,8 @@
     "pack": "cd frontend; webpack; cd ../backend; webpack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",
     "tools": "npm run pack; cd tools/control-panel; webpack; webpack-dev-server --hot --inline --config ../../frontend/webpack.config.js",
-    "test": "flow --quiet && cross-env NODE_ENV=test nyc mocha --reporter min backend/test frontend/test"
+    "test": "flow --quiet && cross-env NODE_ENV=test nyc mocha --reporter min backend/test frontend/test",
+    "coverage": "flow-coverage-report -i 'backend/lib/**/*.js' -i 'frontend/lib/**/*.js' -t html -o coverage/flow && npm test"
   },
   "author": "",
   "license": "MPL-2.0",
@@ -35,6 +36,7 @@
     "eslint-plugin-standard": "^2.0.0",
     "file-loader": "^0.9.0",
     "flow-bin": "^0.34.0",
+    "flow-coverage-report": "^0.2.0",
     "flow-typed": "^2.0.0-beta.11",
     "ignore-styles": "^5.0.1",
     "jpm": "^1.2.2",
