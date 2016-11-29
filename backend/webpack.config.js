@@ -19,7 +19,7 @@ const config = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel',
+        loader: 'babel-loader',
         query: {
           presets: [['es2015', { modules: false }], 'stage-2'],
           plugins: ['transform-flow-strip-types']
@@ -33,7 +33,6 @@ const config = {
     /^sdk|chrome|resource/
   ],
   plugins: [
-    new webpack.optimize.DedupePlugin(),
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify('production')

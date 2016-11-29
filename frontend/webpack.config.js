@@ -18,7 +18,7 @@ const config = {
     loaders: [
       {
         test: /\.js$/,
-        loader: 'babel',
+        loader: 'babel-loader',
         exclude: /node_modules/,
         include: [__dirname, path.join(__dirname, '..', 'common')],
         query: {
@@ -27,11 +27,11 @@ const config = {
       },
       {
         test: /.(css|scss)$/,
-        loaders: ['style', 'css', 'sass']
+        loaders: ['style-loader', 'css-loader', 'sass-loader']
       },
       {
         test: /\.png$/,
-        loader: 'url'
+        loader: 'url-loader'
       }
     ]
   },
