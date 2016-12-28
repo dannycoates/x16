@@ -144,7 +144,7 @@ declare module 'sdk/timers' {
   declare function clearInterval(id: ?number): void;
 }
 
-declare module 'sdk/ui/button/toggle' {
+declare module 'sdk/ui/button/action' {
   declare type Properties = {
     id: string,
     label: string,
@@ -154,7 +154,7 @@ declare module 'sdk/ui/button/toggle' {
     badge: ?string | number,
     badgeColor: string
   };
-  declare class ToggleButton mixins AddonEventTarget {
+  declare class ActionButton mixins AddonEventTarget {
     constructor(options: {
       id: string,
       label: string,
@@ -177,7 +177,7 @@ declare module 'sdk/ui/button/toggle' {
     badgeColor: string;
   }
   declare module.exports: {
-    ToggleButton: typeof ToggleButton
+    ActionButton: typeof ActionButton
   }
 }
 

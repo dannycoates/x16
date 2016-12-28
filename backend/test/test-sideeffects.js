@@ -143,9 +143,10 @@ describe('side effects', function () {
       const action = {
         type: actions.MAIN_BUTTON_CLICKED.type
       }
+      const baseUrl = 'testUrl'
+      const getState = () => ({ baseUrl })
       const ui = {
-        setBadge: () => {},
-        showPanel: () => {}
+        setBadge: () => {}
       }
       const telemetry = {
         ping: (id, name) => {
@@ -153,9 +154,14 @@ describe('side effects', function () {
           assert.equal(name, 'clicked')
         }
       }
+      const tabs = {
+        open: (x) => {
+          assert.equal(x.url, baseUrl)
+        }
+      }
       const state = reducer(null, action)
       assert.equal(typeof (state), 'function')
-      state({ ui, telemetry })
+      state({ ui, telemetry, tabs, getState })
     })
 
     it('handles SCHEDULE_NOTIFIER', function (done) {
@@ -187,21 +193,6 @@ describe('side effects', function () {
       }
       const state = reducer(null, action)
       state({feedbackManager})
-    })
-
-    it('handles SHOW_EXPERIMENT', function () {
-      const action = {
-        type: actions.SHOW_EXPERIMENT.type,
-        payload: {
-          url: 'foobar'
-        }
-      }
-      const ui = {
-        openTab: url => assert.equal(url, action.payload.url)
-      }
-      const state = reducer(null, action)
-      assert.equal(typeof (state), 'function')
-      state({ ui })
     })
 
     it('handles INSTALL_EXPERIMENT', function () {
@@ -466,24 +457,6 @@ describe('side effects', function () {
       }
       const state = reducer(null, action)
       assert.equal(state, nothing)
-    })
-
-    it('handles FRONTEND_CONNECTED', function () {
-      const action = {
-        type: actions.FRONTEND_CONNECTED.type
-      }
-      const e = { name: 'production', baseUrl: 'foo' }
-      const env = {
-        get: () => e
-      }
-      const getState = sinon.spy()
-      const dispatch = sinon.spy()
-      const state = reducer(null, action)
-      state({env, getState, dispatch})
-      assert.ok(dispatch.calledOnce, 'dispatch called')
-      const a = dispatch.firstCall.args[0]
-      assert.equal(a.type, actions.LOAD_EXPERIMENTS.type)
-      assert.equal(a.payload.baseUrl, e.baseUrl)
     })
 
     it('handles CHANGE_ENV', function () {

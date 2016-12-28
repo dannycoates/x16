@@ -46,7 +46,6 @@ export const EXPERIMENT_ENABLED = createAction('EXPERIMENT_ENABLED', ['experimen
 export const EXPERIMENT_DISABLED = createAction('EXPERIMENT_DISABLED', ['experiment'])
 export const EXPERIMENT_UNINSTALLING = createAction('EXPERIMENT_UNINSTALLING', ['experiment'])
 export const EXPERIMENT_UNINSTALLED = createAction('EXPERIMENT_UNINSTALLED', ['experiment'])
-export const FRONTEND_CONNECTED = createAction('FRONTEND_CONNECTED', [])
 export const CHANGE_ENV = createAction('CHANGE_ENV', [])
 export const SET_BADGE = createAction('SET_BADGE', ['text'])
 export const MAIN_BUTTON_CLICKED = createAction('MAIN_BUTTON_CLICKED', ['time'])
@@ -60,8 +59,6 @@ export const SELF_DISABLED = createAction('SELF_DISABLED', [])
 export const SET_RATING = createAction('SET_RATING', ['experiment', 'rating', 'time'])
 export const SHOW_RATING_PROMPT = createAction('SHOW_RATING_PROMPT', ['interval', 'experiment'])
 export const SYNC_INSTALLED = createAction('SYNC_INSTALLED', ['clientUUID', 'installed'])
-// frontend created
-export const SHOW_EXPERIMENT = createAction('SHOW_EXPERIMENT', ['url'])
 // webapp created
 export const INSTALL_EXPERIMENT = createAction('INSTALL_EXPERIMENT', ['experiment'])
 export const UNINSTALL_EXPERIMENT = createAction('UNINSTALL_EXPERIMENT', ['experiment'])

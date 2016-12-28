@@ -28,9 +28,7 @@ const DEFAULT_STATE = {
     lastNotified: 1471935600000,
     nextCheck: 1471935600000
   },
-  ui: {
-    panelHeight: 0
-  },
+  ui: {},
   ratings: {},
   experiments: null,
   sideEffects: null
@@ -58,10 +56,7 @@ describe('reducers', function () {
     const expectedState = Object.assign({}, initialState, {
       baseUrl: 'testpilot.dev:8000',
       env: 'test',
-      experiments: { X, Y },
-      ui: {
-        panelHeight: 2 * 80 + 53
-      }
+      experiments: { X, Y }
     })
     const action = {
       type: actions.EXPERIMENTS_LOADED.type,
@@ -97,14 +92,10 @@ describe('reducers', function () {
 
   it('handles EXPERIMENTS_LOAD_ERROR', function () {
     const initialState = Object.assign({}, DEFAULT_STATE, {
-      experiments: { X, Y },
-      ui: {
-        panelHeight: 2 * 80 + 53
-      }
+      experiments: { X, Y }
     })
     const expectedState = Object.assign({}, DEFAULT_STATE, {
-      experiments: {},
-      ui: { panelHeight: 53 }
+      experiments: {}
     })
     const action = {
       type: actions.EXPERIMENTS_LOAD_ERROR.type,
@@ -256,17 +247,6 @@ describe('reducers', function () {
         experiment: X
       }
     }
-    testAction(action, initialState, expectedState)
-  })
-
-  it('handles SHOW_EXPERIMENT', function () {
-    const initialState = DEFAULT_STATE
-    const expectedState = initialState
-    const action = {
-      type: actions.SHOW_EXPERIMENT.type,
-      payload: {}
-    }
-
     testAction(action, initialState, expectedState)
   })
 
@@ -514,16 +494,6 @@ describe('reducers', function () {
     const initialState = DEFAULT_STATE
     const action = {
       type: actions.SYNC_INSTALLED.type,
-      payload: {}
-    }
-    // Not implemented, no change expected
-    testAction(action, initialState, initialState)
-  })
-
-  it('handles FRONTEND_CONNECTED', function () {
-    const initialState = DEFAULT_STATE
-    const action = {
-      type: actions.FRONTEND_CONNECTED.type,
       payload: {}
     }
     // Not implemented, no change expected

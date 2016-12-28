@@ -45,12 +45,6 @@ export function nothing () {}
 
 export function reducer (state: Function = nothing, { payload, type }: Action): SideEffect {
   switch (type) {
-    case actions.FRONTEND_CONNECTED.type:
-      return ({env, getState, dispatch}) => {
-        const e = env.get()
-        const baseUrl = e.name === 'any' ? getState().baseUrl : e.baseUrl
-        dispatch(actions.LOAD_EXPERIMENTS({ envname: e.name, baseUrl }))
-      }
 
     case actions.LOAD_EXPERIMENTS.type:
       return ({loader}) => { loader.loadExperiments(payload.envname, payload.baseUrl) }
@@ -68,9 +62,6 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
         WebExtensionChannels.remove(payload.experiment.addon_id)
         telemetry.ping(payload.experiment.addon_id, 'disabled')
       }
-
-    case actions.SHOW_EXPERIMENT.type:
-      return ({ui}) => ui.openTab(payload.url)
 
     case actions.EXPERIMENTS_LOADED.type:
       return ({loader}) => loader.schedule()
@@ -115,9 +106,11 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
       return ({ui}) => ui.setBadge()
 
     case actions.MAIN_BUTTON_CLICKED.type:
-      return ({ui, telemetry}) => {
+      return ({getState, ui, tabs, telemetry}) => {
         ui.setBadge()
-        ui.showPanel()
+        tabs.open({
+          url: getState().baseUrl
+        })
         telemetry.ping('txp_toolbar_menu_1', 'clicked')
       }
 

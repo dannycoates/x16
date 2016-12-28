@@ -58,7 +58,10 @@ export function main ({loadReason}: {loadReason: string}) {
   env.subscribe(store)
   sideEffects.enable(store)
   installManager.selfLoaded(loadReason)
-  hub.connect(ui.panel.port)
+  loader.loadExperiments(
+    startEnv.name,
+    startEnv.name === 'any' ? store.getState().baseUrl : startEnv.baseUrl
+  )
   notificationManager.schedule()
   feedbackManager.schedule()
 }

@@ -1,7 +1,6 @@
 {
   "require": [
-    "babel-register",
-    "ignore-styles"
+    "babel-register"
   ],
   "reporter": [
     "lcov",
