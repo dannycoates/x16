@@ -32,7 +32,7 @@ const feedbackManager = new FeedbackManager(store)
 const installManager = new InstallManager(store)
 const loader = new Loader(store)
 const notificationManager = new NotificationManager(store)
-const telemetry = new Telemetry()
+const telemetry = new Telemetry(store)
 const ui = new MainUI(store)
 const webapp = new WebApp({
   baseUrl: startEnv.baseUrl,
@@ -65,6 +65,12 @@ export function main ({loadReason}: {loadReason: string}) {
   notificationManager.schedule()
   feedbackManager.schedule()
   feedbackManager.maybeShare()
+  telemetry.sendGAEvent({
+    t: 'event',
+    ec: 'add-on Interactions',
+    ea: 'browser startup',
+    el: 0 // TODO: installedCount
+  })
 }
 
 export function onUnload (reason: string) {

@@ -7,10 +7,13 @@
 // @flow
 
 import aboutConfig from 'sdk/preferences/service'
+import { Request } from 'sdk/request'
 import self from 'sdk/self'
 import { Services } from 'resource://gre/modules/Services.jsm'
 import { storage } from 'sdk/simple-storage'
 import { TelemetryController } from 'resource://gre/modules/TelemetryController.jsm'
+
+import type { ReduxStore } from 'testpilot/types'
 
 const startTime = (Services.startup.getStartupInfo().process: Date)
 
@@ -24,6 +27,11 @@ const PREFS = [
 ]
 
 export default class Telemetry {
+  store: ReduxStore
+
+  constructor (store: ReduxStore) {
+    this.store = store
+  }
 
   setPrefs () {
     storage.originalPrefs = PREFS.map(pref => [pref, aboutConfig.get(pref)])
@@ -58,5 +66,24 @@ export default class Telemetry {
         addEnvironment: true
       }
     )
+
+    this.sendGAEvent({
+      t: 'event',
+      ec: 'add-on Interactions',
+      ea: object,
+      el: event
+    })
+  }
+
+  sendGAEvent (data: Object) {
+    const { clientUUID } = this.store.getState()
+    data.v = 1; // Version -- https://developers.google.com/analytics/devguides/collection/protocol/v1/
+    data.tid = 'UA-49796218-47';
+    data.cid = clientUUID;
+    const req = new Request({
+      url: 'https://ssl.google-analytics.com/collect',
+      content: data
+    });
+    req.post();
   }
 }
