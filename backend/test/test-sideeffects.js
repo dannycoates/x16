@@ -189,7 +189,7 @@ describe('side effects', function () {
         type: actions.SHOW_RATING_PROMPT.type
       }
       const feedbackManager = {
-        prompt: () => done()
+        promptRating: () => done()
       }
       const state = reducer(null, action)
       state({feedbackManager})
@@ -493,6 +493,20 @@ describe('side effects', function () {
       state({notificationManager})
       assert.ok(notificationManager.showNotification.calledOnce)
       assert.ok(notificationManager.showNotification.calledWith(action.payload))
+    })
+
+    it('handles PROMPT_SHARE', function () {
+      const action = {
+        type: actions.PROMPT_SHARE.type,
+        payload: { url: 'aUrl' }
+      }
+      const feedbackManager = {
+        promptShare: sinon.spy()
+      }
+      const state = reducer(null, action)
+      state({feedbackManager})
+      assert.ok(feedbackManager.promptShare.calledOnce)
+      assert.ok(feedbackManager.promptShare.calledWith(action.payload.url))
     })
   })
 

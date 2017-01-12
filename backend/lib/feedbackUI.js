@@ -16,6 +16,7 @@
 
 import { Services } from 'resource://gre/modules/Services.jsm'
 import { setTimeout, clearTimeout } from 'sdk/timers'
+import tabs from 'sdk/tabs'
 
 import type { Experiment } from '../../common/Experiment'
 
@@ -128,6 +129,26 @@ export function showRating (options: Option) {
       experimentRating = rating
       notifyBox.removeNotification(box)
     }
+  })
+}
+
+export function showSharePrompt (url: string) {
+  return new Promise((resolve) => {
+    const { notifyBox, box } = createNotificationBox({
+      label: `Love TestPilot?`,
+      image: 'resource://@x16/data/wolf.svg',
+      buttons: [{
+        label: 'Share',
+        callback: () => {
+          tabs.open({ url })
+        }
+      }],
+      callback: () => {
+        clearTimeout(uiTimeout)
+        resolve()
+      }
+    })
+    const uiTimeout = setTimeout(() => { notifyBox.removeNotification(box) }, 60000)
   })
 }
 

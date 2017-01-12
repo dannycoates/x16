@@ -28,6 +28,8 @@ declare module 'testpilot/types' {
     },
     sideEffects: (context: Object) => void,
     ui: {
+      installTimestamp: number,
+      shareShown: boolean,
       badge: ?string,
       clicked: number,
       panelHeight: number

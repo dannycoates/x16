@@ -100,7 +100,7 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
       return ({installManager}) => installManager.syncInstalled()
 
     case actions.SHOW_RATING_PROMPT.type:
-      return ({feedbackManager}) => { feedbackManager.prompt(payload) }
+      return ({feedbackManager}) => { feedbackManager.promptRating(payload) }
 
     case actions.SET_BADGE.type:
       return ({ui}) => ui.setBadge()
@@ -143,6 +143,11 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
       return ({self, telemetry}) => {
         telemetry.ping(self.id, 'disabled')
         telemetry.restorePrefs()
+      }
+
+    case actions.PROMPT_SHARE.type:
+      return ({feedbackManager}) => {
+        feedbackManager.promptShare(payload.url)
       }
 
     default:

@@ -19,6 +19,8 @@ import type { Dispatch, GetState, ReduxStore } from 'testpilot/types'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_DAY = 1000 * 60 * 60 * 24
+const SHARE_DELAY = 3 * ONE_DAY
+const SHARE_PATH = '/share?utm_source=testpilot-addon&utm_medium=firefox-browser&utm_campaign=share-page'
 
 function getInterval (installDate: ?Date) {
   installDate = installDate || new Date()
@@ -68,7 +70,18 @@ export default class FeedbackManager {
     }
   }
 
-  prompt ({interval, experiment}: {interval: number | string, experiment: Experiment}) {
+  maybeShare () {
+    const { ui, baseUrl } = this.getState()
+    if (!ui.shareShown && (ui.installTimestamp + SHARE_DELAY < Date.now())) {
+      this.dispatch(actions.PROMPT_SHARE({url: baseUrl + SHARE_PATH }))
+    }
+  }
+
+  promptShare (url: string) {
+    return feedbackUI.showSharePrompt(url)
+  }
+
+  promptRating ({interval, experiment}: {interval: number | string, experiment: Experiment}) {
     return feedbackUI.showRating({ experiment })
       .then(
         rating => {

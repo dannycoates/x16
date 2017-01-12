@@ -24,6 +24,7 @@ const querystring = {
 }
 
 const feedbackUI = {
+  showSharePrompt: sinon.stub().returns(Promise.resolve()),
   showRating: sinon.stub().returns(Promise.resolve()),
   showSurveyButton: sinon.stub().returns(Promise.resolve()),
   '@noCallThru': true
@@ -149,11 +150,60 @@ describe('FeedbackManager', function () {
     })
   })
 
-  describe('prompt', function () {
+  describe('maybeShare', function () {
+    it('does nothing if already shown', function () {
+      const state = { ui: { shareShown: true } }
+      const s = {
+        getState: sinon.stub().returns(state),
+        dispatch: sinon.spy()
+      }
+      const fm = new FeedbackManager(s)
+      fm.maybeShare()
+      assert.ok(!fm.dispatch.called)
+    })
+
+    it('does nothing if install date is new', function () {
+      const state = { ui: { shareShown: false, installTimestamp: Date.now() } }
+      const s = {
+        getState: sinon.stub().returns(state),
+        dispatch: sinon.spy()
+      }
+      const fm = new FeedbackManager(s)
+      fm.maybeShare()
+      assert.ok(!fm.dispatch.called)
+    })
+
+    it('dispatches PROMPT_SHARE when conditions are right', function () {
+      const aWhileAgo = Date.now() - (3 * ONE_DAY) - 1;
+      const state = {
+        baseUrl: 'aUrl',
+        ui: { shareShown: false, installTimestamp: aWhileAgo }
+      }
+      const s = {
+        getState: sinon.stub().returns(state),
+        dispatch: sinon.spy()
+      }
+      const fm = new FeedbackManager(s)
+      fm.maybeShare()
+      assert.ok(fm.dispatch.calledOnce)
+    })
+
+  })
+
+  describe('promptShare', function () {
+    it('uses feedbackUI to show the share prompt', function () {
+      const fm = new FeedbackManager(store)
+      fm.promptShare('aUrl')
+      assert.ok(feedbackUI.showSharePrompt.calledOnce)
+      assert.ok(feedbackUI.showSharePrompt.calledWith('aUrl'))
+    })
+  })
+
+  describe('promptRating', function () {
     it('uses feedbackUI to show the rating prompt', function () {
       const experiment = {}
       const fm = new FeedbackManager(store)
-      fm.prompt({experiment})
+      fm.promptRating({experiment})
       assert.ok(feedbackUI.showRating.calledOnce)
       assert.equal(feedbackUI.showRating.firstCall.args[0].experiment, experiment)
     })
@@ -162,7 +212,7 @@ describe('FeedbackManager', function () {
       feedbackUI.showRating.returns(Promise.resolve(5))
       const experiment = {}
       const fm = new FeedbackManager(store)
-      fm.prompt({experiment})
+      fm.promptRating({experiment})
         .then(() => {
           assert.ok(store.dispatch.calledOnce)
           assert.equal(store.dispatch.firstCall.args[0].type, SET_RATING.type)
@@ -175,7 +225,7 @@ describe('FeedbackManager', function () {
       feedbackUI.showRating.returns(Promise.resolve(5))
       const experiment = {}
       const fm = new FeedbackManager(store)
-      fm.prompt({experiment})
+      fm.promptRating({experiment})
         .then(() => {
           assert.ok(feedbackUI.showSurveyButton.calledOnce)
           assert.equal(feedbackUI.showSurveyButton.firstCall.args[0].experiment, experiment)
@@ -195,7 +245,7 @@ describe('FeedbackManager', function () {
         })
       }
       const fm = new FeedbackManager(s)
-      fm.prompt({experiment})
+      fm.promptRating({experiment})
         .then(() => {
           assert.ok(tabs.open.calledOnce)
           assert.ok(tabs.open.calledWith('ok?qs'))
@@ -209,7 +259,7 @@ describe('FeedbackManager', function () {
       feedbackUI.showRating.returns(Promise.reject())
       const experiment = {}
       const fm = new FeedbackManager(store)
-      fm.prompt({experiment})
+      fm.promptRating({experiment})
         .then(() => {
           done()
         })

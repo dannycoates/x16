@@ -64,6 +64,7 @@ export function main ({loadReason}: {loadReason: string}) {
   )
   notificationManager.schedule()
   feedbackManager.schedule()
+  feedbackManager.maybeShare()
 }
 
 export function onUnload (reason: string) {

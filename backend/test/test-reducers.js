@@ -1,6 +1,7 @@
 /* global describe it */
 import assert from 'assert'
 import proxyquire from 'proxyquire'
+import sinon from 'sinon'
 
 const reducers = proxyquire('../lib/reducers',
   {
@@ -285,13 +286,15 @@ describe('reducers', function () {
 
   it('handles SELF_INSTALLED', function () {
     const initialState = DEFAULT_STATE
-    const expectedState = initialState
+    const expectedState = Object.assign({}, DEFAULT_STATE, { ui: { installTimestamp: 808 }})
+    sinon.stub(Date, 'now').returns(808)
     const action = {
       type: actions.SELF_INSTALLED.type,
       payload: {}
     }
 
     testAction(action, initialState, expectedState)
+    Date.now.restore()
   })
 
   it('handles SET_BASE_URL', function () {
@@ -528,5 +531,16 @@ describe('reducers', function () {
     }
     // Not implemented, no change expected
     testAction(action, initialState, initialState)
+  })
+
+  it('handles PROMPT_SHARE', function () {
+    const initialState = DEFAULT_STATE
+    const expectedState = Object.assign({}, DEFAULT_STATE, { ui: { shareShown: true }})
+    const action = {
+      type: actions.PROMPT_SHARE.type,
+      payload: {}
+    }
+
+    testAction(action, initialState, expectedState)
   })
 })
