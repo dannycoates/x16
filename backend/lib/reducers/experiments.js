@@ -42,6 +42,15 @@ export function activeExperiments (state: BackendState): Experiments {
   return pickBy(state.experiments, x => x.active)
 }
 
+// TODO: some kind of selector lib to replace this maybe?
+export function activeCompletedExperimentList (state: BackendState): Array<Experiment> {
+  const active = activeExperiments(state)
+  const ids = Object.keys(active)
+  return ids
+    .map(id => active[id])
+    .filter(x => x.completed && new Date(x.completed) < new Date())
+}
+
 export function randomActiveExperiment (state: BackendState): Experiment {
   const installed = activeExperiments(state)
   const installedKeys = Object.keys(installed)

@@ -23,7 +23,7 @@ declare module 'testpilot/types' {
       lastRated?: number,
       [id: string]: {
         rating: number,
-        [interval: number]: boolean
+        [interval: number | string]: boolean
       }
     },
     sideEffects: (context: Object) => void,

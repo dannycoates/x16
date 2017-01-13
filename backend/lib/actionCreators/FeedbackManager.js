@@ -7,7 +7,7 @@
 // @flow
 
 import * as actions from '../../../common/actions'
-import { activeExperiments, randomActiveExperiment } from '../reducers/experiments'
+import { activeCompletedExperimentList, activeExperiments, randomActiveExperiment } from '../reducers/experiments'
 import { experimentRating } from '../reducers/ratings'
 import { setTimeout, clearTimeout } from 'sdk/timers'
 import * as feedbackUI from '../feedbackUI'
@@ -58,6 +58,7 @@ export default class FeedbackManager {
 
   check () {
     const state = this.getState()
+    if (this.checkForCompletedExperimentSurveys()) { return }
     if (Date.now() - (state.ratings.lastRated || 0) < this.dnd) {
       return
     }
@@ -68,6 +69,31 @@ export default class FeedbackManager {
     if (interval > 0 && !rating[interval]) {
       this.dispatch(actions.SHOW_RATING_PROMPT({interval, experiment}))
     }
+  }
+
+  checkForCompletedExperimentSurveys () {
+    const now = new Date()
+    const state = this.getState()
+    const eligibles = activeCompletedExperimentList(state).filter(x => {
+      const r = experimentRating(state, x.id)
+      return (!r || !r['eol'])
+    })
+    if (eligibles.length > 0) {
+      const experiment = eligibles[Math.floor(Math.random() * eligibles.length)]
+      if (experiment) {
+        tabs.once('open', tab => {
+          setTimeout(() =>
+            this.promptRating({
+              interval: 'eol',
+              experiment
+            }),
+            1000
+          )
+        })
+        return true
+      }
+    }
+    return false
   }
 
   maybeShare () {

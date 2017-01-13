@@ -15,6 +15,7 @@ const timers = {
 
 const tabs = {
   open: sinon.spy(),
+  once: sinon.spy(),
   '@noCallThru': true
 }
 
@@ -126,6 +127,13 @@ describe('FeedbackManager', function () {
       assert.ok(!s.dispatch.called)
     })
 
+    it('does nothing when an eol survey is scheduled', function () {
+      const fm = new FeedbackManager(store)
+      sinon.stub(fm, 'checkForCompletedExperimentSurveys').returns(true)
+      fm.check()
+      assert.ok(!fm.dispatch.called)
+    })
+
     it('dispatches a SHOW_RATING_PROMPT when it has to', function () {
       const state = {
         ratings: {
@@ -147,6 +155,50 @@ describe('FeedbackManager', function () {
       fm.check()
       assert.ok(s.dispatch.calledOnce)
       assert.ok(s.dispatch.firstCall.args[0].type, SHOW_RATING_PROMPT.type)
+    })
+  })
+
+  describe('checkForCompletedExperimentSurveys', function () {
+    it('returns false if eol experiment was taken', function () {
+      const state = {
+        experiments: {
+          testId1: { id: 'testId1', completed: new Date('2017-01-01'), active: true }
+        },
+        ratings: {
+          testId1: { eol: 5 }
+        }
+      }
+      const store = {
+        getState: sinon.stub().returns(state),
+        dispatch: sinon.spy()
+      }
+      const fm = new FeedbackManager(store)
+      assert.equal(fm.checkForCompletedExperimentSurveys(), false)
+    })
+
+    it('schedules a prompt on tab open', function () {
+      const state = {
+        experiments: {
+          testId1: { id: 'testId1', completed: new Date('2017-01-01'), active: true }
+        },
+        ratings: {}
+      }
+      const store = {
+        getState: sinon.stub().returns(state),
+        dispatch: sinon.spy()
+      }
+      const fm = new FeedbackManager(store)
+      sinon.spy(fm, 'promptRating')
+      assert.equal(fm.checkForCompletedExperimentSurveys(), true)
+      assert.ok(tabs.once.calledOnce)
+      assert.ok(tabs.once.calledWith('open'))
+      // now to unpack all the callbacks...
+      const callback1 = tabs.once.firstCall.args[1]
+      callback1()
+      assert.ok(timers.setTimeout.calledOnce)
+      const callback2 = timers.setTimeout.firstCall.args[0]
+      callback2()
+      assert.ok(fm.promptRating.calledOnce)
     })
   })
 
