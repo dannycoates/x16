@@ -191,12 +191,20 @@ describe('side effects', function () {
       state({ notificationManager })
     })
 
-    it('handles SET_RATING', function () {
+    it('handles SET_RATING', function (done) {
       const action = {
-        type: actions.SET_RATING.type
+        type: actions.SET_RATING.type,
+        payload: {
+          experiment: {},
+          rating: 0
+        }
+      }
+      const telemetry = {
+        ping: done
       }
       const state = reducer(null, action)
-      assert.equal(state, nothing)
+      assert.equal(typeof (state), 'function')
+      state({ telemetry })
     })
 
     it('handles SHOW_RATING_PROMPT', function (done) {

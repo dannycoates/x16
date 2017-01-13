@@ -107,6 +107,11 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
     case actions.SHOW_RATING_PROMPT.type:
       return ({feedbackManager}) => { feedbackManager.promptRating(payload) }
 
+    case actions.SET_RATING.type:
+      return ({telemetry}) => {
+        telemetry.ping(payload.experiment.addon_id, `rated_${payload.rating}`)
+      }
+
     case actions.SET_BADGE.type:
       return ({ui}) => ui.setBadge()
 
