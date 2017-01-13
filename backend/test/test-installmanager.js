@@ -14,6 +14,7 @@ const install = {
 }
 
 const AddonManager = {
+  getAllAddons: sinon.stub().callsArgWith(0, [addon]),
   getAddonByID: sinon.stub().callsArgWith(1, addon),
   getInstallForURL: sinon.stub().callsArgWith(1, install)
 }

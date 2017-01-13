@@ -73,9 +73,15 @@ export default class InstallManager {
 
   syncInstalled () {
     const { dispatch, getState } = this.store
-    dispatch(actions.SYNC_INSTALLED({
-      clientUUID: getState().clientUUID,
-      installed: activeExperiments(getState())
-    }))
+    AddonManager.getAllAddons(addons => {
+      const activeAddonIds = addons
+      .filter(a => (a.isActive && !a.appDisabled && !a.userDisabled))
+      .map(a => a.id)
+      dispatch(actions.SYNC_INSTALLED({
+        clientUUID: getState().clientUUID,
+        installed: activeExperiments(getState()),
+        active: activeAddonIds
+      }))
+    })
   }
 }

@@ -26,6 +26,7 @@ export type Context = {
   getState: GetState,
   env: Env,
   feedbackManager: FeedbackManager,
+  hacks: Object,
   installManager: InstallManager,
   loader: Loader,
   notificationManager: NotificationManager,
@@ -51,16 +52,20 @@ export function reducer (state: Function = nothing, { payload, type }: Action): 
 
     case actions.EXPERIMENT_ENABLED.type:
     case actions.INSTALL_ENDED.type:
-      return ({telemetry}) => {
-        WebExtensionChannels.add(payload.experiment.addon_id)
-        telemetry.ping(payload.experiment.addon_id, 'enabled')
+      return ({hacks, telemetry}) => {
+        const id = payload.experiment.addon_id
+        WebExtensionChannels.add(id)
+        telemetry.ping(id, 'enabled')
+        hacks.enabled(id)
       }
 
     case actions.EXPERIMENT_DISABLED.type:
     case actions.EXPERIMENT_UNINSTALLING.type:
-      return ({telemetry}) => {
-        WebExtensionChannels.remove(payload.experiment.addon_id)
-        telemetry.ping(payload.experiment.addon_id, 'disabled')
+      return ({hacks, telemetry}) => {
+        const id = payload.experiment.addon_id
+        WebExtensionChannels.remove(id)
+        telemetry.ping(id, 'disabled')
+        hacks.disabled(id)
       }
 
     case actions.EXPERIMENTS_LOADED.type:

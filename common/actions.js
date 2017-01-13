@@ -58,7 +58,7 @@ export const SELF_ENABLED = createAction('SELF_ENABLED', [])
 export const SELF_DISABLED = createAction('SELF_DISABLED', [])
 export const SET_RATING = createAction('SET_RATING', ['experiment', 'rating', 'time'])
 export const SHOW_RATING_PROMPT = createAction('SHOW_RATING_PROMPT', ['interval', 'experiment'])
-export const SYNC_INSTALLED = createAction('SYNC_INSTALLED', ['clientUUID', 'installed'])
+export const SYNC_INSTALLED = createAction('SYNC_INSTALLED', ['clientUUID', 'installed', 'active'])
 export const PROMPT_SHARE = createAction('PROMPT_SHARE', ['url'])
 // webapp created
 export const INSTALL_EXPERIMENT = createAction('INSTALL_EXPERIMENT', ['experiment'])

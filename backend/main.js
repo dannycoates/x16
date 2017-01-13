@@ -11,6 +11,7 @@ import configureStore from './lib/configureStore'
 import createExperimentMetrics from './lib/metrics'
 import env from './lib/env'
 import FeedbackManager from './lib/actionCreators/FeedbackManager'
+import * as hacks from './lib/experimentHacks'
 import Hub from './lib/middleware/Hub'
 import InstallManager from './lib/actionCreators/InstallManager'
 import Loader from './lib/actionCreators/Loader'
@@ -44,6 +45,7 @@ const webapp = new WebApp({
 sideEffects.setContext(Object.assign({}, store, {
   env,
   feedbackManager,
+  hacks,
   installManager,
   loader,
   notificationManager,

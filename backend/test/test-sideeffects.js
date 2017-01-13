@@ -8,6 +8,11 @@ const spies = {
   remove: sinon.spy(),
   '@noCallThru': true
 }
+const hacks = {
+  enabled: sinon.spy(),
+  disabled: sinon.spy()
+}
+
 const sideEffects = proxyquire(
   '../lib/reducers/sideEffects',
   {
@@ -29,6 +34,8 @@ describe('side effects', function () {
       function () {
         spies.add.reset()
         spies.remove.reset()
+        hacks.enabled.reset()
+        hacks.disabled.reset()
       }
     )
 
@@ -65,9 +72,11 @@ describe('side effects', function () {
         }
       }
       const state = reducer(null, action)
-      state({telemetry})
+      state({hacks, telemetry})
       assert.ok(spies.add.calledOnce, 'added channel')
       assert.ok(spies.add.calledWith(X.addon_id), 'passed correct id')
+      assert.ok(hacks.enabled.calledOnce)
+      assert.ok(hacks.enabled.calledWith(X.addon_id))
     })
 
     it('handles EXPERIMENT_ENABLED', function () {
@@ -84,9 +93,11 @@ describe('side effects', function () {
         }
       }
       const state = reducer(null, action)
-      state({telemetry})
+      state({hacks, telemetry})
       assert.ok(spies.add.calledOnce, 'added channel')
       assert.ok(spies.add.calledWith(X.addon_id), 'passed correct id')
+      assert.ok(hacks.enabled.calledOnce)
+      assert.ok(hacks.enabled.calledWith(X.addon_id))
     })
 
     it('handles EXPERIMENT_DISABLED', function () {
@@ -103,9 +114,11 @@ describe('side effects', function () {
         }
       }
       const state = reducer(null, action)
-      state({telemetry})
+      state({hacks, telemetry})
       assert.ok(spies.remove.calledOnce, 'removed channel')
       assert.ok(spies.remove.calledWith(X.addon_id), 'passed correct id')
+      assert.ok(hacks.disabled.calledOnce)
+      assert.ok(hacks.disabled.calledWith(X.addon_id))
     })
 
     it('handles EXPERIMENT_UNINSTALLING', function () {
@@ -122,9 +135,11 @@ describe('side effects', function () {
         }
       }
       const state = reducer(null, action)
-      state({telemetry})
+      state({hacks, telemetry})
       assert.ok(spies.remove.calledOnce, 'removed channel')
       assert.ok(spies.remove.calledWith(X.addon_id), 'passed correct id')
+      assert.ok(hacks.disabled.calledOnce, 'removed channel')
+      assert.ok(hacks.disabled.calledWith(X.addon_id), 'passed correct id')
     })
 
     it('handles SET_BADGE', function (done) {
