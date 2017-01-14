@@ -171,7 +171,7 @@ describe('side effects', function () {
       }
       const tabs = {
         open: (x) => {
-          assert.equal(x.url, baseUrl)
+          assert.ok(x.url)
         }
       }
       const state = reducer(null, action)

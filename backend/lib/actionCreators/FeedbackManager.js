@@ -116,9 +116,11 @@ export default class FeedbackManager {
           return feedbackUI.showSurveyButton({ experiment })
             .then((clicked) => {
               if (clicked) {
+                const state = this.getState()
                 const urlParams = querystring.stringify({
                   id: experiment.addon_id,
-                  installed: activeExperiments(this.getState()), // TODO match official output
+                  cid: state.clientUUID,
+                  installed: activeExperiments(state), // TODO match official output
                   rating,
                   interval
                 })
