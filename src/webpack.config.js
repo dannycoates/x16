@@ -25,7 +25,7 @@ const config = {
           plugins: ['transform-flow-strip-types']
         },
         exclude: /node_modules/,
-        include: [__dirname, path.join(__dirname, '..', 'common')]
+        include: __dirname
       }
     ]
   },

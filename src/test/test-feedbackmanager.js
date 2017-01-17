@@ -2,7 +2,7 @@
 import assert from 'assert'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
-import { SHOW_RATING_PROMPT, SET_RATING } from '../../common/actions'
+import { SHOW_RATING_PROMPT, SET_RATING } from '../lib/actions'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_DAY = 1000 * 60 * 60 * 24

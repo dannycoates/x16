@@ -7,8 +7,8 @@
 // @flow
 
 import aboutConfig from 'sdk/preferences/service'
-import { CHANGE_ENV } from '../../common/actions'
-import environments from '../../common/environments'
+import { CHANGE_ENV } from './actions'
+import environments from './environments'
 import { PrefsTarget } from 'sdk/preferences/event-target'
 import self from 'sdk/self'
 

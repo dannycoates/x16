@@ -6,7 +6,7 @@
 
 // @flow
 
-import * as actions from '../../common/actions'
+import * as actions from './actions'
 import self from 'sdk/self'
 import tabs from 'sdk/tabs'
 import { ActionButton } from 'sdk/ui/button/action'

@@ -6,7 +6,7 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 import WebExtensionChannels from '../metrics/webextension-channels'
 
 import typeof self from 'sdk/self'

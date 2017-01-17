@@ -2,8 +2,8 @@
 import assert from 'assert'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
-import { CHANGE_ENV } from '../../common/actions'
-import environments from '../../common/environments'
+import { CHANGE_ENV } from '../lib/actions'
+import environments from '../lib/environments'
 
 const prefs = {
   on: sinon.spy()

@@ -6,13 +6,13 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 import { activeExperiments } from '../reducers/experiments'
 import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
 import InstallListener from './InstallListener'
 import self from 'sdk/self'
 
-import type { Experiment } from '../../../common/Experiment'
+import type { Experiment } from '../Experiment'
 import type { ReduxStore } from 'testpilot/types'
 
 export default class InstallManager {

@@ -6,7 +6,7 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 
 import type { Action, AddonState } from 'testpilot/types'
 

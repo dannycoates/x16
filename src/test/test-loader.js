@@ -7,7 +7,7 @@ import {
   EXPERIMENTS_LOAD_ERROR,
   MAYBE_NOTIFY,
   SET_BADGE
-} from '../../common/actions'
+} from '../lib/actions'
 
 const addons = [{id: 'x', isActive: true, installDate: new Date()}, {id: 'y'}]
 const AddonManager = {

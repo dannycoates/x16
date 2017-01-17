@@ -2,7 +2,7 @@
 import assert from 'assert'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
-import { EXPERIMENT_ENABLED, EXPERIMENT_DISABLED } from '../../common/actions'
+import { EXPERIMENT_ENABLED, EXPERIMENT_DISABLED } from '../lib/actions'
 
 const AddonManager = {
   addAddonListener: sinon.spy(),

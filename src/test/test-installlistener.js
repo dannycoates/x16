@@ -1,7 +1,7 @@
 /* global describe beforeEach it */
 import assert from 'assert'
 import sinon from 'sinon'
-import * as actions from '../../common/actions'
+import * as actions from '../lib/actions'
 import InstallListener from '../lib/actionCreators/InstallListener'
 
 const dispatch = sinon.spy()

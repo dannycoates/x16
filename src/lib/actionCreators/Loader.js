@@ -6,9 +6,9 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
-import { Experiment } from '../../../common/Experiment'
+import { Experiment } from '../Experiment'
 import { get as _ } from 'sdk/l10n'
 import { Request } from 'sdk/request'
 import { Services } from 'resource://gre/modules/Services.jsm'
@@ -17,7 +17,7 @@ import difference from 'lodash/difference'
 import WebExtensionChannels from '../metrics/webextension-channels'
 
 // eslint-disable-next-line
-import type { Experiments } from '../../../common/Experiment'
+import type { Experiments } from '../Experiment'
 import type { ReduxStore } from 'testpilot/types'
 
 const SIX_HOURS = 6 * 60 * 60 * 1000

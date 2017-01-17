@@ -19,7 +19,7 @@ import { setTimeout, clearTimeout } from 'sdk/timers'
 import tabs from 'sdk/tabs'
 import { get as _ } from 'sdk/l10n'
 
-import type { Experiment } from '../../common/Experiment'
+import type { Experiment } from './Experiment'
 
 function getAnonEl (win, box, attrName) {
   return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName)

@@ -6,7 +6,7 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 import type { Action } from 'testpilot/types'
 
 export function reducer (state: ?string = null, { payload, type }: Action) {

@@ -6,7 +6,7 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 import { activeCompletedExperimentList, activeExperiments, randomActiveExperiment } from '../reducers/experiments'
 import { experimentRating } from '../reducers/ratings'
 import { setTimeout, clearTimeout } from 'sdk/timers'
@@ -14,7 +14,7 @@ import * as feedbackUI from '../feedbackUI'
 import tabs from 'sdk/tabs'
 import querystring from 'sdk/querystring'
 
-import type { Experiment } from '../../../common/Experiment'
+import type { Experiment } from '../Experiment'
 import type { Dispatch, GetState, ReduxStore } from 'testpilot/types'
 
 const TEN_MINUTES = 1000 * 60 * 10

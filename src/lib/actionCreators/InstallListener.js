@@ -6,9 +6,9 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 
-import type { Experiment } from '../../../common/Experiment'
+import type { Experiment } from '../Experiment'
 import type { Dispatch } from 'testpilot/types'
 import type { Addon, AddonInstall } from 'resource://gre/modules/AddonManager.jsm'
 

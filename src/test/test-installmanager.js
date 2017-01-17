@@ -2,7 +2,7 @@
 import assert from 'assert'
 import proxyquire from 'proxyquire'
 import sinon from 'sinon'
-import * as actions from '../../common/actions'
+import * as actions from '../lib/actions'
 
 const addon = {
   uninstall: sinon.spy()

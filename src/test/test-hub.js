@@ -2,7 +2,7 @@
 import assert from 'assert'
 import sinon from 'sinon'
 import Hub from '../lib/middleware/Hub'
-import { GET_INSTALLED, SYNC_INSTALLED } from '../../common/actions'
+import { GET_INSTALLED, SYNC_INSTALLED } from '../lib/actions'
 
 const store = {
   dispatch: sinon.spy(),

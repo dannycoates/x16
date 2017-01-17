@@ -6,12 +6,12 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 import pickBy from 'lodash/pickBy'
-import { Experiment } from '../../../common/Experiment'
+import { Experiment } from '../Experiment'
 
 // eslint-disable-next-line
-import type { Experiments } from '../../../common/Experiment'
+import type { Experiments } from '../Experiment'
 import type { Action, AddonState } from 'testpilot/types'
 
 export function reducer (experiments: Experiments = {}, { payload, type }: Action): Experiments {

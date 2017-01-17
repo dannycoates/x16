@@ -6,12 +6,12 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
 
 // eslint-disable-next-line
 import type { Addon } from 'resource://gre/modules/AddonManager.jsm'
-import type { Experiment } from '../../../common/Experiment'
+import type { Experiment } from '../Experiment'
 import type { Dispatch, ReduxStore } from 'testpilot/types'
 
 function getExperiment (getState, addon): ?Experiment {

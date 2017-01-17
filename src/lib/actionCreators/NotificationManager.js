@@ -6,12 +6,12 @@
 
 // @flow
 
-import * as actions from '../../../common/actions'
+import * as actions from '../actions'
 import * as notificationUI from '../notificationUI'
 import { setTimeout, clearTimeout } from 'sdk/timers'
 
 import type { ReduxStore } from 'testpilot/types'
-import type { Experiment } from '../../../common/Experiment'
+import type { Experiment } from '../Experiment'
 
 const ONE_DAY = 24 * 60 * 60 * 1000
 const MAX_NOTIFICATION_DELAY_PERIOD = 14 * ONE_DAY

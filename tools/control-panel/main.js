@@ -8,7 +8,7 @@
 
 import React, { Component } from 'react'
 import { render } from 'react-dom'
-import * as actions from '../../common/actions'
+import * as actions from '../../src/lib/actions'
 import templates from './templates'
 
 window.addEventListener('addon-action', event => {

@@ -17,8 +17,8 @@ const reducers = proxyquire('../lib/reducers',
   }
 ).default
 
-import * as actions from '../../common/actions'
-import { Experiment } from '../../common/Experiment'
+import * as actions from '../lib/actions'
+import { Experiment } from '../lib/Experiment'
 import { createStore } from 'redux'
 
 const DEFAULT_STATE = {

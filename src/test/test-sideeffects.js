@@ -21,8 +21,8 @@ const sideEffects = proxyquire(
 )
 const { reducer, nothing } = sideEffects
 
-import * as actions from '../../common/actions'
-import { Experiment } from '../../common/Experiment'
+import * as actions from '../lib/actions'
+import { Experiment } from '../lib/Experiment'
 
 const X = new Experiment({
   addon_id: 'X'
