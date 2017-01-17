@@ -20,7 +20,7 @@ export default class MainUI {
     this.button = new ActionButton({
       id: 'x16',
       label: 'X-16',
-      icon: `./wolf.svg`,
+      icon: `./txp.svg`,
       onClick: state => {
         store.dispatch(actions.MAIN_BUTTON_CLICKED({ time: Date.now() }))
       }

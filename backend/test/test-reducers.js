@@ -36,10 +36,12 @@ const DEFAULT_STATE = {
 }
 
 const X = new Experiment({
-  addon_id: 'X'
+  addon_id: 'X',
+  created: '2017-01-01'
 })
 const Y = new Experiment({
-  addon_id: 'Y'
+  addon_id: 'Y',
+  created: '2017-01-02'
 })
 
 describe('reducers', function () {

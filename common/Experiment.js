@@ -43,6 +43,9 @@ export class Experiment {
   completed: string
   active: boolean
   installDate: ?Date
+  launchDate: Date
+  localeGrantlist: Array<string>
+  localeBlocklist: Array<string>
 
   constructor (object: Object, baseUrl?: string) {
     this.baseUrl = object.baseUrl || baseUrl || ''
@@ -63,6 +66,20 @@ export class Experiment {
 
     this.active = object.active || false
     this.installDate = object.installDate
+    this.launchDate = object.launch_date ? new Date(object.launchDate) : new Date(object.created)
+
+    this.localeGrantlist = object.locale_grantlist || []
+    this.localeBlocklist = object.locale_blocklist || []
+  }
+
+  allowsLocale(locale: string) {
+    const lang = locale.split('-')[0]
+    if (this.localeGrantlist.length) {
+      return this.localeGrantlist.includes(lang)
+    } else if (this.localeBlocklist.length) {
+      return !this.localeBlocklist.includes(lang)
+    }
+    return true
   }
 
   toJSON () {

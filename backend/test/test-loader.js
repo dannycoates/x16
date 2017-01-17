@@ -26,6 +26,12 @@ const req = {
 }
 const Request = sinon.stub().returns(req)
 
+const Services = {
+  appShell: {
+    hiddenDOMWindow: { navigator: { language: 'en-US' } }
+  }
+}
+
 const timers = {
   setTimeout: sinon.stub(),
   clearTimeout: sinon.spy(),
@@ -45,6 +51,10 @@ const Loader = proxyquire('../lib/actionCreators/Loader', {
   },
   'sdk/request': {
     Request,
+    '@noCallThru': true
+  },
+  'resource://gre/modules/Services.jsm': {
+    Services,
     '@noCallThru': true
   },
   'sdk/timers': timers,

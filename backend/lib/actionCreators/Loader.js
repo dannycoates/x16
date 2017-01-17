@@ -11,6 +11,7 @@ import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
 import { Experiment } from '../../../common/Experiment'
 import { get as _ } from 'sdk/l10n'
 import { Request } from 'sdk/request'
+import { Services } from 'resource://gre/modules/Services.jsm'
 import { setTimeout, clearTimeout } from 'sdk/timers'
 import difference from 'lodash/difference'
 import WebExtensionChannels from '../metrics/webextension-channels'
@@ -31,11 +32,14 @@ function fetchExperiments (baseUrl, path): Promise<Experiments> {
       r.on(
         'complete',
         (res: { status: number, json: { results: Array<Object>}}) => {
+          const userLocale = Services.appShell.hiddenDOMWindow.navigator.language
           const xs = {}
           if (res.status === 200) {
             for (let o of res.json.results) {
               const x = new Experiment(o, baseUrl)
-              xs[x.addon_id] = x
+              if (x.allowsLocale(userLocale)) {
+                xs[x.addon_id] = x
+              }
             }
             resolve(xs)
           } else {
@@ -111,7 +115,7 @@ export default class Loader {
 
         const newExperiments = diffExperimentList(experiments, xs)
         for (let experiment of newExperiments) {
-          if ((new Date(experiment.created)).getTime() > clicked) {
+          if (experiment.launchDate.getTime() > clicked) {
             dispatch(actions.SET_BADGE({ text: _('new_badge') }))
           }
         }

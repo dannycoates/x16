@@ -7,7 +7,7 @@
 const path = require('path')
 
 module.exports = {
-  entry: './main.js',
+  entry: [path.join(__dirname, 'main.js')],
   output: {
     path: path.join(__dirname, '..'),
     filename: 'control-panel.js'
@@ -16,9 +16,13 @@ module.exports = {
     loaders: [
       {
         test: /\.js$/,
-        loaders: [ 'babel' ],
+        loader: 'babel-loader',
+        query: {
+          presets: ['es2015', 'react', 'stage-2'],
+          plugins: ['transform-flow-strip-types']
+        },
         exclude: /node_modules/,
-        include: __dirname
+        include: [__dirname, path.join(__dirname, '..', '..', 'common')]
       }
     ]
   }
