@@ -8,7 +8,6 @@
 
 import * as actions from './actions'
 import self from 'sdk/self'
-import tabs from 'sdk/tabs'
 import { ActionButton } from 'sdk/ui/button/action'
 import type { ReduxStore } from 'testpilot/types'
 import { addXULStylesheet } from './xulcss'

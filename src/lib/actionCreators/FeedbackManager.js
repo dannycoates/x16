@@ -72,7 +72,6 @@ export default class FeedbackManager {
   }
 
   checkForCompletedExperimentSurveys () {
-    const now = new Date()
     const state = this.getState()
     const eligibles = activeCompletedExperimentList(state).filter(x => {
       const r = experimentRating(state, x.id)
