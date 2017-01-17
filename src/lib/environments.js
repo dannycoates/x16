@@ -1,11 +1,7 @@
 // @flow
 
 module.exports = {
-  any: {
-    name: 'any',
-    baseUrl: '*',
-    whitelist: '*'
-  },
+  any: { name: 'any', baseUrl: '*', whitelist: '*' },
   local: {
     name: 'local',
     baseUrl: 'http://testpilot.dev:8000',
@@ -26,4 +22,4 @@ module.exports = {
     baseUrl: 'https://testpilot.firefox.com',
     whitelist: 'https://www.mozilla.org/*,about:home'
   }
-}
+};

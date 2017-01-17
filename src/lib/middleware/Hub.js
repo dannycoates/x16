@@ -6,53 +6,56 @@
 
 // @flow
 
-import { actionToWeb, webToAction } from './webadapter'
-import type { Dispatch, Middleware } from 'testpilot/types'
-import type { EventEmitter } from 'sdk/event/emitter'
+import { actionToWeb, webToAction } from './webadapter';
+import type { Dispatch, Middleware } from 'testpilot/types';
+import type { EventEmitter } from 'sdk/event/emitter';
 
 export default class Hub {
-  dispatch: Dispatch
-  ports: Set<EventEmitter>
-
-  constructor () {
-    this.dispatch = () => console.error('Hub cannot use dispatch() before middleware()')
-    this.ports = new Set()
+  dispatch: Dispatch;
+  ports: Set<EventEmitter>;
+  constructor() {
+    this.dispatch = () =>
+      console.error('Hub cannot use dispatch() before middleware()');
+    this.ports = new Set();
   }
 
-  connect (port: EventEmitter): void {
-    port.on('action', this.dispatch)
-    port.on('from-web-to-addon', (evt: Object) => this.dispatch(webToAction(evt)))
-    this.ports.add(port)
+  connect(port: EventEmitter): void {
+    port.on('action', this.dispatch);
+    port.on(
+      'from-web-to-addon',
+      (evt: Object) => this.dispatch(webToAction(evt))
+    );
+    this.ports.add(port);
   }
 
-  disconnect (port: EventEmitter): void {
-    port.off('action', this.dispatch)
-    port.off('from-web-to-addon')
-    this.ports.delete(port)
+  disconnect(port: EventEmitter): void {
+    port.off('action', this.dispatch);
+    port.off('from-web-to-addon');
+    this.ports.delete(port);
   }
 
-  middleware (): Middleware {
-    return ({dispatch}) => {
-      this.dispatch = dispatch
-      return (next) => (action) => {
-        action.meta = action.meta || {}
-        action.meta.src = action.meta.src || 'addon'
+  middleware(): Middleware {
+    return ({ dispatch }) => {
+      this.dispatch = dispatch;
+      return next => action => {
+        action.meta = action.meta || {};
+        action.meta.src = action.meta.src || 'addon';
         if (action.meta.src === 'addon') {
           for (let port of this.ports) {
             try {
-              port.emit('action', action)
+              port.emit('action', action);
 
-              const evt = actionToWeb(action)
+              const evt = actionToWeb(action);
               if (evt && evt.type !== 'IGNORE_ME') {
-                port.emit('from-addon-to-web', evt)
+                port.emit('from-addon-to-web', evt);
               }
             } catch (e) {
-              this.ports.delete(port)
+              this.ports.delete(port);
             }
           }
         }
-        return next(action)
-      }
-    }
+        return next(action);
+      };
+    };
   }
 }

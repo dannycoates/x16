@@ -6,31 +6,30 @@
 
 // @flow
 
-import * as actions from './actions'
-import self from 'sdk/self'
-import { ActionButton } from 'sdk/ui/button/action'
-import type { ReduxStore } from 'testpilot/types'
-import { addXULStylesheet } from './xulcss'
+import * as actions from './actions';
+import self from 'sdk/self';
+import { ActionButton } from 'sdk/ui/button/action';
+import type { ReduxStore } from 'testpilot/types';
+import { addXULStylesheet } from './xulcss';
 
-addXULStylesheet(self.data.url('button.css'))
+addXULStylesheet(self.data.url('button.css'));
 
 export default class MainUI {
-  button: ActionButton
-  store: ReduxStore
-
-  constructor (store: ReduxStore) {
-    this.store = store
+  button: ActionButton;
+  store: ReduxStore;
+  constructor(store: ReduxStore) {
+    this.store = store;
     this.button = new ActionButton({
       id: 'x16',
       label: 'X-16',
       icon: `./txp.svg`,
       onClick: state => {
-        store.dispatch(actions.MAIN_BUTTON_CLICKED({ time: Date.now() }))
+        store.dispatch(actions.MAIN_BUTTON_CLICKED({ time: Date.now() }));
       }
-    })
+    });
   }
 
-  setBadge () {
-    this.button.badge = this.store.getState().ui.badge
+  setBadge() {
+    this.button.badge = this.store.getState().ui.badge;
   }
 }

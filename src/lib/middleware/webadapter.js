@@ -6,41 +6,40 @@
 
 // @flow
 
-import * as actions from '../actions'
+import * as actions from '../actions';
 
-import type { Action } from 'testpilot/types'
+import type { Action } from 'testpilot/types';
 
-export function webToAction (webevent: ?Object): Action {
-  const { type, data } = (webevent || {})
-  const meta = { src: 'web' }
+export function webToAction(webevent: ?Object): Action {
+  const { type, data } = webevent || {};
+
+  const meta = { src: 'web' };
   switch (type) {
     case 'install-experiment':
-      return actions.INSTALL_EXPERIMENT({experiment: data}, meta)
+      return actions.INSTALL_EXPERIMENT({ experiment: data }, meta);
 
     case 'uninstall-experiment':
-      return actions.UNINSTALL_EXPERIMENT({experiment: data}, meta)
+      return actions.UNINSTALL_EXPERIMENT({ experiment: data }, meta);
 
     case 'uninstall-self':
-      return actions.UNINSTALL_SELF({}, meta)
+      return actions.UNINSTALL_SELF({}, meta);
 
     case 'sync-installed':
-      return actions.GET_INSTALLED({}, meta)
+      return actions.GET_INSTALLED({}, meta);
 
     case 'base-url':
-      return actions.SET_BASE_URL({url: data}, meta)
+      return actions.SET_BASE_URL({ url: data }, meta);
   }
-  return { type: 'IGNORE_ME', payload: {} }
+  return { type: 'IGNORE_ME', payload: {} };
 }
 
-export function actionToWeb ({ payload, type }: Action) {
+export function actionToWeb({ payload, type }: Action) {
   switch (type) {
     case actions.INSTALL_ENDED.type:
       return {
         type: 'addon-install:install-ended',
-        data: {
-          id: payload.experiment.addon_id
-        }
-      }
+        data: { id: payload.experiment.addon_id }
+      };
     case actions.EXPERIMENT_UNINSTALLED.type:
       return {
         type: 'addon-uninstall:uninstall-ended',
@@ -49,15 +48,12 @@ export function actionToWeb ({ payload, type }: Action) {
           name: payload.experiment.title,
           version: payload.experiment.version
         }
-      }
+      };
     case actions.SYNC_INSTALLED.type:
       return {
         type: 'sync-installed-result',
-        data: {
-          clientUUID: payload.clientUUID,
-          installed: payload.installed
-        }
-      }
+        data: { clientUUID: payload.clientUUID, installed: payload.installed }
+      };
     case actions.EXPERIMENT_ENABLED.type:
       return {
         type: 'addon-manage:enabled',
@@ -66,7 +62,7 @@ export function actionToWeb ({ payload, type }: Action) {
           name: payload.experiment.title,
           version: payload.experiment.version
         }
-      }
+      };
     case actions.EXPERIMENT_DISABLED.type:
       return {
         type: 'addon-manage:disabled',
@@ -75,11 +71,9 @@ export function actionToWeb ({ payload, type }: Action) {
           name: payload.experiment.title,
           version: payload.experiment.version
         }
-      }
+      };
     case actions.SELF_UNINSTALLED.type:
-      return {
-        type: 'addon-self:uninstalled'
-      }
+      return { type: 'addon-self:uninstalled' };
   }
-  return { type: 'IGNORE_ME', payload: {} }
+  return { type: 'IGNORE_ME', payload: {} };
 }

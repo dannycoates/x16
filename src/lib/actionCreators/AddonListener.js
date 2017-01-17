@@ -6,69 +6,69 @@
 
 // @flow
 
-import * as actions from '../actions'
-import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
+import * as actions from '../actions';
+import { AddonManager } from 'resource://gre/modules/AddonManager.jsm';
 
 // eslint-disable-next-line
-import type { Addon } from 'resource://gre/modules/AddonManager.jsm'
-import type { Experiment } from '../Experiment'
-import type { Dispatch, ReduxStore } from 'testpilot/types'
+import type { Addon } from 'resource://gre/modules/AddonManager.jsm';
+import type { Experiment } from '../Experiment';
+import type { Dispatch, ReduxStore } from 'testpilot/types';
 
-function getExperiment (getState, addon): ?Experiment {
-  const { experiments } = getState()
-  return experiments[addon.id]
+function getExperiment(getState, addon): ?Experiment {
+  const { experiments } = getState();
+  return experiments[addon.id];
 }
 
 export default class AddonListener {
-  getExperiment: (addon: Addon) => ?Experiment
+  getExperiment: (addon: Addon) => ?Experiment;
   dispatch: Dispatch;
 
-  constructor ({dispatch, getState}: ReduxStore) {
-    this.getExperiment = getExperiment.bind(null, getState)
-    this.dispatch = dispatch
-    AddonManager.addAddonListener(this)
+  constructor({ dispatch, getState }: ReduxStore) {
+    this.getExperiment = getExperiment.bind(null, getState);
+    this.dispatch = dispatch;
+    AddonManager.addAddonListener(this);
   }
 
-  onEnabled (addon: Addon) {
-    const experiment = this.getExperiment(addon)
+  onEnabled(addon: Addon) {
+    const experiment = this.getExperiment(addon);
     if (experiment) {
-      this.dispatch(actions.EXPERIMENT_ENABLED({experiment}))
+      this.dispatch(actions.EXPERIMENT_ENABLED({ experiment }));
     }
   }
 
-  onDisabled (addon: Addon) {
-    const experiment = this.getExperiment(addon)
+  onDisabled(addon: Addon) {
+    const experiment = this.getExperiment(addon);
     if (experiment) {
-      this.dispatch(actions.EXPERIMENT_DISABLED({experiment}))
+      this.dispatch(actions.EXPERIMENT_DISABLED({ experiment }));
     }
   }
 
-  onUninstalling (addon: Addon) {
-    const experiment = this.getExperiment(addon)
+  onUninstalling(addon: Addon) {
+    const experiment = this.getExperiment(addon);
     if (experiment) {
-      this.dispatch(actions.EXPERIMENT_UNINSTALLING({experiment}))
+      this.dispatch(actions.EXPERIMENT_UNINSTALLING({ experiment }));
     }
   }
 
-  onUninstalled (addon: Addon) {
-    const experiment = this.getExperiment(addon)
+  onUninstalled(addon: Addon) {
+    const experiment = this.getExperiment(addon);
     if (experiment) {
-      this.dispatch(actions.EXPERIMENT_UNINSTALLED({experiment}))
+      this.dispatch(actions.EXPERIMENT_UNINSTALLED({ experiment }));
     }
   }
 
-  onOperationCancelled (addon: Addon) {
-    const experiment = this.getExperiment(addon)
+  onOperationCancelled(addon: Addon) {
+    const experiment = this.getExperiment(addon);
     if (experiment) {
       if (addon.pendingOperations & AddonManager.PENDING_ENABLE) {
-        this.dispatch(actions.EXPERIMENT_ENABLED({experiment}))
+        this.dispatch(actions.EXPERIMENT_ENABLED({ experiment }));
       } else if (addon.userDisabled && addon.installDate) {
-        this.dispatch(actions.EXPERIMENT_DISABLED({experiment}))
+        this.dispatch(actions.EXPERIMENT_DISABLED({ experiment }));
       }
     }
   }
 
-  teardown () {
-    AddonManager.removeAddonListener(this)
+  teardown() {
+    AddonManager.removeAddonListener(this);
   }
 }

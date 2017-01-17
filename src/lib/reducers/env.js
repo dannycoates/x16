@@ -6,14 +6,14 @@
 
 // @flow
 
-import * as actions from '../actions'
-import type { Action } from 'testpilot/types'
+import * as actions from '../actions';
+import type { Action } from 'testpilot/types';
 
-export function reducer (state: ?string = null, { payload, type }: Action) {
+export function reducer(state: ?string = null, { payload, type }: Action) {
   switch (type) {
     case actions.EXPERIMENTS_LOADED.type:
-      return payload.envname
+      return payload.envname;
     default:
-      return state
+      return state;
   }
 }

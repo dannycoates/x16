@@ -6,54 +6,64 @@
 
 // @flow
 
-import * as actions from '../actions'
-import pickBy from 'lodash/pickBy'
-import { Experiment } from '../Experiment'
+import * as actions from '../actions';
+import pickBy from 'lodash/pickBy';
+import { Experiment } from '../Experiment';
 
 // eslint-disable-next-line
-import type { Experiments } from '../Experiment'
-import type { Action, AddonState } from 'testpilot/types'
+import type { Experiments } from '../Experiment';
+import type { Action, AddonState } from 'testpilot/types';
 
-export function reducer (experiments: Experiments = {}, { payload, type }: Action): Experiments {
-  let x, n
+export function reducer(
+  experiments: Experiments = {},
+  { payload, type }: Action
+): Experiments {
+  let x, n;
   switch (type) {
     case actions.EXPERIMENTS_LOAD_ERROR.type:
-      return {}
+      return {};
 
     case actions.EXPERIMENTS_LOADED.type:
-      return Object.assign({}, payload.experiments)
+      return Object.assign({}, payload.experiments);
 
     case actions.EXPERIMENT_ENABLED.type:
     case actions.INSTALL_ENDED.type:
-      x = experiments[payload.experiment.addon_id]
-      n = new Experiment(Object.assign({}, x, { active: true, installDate: payload.experiment.installDate }))
-      return Object.assign({}, experiments, { [n.addon_id]: n })
+      x = experiments[payload.experiment.addon_id];
+      n = new Experiment(
+        Object.assign({}, x, {
+          active: true,
+          installDate: payload.experiment.installDate
+        })
+      );
+      return Object.assign({}, experiments, { [n.addon_id]: n });
 
     case actions.EXPERIMENT_DISABLED.type:
     case actions.EXPERIMENT_UNINSTALLING.type:
-      x = experiments[payload.experiment.addon_id]
-      n = new Experiment(Object.assign({}, x, { active: false }))
-      return Object.assign({}, experiments, { [n.addon_id]: n })
+      x = experiments[payload.experiment.addon_id];
+      n = new Experiment(Object.assign({}, x, { active: false }));
+      return Object.assign({}, experiments, { [n.addon_id]: n });
   }
-  return experiments
+  return experiments;
 }
 
-export function activeExperiments (state: AddonState): Experiments {
-  return pickBy(state.experiments, x => x.active)
+export function activeExperiments(state: AddonState): Experiments {
+  return pickBy(state.experiments, x => x.active);
 }
 
 // TODO: some kind of selector lib to replace this maybe?
-export function activeCompletedExperimentList (state: AddonState): Array<Experiment> {
-  const active = activeExperiments(state)
-  const ids = Object.keys(active)
+export function activeCompletedExperimentList(
+  state: AddonState
+): Array<Experiment> {
+  const active = activeExperiments(state);
+  const ids = Object.keys(active);
   return ids
     .map(id => active[id])
-    .filter(x => x.completed && new Date(x.completed) < new Date())
+    .filter(x => x.completed && new Date(x.completed) < new Date());
 }
 
-export function randomActiveExperiment (state: AddonState): Experiment {
-  const installed = activeExperiments(state)
-  const installedKeys = Object.keys(installed)
-  const id = installedKeys[Math.floor(Math.random() * installedKeys.length)]
-  return installed[id]
+export function randomActiveExperiment(state: AddonState): Experiment {
+  const installed = activeExperiments(state);
+  const installedKeys = Object.keys(installed);
+  const id = installedKeys[Math.floor(Math.random() * installedKeys.length)];
+  return installed[id];
 }

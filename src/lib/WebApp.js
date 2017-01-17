@@ -6,69 +6,63 @@
 
 // @flow
 
-import { PageMod } from 'sdk/page-mod'
-import type Hub from './middleware/Hub'
-import type { Environment } from './env'
+import { PageMod } from 'sdk/page-mod';
+import type Hub from './middleware/Hub';
+import type { Environment } from './env';
 
 type WebAppOptions = {
   hub: Hub,
   baseUrl: string,
   whitelist: string,
   addonVersion: string
-}
+};
 
-type PageIncludes = {
-  page: string,
-  beacon: string[]
-}
+type PageIncludes = { page: string, beacon: string[] };
 
-function toIncludes (baseUrl: string, whitelist: string): PageIncludes {
-  const page = (baseUrl === '*') ? baseUrl : `${baseUrl}/*`
-  const beacon = whitelist.split(',')
-  return { page, beacon }
+function toIncludes(baseUrl: string, whitelist: string): PageIncludes {
+  const page = baseUrl === '*' ? baseUrl : `${baseUrl}/*`;
+  const beacon = whitelist.split(',');
+  return { page, beacon };
 }
 
 export default class WebApp {
-  hub: Hub
-  addonVersion: string
-  page: PageMod
-  beacon: PageMod
-
-  constructor ({hub, baseUrl, whitelist, addonVersion}: WebAppOptions) {
-    this.hub = hub
-    this.addonVersion = addonVersion
-    this.createMods(toIncludes(baseUrl, whitelist))
+  hub: Hub;
+  addonVersion: string;
+  page: PageMod;
+  beacon: PageMod;
+  constructor({ hub, baseUrl, whitelist, addonVersion }: WebAppOptions) {
+    this.hub = hub;
+    this.addonVersion = addonVersion;
+    this.createMods(toIncludes(baseUrl, whitelist));
   }
 
-  createMods (includes: PageIncludes) {
+  createMods(includes: PageIncludes) {
     this.page = new PageMod({
       include: includes.page,
       contentScriptFile: './message-bridge.js',
       contentScriptWhen: 'start',
-      attachTo: ['top', 'existing'],
+      attachTo: [ 'top', 'existing' ],
       onAttach: worker => {
-        this.hub.connect(worker.port)
-        worker.on('detach', () => this.hub.disconnect(worker.port))
+        this.hub.connect(worker.port);
+        worker.on('detach', () => this.hub.disconnect(worker.port));
       }
-    })
+    });
     this.beacon = new PageMod({
       include: includes.beacon,
       contentScriptFile: './set-installed-flag.js',
       contentScriptWhen: 'start',
-      attachTo: ['top', 'existing'],
-      contentScriptOptions: {
-        version: this.addonVersion
-      }
-    })
+      attachTo: [ 'top', 'existing' ],
+      contentScriptOptions: { version: this.addonVersion }
+    });
   }
 
-  changeEnv ({baseUrl, whitelist}: Environment) {
-    this.teardown()
-    this.createMods(toIncludes(baseUrl, whitelist))
+  changeEnv({ baseUrl, whitelist }: Environment) {
+    this.teardown();
+    this.createMods(toIncludes(baseUrl, whitelist));
   }
 
-  teardown () {
-    this.page.destroy()
-    this.beacon.destroy()
+  teardown() {
+    this.page.destroy();
+    this.beacon.destroy();
   }
 }

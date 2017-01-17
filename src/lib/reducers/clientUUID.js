@@ -6,10 +6,10 @@
 
 // @flow
 
-import { uuid } from 'sdk/util/uuid'
-import type { Action } from 'testpilot/types'
+import { uuid } from 'sdk/util/uuid';
+import type { Action } from 'testpilot/types';
 
-const newUUID = uuid().toString().slice(1, -1)
-export function reducer (state: string = newUUID, action: Action) {
-  return state
+const newUUID = uuid().toString().slice(1, -1);
+export function reducer(state: string = newUUID, action: Action) {
+  return state;
 }

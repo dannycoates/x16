@@ -6,10 +6,10 @@
 
 // @flow
 
-import Experiment from './experiment'
-import Variants from './variants'
+import Experiment from './experiment';
+import Variants from './variants';
 
-export default function (clientUUID: string) {
-  const variants = new Variants(clientUUID)
-  return new Experiment(variants)
+export default function(clientUUID: string) {
+  const variants = new Variants(clientUUID);
+  return new Experiment(variants);
 }

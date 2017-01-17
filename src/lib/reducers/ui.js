@@ -6,25 +6,28 @@
 
 // @flow
 
-import * as actions from '../actions'
+import * as actions from '../actions';
 
-import type { Action } from 'testpilot/types'
+import type { Action } from 'testpilot/types';
 
-export function reducer (state: Object = { badge: null, clicked: Date.now(), shareShown: false }, { payload, type }: Action) {
+export function reducer(
+  state: Object = { badge: null, clicked: Date.now(), shareShown: false },
+  { payload, type }: Action
+) {
   switch (type) {
     case actions.SELF_INSTALLED.type:
-      return Object.assign({}, state, { installTimestamp: Date.now() })
+      return Object.assign({}, state, { installTimestamp: Date.now() });
 
     case actions.SET_BADGE.type:
-      return Object.assign({}, state, { badge: payload.text })
+      return Object.assign({}, state, { badge: payload.text });
 
     case actions.MAIN_BUTTON_CLICKED.type:
-      return Object.assign({}, state, { badge: null, clicked: payload.time })
+      return Object.assign({}, state, { badge: null, clicked: payload.time });
 
     case actions.PROMPT_SHARE.type:
-      return Object.assign({}, state, { shareShown: true })
+      return Object.assign({}, state, { shareShown: true });
 
     default:
-      return state
+      return state;
   }
 }

@@ -14,58 +14,58 @@
 
 // @flow
 
-import { Services } from 'resource://gre/modules/Services.jsm'
-import { setTimeout, clearTimeout } from 'sdk/timers'
-import tabs from 'sdk/tabs'
-import { get as _ } from 'sdk/l10n'
+import { Services } from 'resource://gre/modules/Services.jsm';
+import { setTimeout, clearTimeout } from 'sdk/timers';
+import tabs from 'sdk/tabs';
+import { get as _ } from 'sdk/l10n';
 
-import type { Experiment } from './Experiment'
+import type { Experiment } from './Experiment';
 
-function getAnonEl (win, box, attrName) {
-  return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName)
+function getAnonEl(win, box, attrName) {
+  return win.document.getAnonymousElementByAttribute(box, 'anonid', attrName);
 }
 
-function createRatingUI (document: Document, cb) {
+function createRatingUI(document: Document, cb) {
   // Create the fragment holding the rating UI.
-  const frag = document.createDocumentFragment()
+  const frag = document.createDocumentFragment();
 
   // Build the star rating.
-  const ratingContainer = document.createElement('hbox')
-  ratingContainer.id = 'star-rating-container'
-  ratingContainer.setAttribute('style', 'margin-bottom: 2px')
+  const ratingContainer = document.createElement('hbox');
+  ratingContainer.id = 'star-rating-container';
+  ratingContainer.setAttribute('style', 'margin-bottom: 2px');
 
-  function ratingListener (evt: Event) {
+  function ratingListener(evt: Event) {
     if (typeof evt.target.getAttribute === 'function') {
-      cb(Number(evt.target.getAttribute('data-score'), 10))
+      cb(Number(evt.target.getAttribute('data-score'), 10));
     } else {
-      cb(0)
+      cb(0);
     }
   }
 
   for (let starIndex = 5; starIndex > 0; starIndex--) {
     // Create a star rating element.
-    const ratingElement = document.createElement('toolbarbutton')
+    const ratingElement = document.createElement('toolbarbutton');
 
     // Style it.
-    ratingElement.className = 'plain star-x'
-    ratingElement.id = 'star' + starIndex
-    ratingElement.setAttribute('data-score', String(starIndex))
+    ratingElement.className = 'plain star-x';
+    ratingElement.id = 'star' + starIndex;
+    ratingElement.setAttribute('data-score', String(starIndex));
 
     // Add the click handler.
-    ratingElement.addEventListener('click', ratingListener)
+    ratingElement.addEventListener('click', ratingListener);
 
     // Add it to the container.
-    ratingContainer.appendChild(ratingElement)
+    ratingContainer.appendChild(ratingElement);
   }
 
-  frag.appendChild(ratingContainer)
+  frag.appendChild(ratingContainer);
 
-  return frag
+  return frag;
 }
 
-function createNotificationBox (options) {
-  const win = Services.wm.getMostRecentWindow('navigator:browser')
-  const notifyBox = win.gBrowser.getNotificationBox()
+function createNotificationBox(options) {
+  const win = Services.wm.getMostRecentWindow('navigator:browser');
+  const notifyBox = win.gBrowser.getNotificationBox();
   const box = notifyBox.appendNotification(
     options.label,
     options.value || '',
@@ -73,33 +73,31 @@ function createNotificationBox (options) {
     notifyBox.PRIORITY_INFO_LOW,
     options.buttons || [],
     options.callback
-  )
-  const messageText = getAnonEl(win, box, 'messageText')
-  const messageImage = getAnonEl(win, box, 'messageImage')
+  );
+  const messageText = getAnonEl(win, box, 'messageText');
+  const messageImage = getAnonEl(win, box, 'messageImage');
 
   if (options.child) {
-    const child = options.child(win)
+    const child = options.child(win);
     // Make sure the child is not pushed to the right by the spacer.
-    const rightSpacer = win.document.createElement('spacer')
-    rightSpacer.flex = 20
-    child.appendChild(rightSpacer)
-    box.appendChild(child)
+    const rightSpacer = win.document.createElement('spacer');
+    rightSpacer.flex = 20;
+    child.appendChild(rightSpacer);
+    box.appendChild(child);
   }
-  messageText.flex = 0 // Collapse the space before the stars/button.
-  const leftSpacer = messageText.nextSibling
-  leftSpacer.flex = 0
-  box.classList.add('heartbeat')
-  messageImage.classList.add('heartbeat')
+  messageText.flex = 0;
+  // Collapse the space before the stars/button.
+  const leftSpacer = messageText.nextSibling;
+  leftSpacer.flex = 0;
+  box.classList.add('heartbeat');
+  messageImage.classList.add('heartbeat');
   if (options.pulse) {
-    messageImage.classList.add('pulse-onshow')
+    messageImage.classList.add('pulse-onshow');
   }
-  messageText.classList.add('heartbeat')
-  messageImage.setAttribute('style', 'filter: invert(80%)')
-  box.persistence = options.persistence || 0
-  return {
-    notifyBox,
-    box
-  }
+  messageText.classList.add('heartbeat');
+  messageImage.setAttribute('style', 'filter: invert(80%)');
+  box.persistence = options.persistence || 0;
+  return { notifyBox, box };
 }
 
 type Option = {
@@ -107,16 +105,16 @@ type Option = {
   duration?: number,
   persistence?: number,
   interval?: string | number
-}
+};
 
-export function showRating (options: Option) {
-  return new Promise((resolve) => {
-    const experiment = options.experiment
-    const uiTimeout = setTimeout(uiClosed, options.duration || 60000)
-    const label = options.interval === 'eol' ?
-      _('survey_launch_survey_label', experiment.title) :
-      _('survey_show_rating_label', experiment.title)
-    let experimentRating = null
+export function showRating(options: Option) {
+  return new Promise(resolve => {
+    const experiment = options.experiment;
+    const uiTimeout = setTimeout(uiClosed, options.duration || 60000);
+    const label = options.interval === 'eol'
+      ? _('survey_launch_survey_label', experiment.title)
+      : _('survey_show_rating_label', experiment.title);
+    let experimentRating = null;
 
     const { notifyBox, box } = createNotificationBox({
       label,
@@ -125,56 +123,72 @@ export function showRating (options: Option) {
       persistence: options.persistence,
       pulse: true,
       callback: () => {
-        clearTimeout(uiTimeout)
-        resolve(experimentRating)
+        clearTimeout(uiTimeout);
+        resolve(experimentRating);
       }
-    })
+    });
 
-    function uiClosed (rating) {
-      experimentRating = rating
-      notifyBox.removeNotification(box)
+    function uiClosed(rating) {
+      experimentRating = rating;
+      notifyBox.removeNotification(box);
     }
-  })
+  });
 }
 
-export function showSharePrompt (url: string) {
-  return new Promise((resolve) => {
+export function showSharePrompt(url: string) {
+  return new Promise(resolve => {
     const { notifyBox, box } = createNotificationBox({
       label: _('share_label'),
       image: 'resource://@x16/data/txp.svg',
       persistence: 10,
-      buttons: [{
-        label: _('share_button'),
-        callback: () => {
-          tabs.open({ url })
+      buttons: [
+        {
+          label: _('share_button'),
+          callback: () => {
+            tabs.open({ url });
+          }
         }
-      }],
+      ],
       callback: () => {
-        clearTimeout(uiTimeout)
-        resolve()
+        clearTimeout(uiTimeout);
+        resolve();
       }
-    })
-    const uiTimeout = setTimeout(() => { notifyBox.removeNotification(box) }, 60000)
-  })
+    });
+    const uiTimeout = setTimeout(
+      () => {
+        notifyBox.removeNotification(box);
+      },
+      60000
+    );
+  });
 }
 
-export function showSurveyButton (options: Option) {
-  return new Promise((resolve) => {
-    let clicked = false
-    const { experiment, duration } = options
+export function showSurveyButton(options: Option) {
+  return new Promise(resolve => {
+    let clicked = false;
+    const { experiment, duration } = options;
 
     const { notifyBox, box } = createNotificationBox({
       label: _('survey_rating_thank_you', experiment.title),
       image: experiment.thumbnail,
-      buttons: [{
-        label: _('survey_rating_survey_button'),
-        callback: () => { clicked = true }
-      }],
+      buttons: [
+        {
+          label: _('survey_rating_survey_button'),
+          callback: () => {
+            clicked = true;
+          }
+        }
+      ],
       callback: () => {
-        clearTimeout(uiTimeout)
-        resolve(clicked)
+        clearTimeout(uiTimeout);
+        resolve(clicked);
       }
-    })
-    const uiTimeout = setTimeout(() => { notifyBox.removeNotification(box) }, duration || 60000)
-  })
+    });
+    const uiTimeout = setTimeout(
+      () => {
+        notifyBox.removeNotification(box);
+      },
+      duration || 60000
+    );
+  });
 }

@@ -6,58 +6,74 @@
 
 /* global CustomEvent */
 
-import React, { Component } from 'react'
-import { render } from 'react-dom'
-import * as actions from '../../src/lib/actions'
-import templates from './templates'
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import * as actions from '../../src/lib/actions';
+import templates from './templates';
 
 window.addEventListener('addon-action', event => {
-  console.log('from addon', event.detail)
-})
+  console.log('from addon', event.detail);
+});
 
-function send (action) {
-  document.documentElement.dispatchEvent(new CustomEvent('action', { bubbles: true, detail: action }))
+function send(action) {
+  document.documentElement.dispatchEvent(new CustomEvent('action', {
+    bubbles: true,
+    detail: action
+  }));
 }
 
-function createAction (type) {
-  const action = actions[type]
-  return action(createPayload(action.args))
+function createAction(type) {
+  const action = actions[type];
+  return action(createPayload(action.args));
 }
 
-function createPayload (args) {
-  const payload = {}
+function createPayload(args) {
+  const payload = {};
   args.forEach(a => {
-    payload[a] = templates(a)
-  })
-  return payload
+    payload[a] = templates(a);
+  });
+  return payload;
 }
 
 class App extends Component {
-
-  constructor (props) {
-    super(props)
-    this.state = {action: '{}'}
+  constructor(props) {
+    super(props);
+    this.state = { action: '{}' };
   }
 
-  render () {
+  render() {
     return (
-      <form onSubmit={e => {
-        e.preventDefault()
-        send(JSON.parse(this.state.action))
-      }}>
-        <select size='24' onChange={e => this.setState({action: JSON.stringify(createAction(e.target.value), null, 2)})}>
-          {Object.keys(actions).map(
-            type => <option key={type} value={type}>{type}</option>
-          )}
+      <form
+        onSubmit={e => {
+            e.preventDefault();
+            send(JSON.parse(this.state.action));
+          }}
+      >
+        <select
+          size="24"
+          onChange={
+            e =>
+              this.setState({
+                action: JSON.stringify(createAction(e.target.value), null, 2)
+              })
+          }
+        >
+          {
+            Object
+              .keys(actions)
+              .map(type => <option key={type} value={type}>{type}</option>)
+          }
         </select>
-        <textarea rows='24' cols='60' value={this.state.action} onChange={e => this.setState({ action: e.target.value })} />
-        <input type='submit' value='send' />
+        <textarea
+          rows="24"
+          cols="60"
+          value={this.state.action}
+          onChange={e => this.setState({ action: e.target.value })}
+        />
+        <input type="submit" value="send" />
       </form>
-    )
+    );
   }
 }
 
-render(
-  <App />,
-  document.getElementById('root')
-)
+render(<App />, document.getElementById('root'));
