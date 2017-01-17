@@ -10,7 +10,7 @@ declare module 'testpilot/types' {
   }
 
   // declare type State = Object;
-  declare type BackendState = {
+  declare type AddonState = {
     baseUrl: string,
     clientUUID: string,
     env: string,
@@ -36,14 +36,6 @@ declare module 'testpilot/types' {
     }
   }
 
-  declare type FrontendState = {
-    experiments: Experiments,
-    env: string,
-    baseUrl: string
-  }
-
-  declare type State = BackendState | FrontendState;
-
   declare type ActionMeta = {
     src?: string
   }
@@ -54,7 +46,7 @@ declare module 'testpilot/types' {
     payload: Object
   };
 
-  declare type GetState = () => BackendState;
+  declare type GetState = () => AddonState;
   declare type Dispatch = (action: Action) => void;
   declare type MiddlewareAPI = { dispatch: Dispatch, getState: GetState };
   declare type Middleware = (api: MiddlewareAPI) => (next: Dispatch) => Dispatch;
@@ -62,6 +54,6 @@ declare module 'testpilot/types' {
   declare type ReduxStore = {
     dispatch: Dispatch,
     getState: GetState,
-    subscribe: (listener: () => void) => () => void
+    subscribe: (listener: () => void) => (() => void)
   }
 }

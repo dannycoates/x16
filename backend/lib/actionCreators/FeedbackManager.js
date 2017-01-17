@@ -108,7 +108,8 @@ export default class FeedbackManager {
   }
 
   promptRating ({interval, experiment}: {interval: number | string, experiment: Experiment}) {
-    return feedbackUI.showRating({ experiment })
+
+    return feedbackUI.showRating({ interval, experiment, persistence: 10 })
       .then(
         rating => {
           if (!rating) { return Promise.resolve() }

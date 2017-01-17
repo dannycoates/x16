@@ -51,6 +51,10 @@ const Loader = proxyquire('../lib/actionCreators/Loader', {
   '../metrics/webextension-channels': {
     add: xadd,
     '@noCallThru': true
+  },
+  'sdk/l10n': {
+    get: x => x,
+    '@noCallThru': true
   }
 }).default
 

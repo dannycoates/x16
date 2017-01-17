@@ -8,7 +8,7 @@
 
 import * as actions from '../../../common/actions'
 
-import type { Action, BackendState } from 'testpilot/types'
+import type { Action, AddonState } from 'testpilot/types'
 
 export function reducer (state: Object = {}, { payload, type }: Action) {
   let id, rating
@@ -31,6 +31,6 @@ export function reducer (state: Object = {}, { payload, type }: Action) {
   }
 }
 
-export function experimentRating (state: BackendState, id: string) {
+export function experimentRating (state: AddonState, id: string) {
   return state.ratings[id] || {}
 }

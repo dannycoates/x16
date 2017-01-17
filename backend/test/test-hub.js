@@ -69,7 +69,7 @@ describe('Hub', function () {
     const next = action => {
       assert.ok(p.emit.calledOnce)
       assert.ok(p.emit.calledWith('action', a))
-      assert.equal(a.meta.src, 'backend')
+      assert.equal(a.meta.src, 'addon')
       assert.equal(action, a)
       done()
     }

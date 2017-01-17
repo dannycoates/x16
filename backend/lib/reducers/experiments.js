@@ -12,7 +12,7 @@ import { Experiment } from '../../../common/Experiment'
 
 // eslint-disable-next-line
 import type { Experiments } from '../../../common/Experiment'
-import type { Action, BackendState } from 'testpilot/types'
+import type { Action, AddonState } from 'testpilot/types'
 
 export function reducer (experiments: Experiments = {}, { payload, type }: Action): Experiments {
   let x, n
@@ -38,12 +38,12 @@ export function reducer (experiments: Experiments = {}, { payload, type }: Actio
   return experiments
 }
 
-export function activeExperiments (state: BackendState): Experiments {
+export function activeExperiments (state: AddonState): Experiments {
   return pickBy(state.experiments, x => x.active)
 }
 
 // TODO: some kind of selector lib to replace this maybe?
-export function activeCompletedExperimentList (state: BackendState): Array<Experiment> {
+export function activeCompletedExperimentList (state: AddonState): Array<Experiment> {
   const active = activeExperiments(state)
   const ids = Object.keys(active)
   return ids
@@ -51,7 +51,7 @@ export function activeCompletedExperimentList (state: BackendState): Array<Exper
     .filter(x => x.completed && new Date(x.completed) < new Date())
 }
 
-export function randomActiveExperiment (state: BackendState): Experiment {
+export function randomActiveExperiment (state: AddonState): Experiment {
   const installed = activeExperiments(state)
   const installedKeys = Object.keys(installed)
   const id = installedKeys[Math.floor(Math.random() * installedKeys.length)]

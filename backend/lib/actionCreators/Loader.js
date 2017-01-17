@@ -9,6 +9,7 @@
 import * as actions from '../../../common/actions'
 import { AddonManager } from 'resource://gre/modules/AddonManager.jsm'
 import { Experiment } from '../../../common/Experiment'
+import { get as _ } from 'sdk/l10n'
 import { Request } from 'sdk/request'
 import { setTimeout, clearTimeout } from 'sdk/timers'
 import difference from 'lodash/difference'
@@ -111,7 +112,7 @@ export default class Loader {
         const newExperiments = diffExperimentList(experiments, xs)
         for (let experiment of newExperiments) {
           if ((new Date(experiment.created)).getTime() > clicked) {
-            dispatch(actions.SET_BADGE({ text: 'New' }))
+            dispatch(actions.SET_BADGE({ text: _('new_badge') }))
           }
         }
         for (let id of Object.keys(xs)) {

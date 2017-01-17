@@ -17,6 +17,7 @@
 import { Services } from 'resource://gre/modules/Services.jsm'
 import { setTimeout, clearTimeout } from 'sdk/timers'
 import tabs from 'sdk/tabs'
+import { get as _ } from 'sdk/l10n'
 
 import type { Experiment } from '../../common/Experiment'
 
@@ -104,17 +105,21 @@ function createNotificationBox (options) {
 type Option = {
   experiment: Experiment,
   duration?: number,
-  persistence?: number
+  persistence?: number,
+  interval?: string | number
 }
 
 export function showRating (options: Option) {
   return new Promise((resolve) => {
     const experiment = options.experiment
     const uiTimeout = setTimeout(uiClosed, options.duration || 60000)
+    const label = options.interval === 'eol' ?
+      _('survey_launch_survey_label', experiment.title) :
+      _('survey_show_rating_label', experiment.title)
     let experimentRating = null
 
     const { notifyBox, box } = createNotificationBox({
-      label: `Please rate ${experiment.title}`,
+      label,
       image: experiment.thumbnail,
       child: win => createRatingUI(win.document, uiClosed),
       persistence: options.persistence,
@@ -135,10 +140,11 @@ export function showRating (options: Option) {
 export function showSharePrompt (url: string) {
   return new Promise((resolve) => {
     const { notifyBox, box } = createNotificationBox({
-      label: `Love TestPilot?`,
+      label: _('share_label'),
       image: 'resource://@x16/data/wolf.svg',
+      persistence: 10,
       buttons: [{
-        label: 'Share',
+        label: _('share_button'),
         callback: () => {
           tabs.open({ url })
         }
@@ -158,10 +164,10 @@ export function showSurveyButton (options: Option) {
     const { experiment, duration } = options
 
     const { notifyBox, box } = createNotificationBox({
-      label: `Thank you for rating ${experiment.title}.`,
+      label: _('survey_rating_thank_you', experiment.title),
       image: experiment.thumbnail,
       buttons: [{
-        label: 'Take a Quick Survey',
+        label: _('survey_rating_survey_button'),
         callback: () => { clicked = true }
       }],
       callback: () => {

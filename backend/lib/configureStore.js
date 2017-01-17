@@ -12,9 +12,9 @@ import { createStore, applyMiddleware } from 'redux'
 import createLogger from 'redux-logger'
 import type Hub from './middleware/Hub'
 import type { Environment } from './env'
-import type { ReduxStore, BackendState } from 'testpilot/types'
+import type { ReduxStore, AddonState } from 'testpilot/types'
 
-const initialState = (Object.assign({}, storage.root): BackendState)
+const initialState = (Object.assign({}, storage.root): AddonState)
 
 export default function configureStore ({hub, startEnv}: {hub: Hub, startEnv: Environment}) {
   if (!initialState.baseUrl) {

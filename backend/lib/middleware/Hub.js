@@ -36,8 +36,8 @@ export default class Hub {
       this.dispatch = dispatch
       return (next) => (action) => {
         action.meta = action.meta || {}
-        action.meta.src = action.meta.src || 'backend'
-        if (action.meta.src === 'backend') {
+        action.meta.src = action.meta.src || 'addon'
+        if (action.meta.src === 'addon') {
           for (let port of this.ports) {
             try {
               port.emit('action', action)

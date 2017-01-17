@@ -28,6 +28,10 @@ declare module 'sdk/event/emitter' {
   }
 }
 
+declare module 'sdk/l10n' {
+  declare function get(...any): string
+}
+
 declare module 'sdk/self' {
   declare module.exports: {
     uri: string,
