@@ -1,6 +1,5 @@
 .*
 *
-!/backend/backend.js
 !/data/**
 !/locale/**
 !/install.rdf

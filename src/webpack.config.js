@@ -10,8 +10,8 @@ const webpack = require('webpack')
 const config = {
   entry: [path.join(__dirname, 'main.js')],
   output: {
-    path: __dirname,
-    filename: 'backend.js',
+    path: path.join(__dirname, '..', 'data'),
+    filename: 'bundle.js',
     libraryTarget: 'commonjs'
   },
   target: 'node',

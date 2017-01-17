@@ -28,7 +28,7 @@ function createAction (type: string, payloadArgs: string[]): ActionCreator {
   return action
 }
 
-// backend created
+// addon created
 export const INSTALL_ENDED = createAction('INSTALL_ENDED', ['experiment'])
 export const INSTALL_FAILED = createAction('INSTALL_FAILED', ['install'])
 export const INSTALL_STARTED = createAction('INSTALL_STARTED', ['install'])

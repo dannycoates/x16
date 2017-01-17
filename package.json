@@ -2,16 +2,16 @@
   "name": "x16",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/backend.js",
+  "main": "data/bundle.js",
   "scripts": {
     "start": "NODE_ENV=production npm run addon",
     "lint": "eslint . --ignore-path .gitignore",
-    "pack": "cd backend; webpack; cd ..;",
+    "pack": "cd src; webpack; cd ..;",
     "addon": "npm run pack && jpm post --post-url http://127.0.0.1:8888",
     "tools": "cd tools/control-panel; webpack",
-    "slow-test": "flow --quiet && cross-env NODE_ENV=test nyc mocha --reporter min backend/test",
-    "test": "mocha --compilers js:babel-register --reporter min backend/test",
-    "coverage": "flow-coverage-report -i 'backend/lib/**/*.js' -t html -o coverage/flow && npm run slow-test"
+    "slow-test": "flow --quiet && cross-env NODE_ENV=test nyc mocha --reporter min src/test",
+    "test": "mocha --compilers js:babel-register --reporter min src/test",
+    "coverage": "flow-coverage-report -i 'src/lib/**/*.js' -t html -o coverage/flow && npm run slow-test"
   },
   "author": "",
   "license": "MPL-2.0",
